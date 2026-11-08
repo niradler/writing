@@ -29,9 +29,11 @@ const results = computed(() => {
 <p>{{ results.length }} of {{ posts.length }} articles.</p>
 
 <ol class="post-list">
-  <li v-for="post in results" :key="post.url">
-    <h2><a :href="post.url">{{ post.title }}</a></h2>
-    <p v-if="post.description" class="dek">{{ post.description }}</p>
+  <li v-for="post in results" :key="post.url" class="entry">
+    <div class="entry-main">
+      <h2><a :href="post.url">{{ post.title }}</a></h2>
+      <p v-if="post.description" class="dek">{{ post.description }}</p>
+    </div>
   </li>
 </ol>
 

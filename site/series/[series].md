@@ -25,9 +25,11 @@ const format = (value) =>
 <p v-else>No articles in the current import are filed under this series.</p>
 
 <ol class="post-list">
-  <li v-for="post in matches" :key="post.url">
-    <p class="meta"><time :datetime="post.publishedAt">{{ format(post.publishedAt) }}</time></p>
-    <h2><a :href="post.url">{{ post.title }}</a></h2>
-    <p v-if="post.description" class="dek">{{ post.description }}</p>
+  <li v-for="post in matches" :key="post.url" class="entry">
+    <p class="entry-date"><time :datetime="post.publishedAt">{{ format(post.publishedAt) }}</time></p>
+    <div class="entry-main">
+      <h2><a :href="post.url">{{ post.title }}</a></h2>
+      <p v-if="post.description" class="dek">{{ post.description }}</p>
+    </div>
   </li>
 </ol>

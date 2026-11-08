@@ -30,12 +30,19 @@ const groups = computed(() => {
 
 <p>{{ posts.length }} articles in this import.</p>
 
-<section v-for="[year, group] in groups" :key="year" :aria-labelledby="`year-${year}`">
+<section
+  v-for="[year, group] in groups"
+  :key="year"
+  class="archive-year"
+  :aria-labelledby="`year-${year}`"
+>
   <h2 :id="`year-${year}`">{{ year }}</h2>
   <ol class="post-list">
-    <li v-for="post in group" :key="post.url">
-      <p class="meta"><time :datetime="post.publishedAt">{{ format(post.publishedAt) }}</time></p>
-      <h3><a :href="post.url">{{ post.title }}</a></h3>
+    <li v-for="post in group" :key="post.url" class="entry">
+      <p class="entry-date"><time :datetime="post.publishedAt">{{ format(post.publishedAt) }}</time></p>
+      <div class="entry-main">
+        <h3><a :href="post.url">{{ post.title }}</a></h3>
+      </div>
     </li>
   </ol>
 </section>

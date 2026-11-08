@@ -1,8 +1,11 @@
 name: Deploy GitHub Pages
 
-# Manual preview only. This does not publish a custom domain or change DNS.
+# Preview only. A push to main publishes https://niradler.github.io/writing/
+# after this workflow's checks. No custom domain, CNAME, or production build.
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
 
 permissions:
   contents: read
@@ -13,6 +16,7 @@ concurrency:
 
 jobs:
   build:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:

@@ -18,14 +18,16 @@ const format = (value) =>
 
 # Piece by Piece
 
-Nir Adler personal blog, tech related, and open source projects.
+<p class="lede">Nir Adler personal blog, tech related, and open source projects.</p>
 
 <ol class="post-list">
-  <li v-for="post in latest" :key="post.url">
-    <p class="meta"><time :datetime="post.publishedAt">{{ format(post.publishedAt) }}</time></p>
-    <h2><a :href="post.url">{{ post.title }}</a></h2>
-    <p v-if="post.description" class="dek">{{ post.description }}</p>
+  <li v-for="post in latest" :key="post.url" class="entry">
+    <p class="entry-date"><time :datetime="post.publishedAt">{{ format(post.publishedAt) }}</time></p>
+    <div class="entry-main">
+      <h2><a :href="post.url">{{ post.title }}</a></h2>
+      <p v-if="post.description" class="dek">{{ post.description }}</p>
+    </div>
   </li>
 </ol>
 
-<p><a :href="withBase('/archive')">All articles</a></p>
+<p class="more"><a :href="withBase('/archive')">All articles</a></p>
