@@ -1,6 +1,11 @@
 node_modules/
 dist/
-.astro/
+dist-production/
+site/.vitepress/cache/
+site/.vitepress/dist/
+**/*.timestamp-*.mjs
+site/posts/
+site/page/about.md
+site/public/
 package-lock.json
-.claude/
-.agents/
+migration/media-sources.json

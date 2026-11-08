@@ -7,20 +7,25 @@
     "node": ">=24.0.0 <25"
   },
   "scripts": {
-    "dev": "astro dev",
-    "check": "astro check",
-    "build": "astro build",
-    "preview": "astro preview",
+    "dev": "vitepress dev site --host 127.0.0.1",
+    "build": "SITE_TARGET=preview vitepress build site",
+    "build:production": "SITE_TARGET=production vitepress build site",
+    "preview": "vitepress preview site --host 127.0.0.1 --port 4173",
+    "test": "node --test",
+    "check": "npm run test && node scripts/check-content.mjs",
+    "check:built": "node scripts/check-built.mjs",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
-  },
-  "dependencies": {
-    "astro": "7.4.7"
+    "format:check": "prettier --check .",
+    "import:hashnode": "node scripts/import-hashnode.mjs",
+    "audit:media": "node scripts/audit-media.mjs"
   },
   "devDependencies": {
-    "@astrojs/check": "0.9.12",
+    "@fontsource/ibm-plex-mono": "5.2.7",
+    "@fontsource/ibm-plex-sans": "5.2.8",
+    "gray-matter": "4.0.3",
+    "node-html-parser": "7.1.0",
     "prettier": "3.9.10",
-    "prettier-plugin-astro": "1.1.2",
-    "typescript": "6.0.3"
+    "turndown": "7.2.4",
+    "vitepress": "1.6.4"
   }
 }

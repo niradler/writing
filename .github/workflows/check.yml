@@ -11,7 +11,7 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -22,3 +22,6 @@ jobs:
       - run: npm run format:check
       - run: npm run check
       - run: npm run build
+      - run: npm run check:built
+      - run: npm run build:production
+      - run: SITE_TARGET=production npm run check:built
