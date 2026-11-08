@@ -1,10 +1,10 @@
 <script setup>
-import { computed, nextTick, onMounted, onUnmounted, ref } from "vue";
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { useData, useRoute, useRouter, withBase } from "vitepress";
 import { data as posts } from "./posts.data.js";
 import series from "../series.json";
 
-const { frontmatter, page, theme } = useData();
+const { frontmatter, theme } = useData();
 const route = useRoute();
 const router = useRouter();
 const menuOpen = ref(false);
@@ -17,9 +17,75 @@ const isPost = computed(
 );
 const isFixture = computed(() => Boolean(frontmatter.value.fixture));
 const isAbout = computed(() => route.path.includes("/page/about"));
-const headers = computed(() =>
-  (page.value.headers || []).filter((item) => item.level === 2 || item.level === 3),
-);
+const sections = ref([]);
+const activeId = ref("");
+let ignoreOutline = false;
+let outlineFrame = 0;
+
+function collectOutline() {
+  sections.value = [
+    ...document.querySelectorAll(".post-main h2[id], .post-main h3[id]"),
+  ].map((node) => ({
+    id: node.id,
+    title: node.textContent.replace(/\u200b/g, "").trim(),
+    level: node.tagName === "H2" ? 2 : 3,
+  }));
+}
+
+function headerOffset() {
+  const bar = document.querySelector(".site-header");
+  return (bar?.getBoundingClientRect().height || 72) + 16;
+}
+
+function scrollToSection(id) {
+  const target = document.getElementById(id);
+  if (!target) return;
+  ignoreOutline = true;
+  const top = target.getBoundingClientRect().top + window.scrollY - headerOffset();
+  window.scrollTo({ top: Math.max(0, top), behavior: "auto" });
+  activeId.value = id;
+  window.setTimeout(() => {
+    ignoreOutline = false;
+  }, 350);
+}
+
+function onOutlineClick(event, section) {
+  if (!section.id) return;
+  event.preventDefault();
+  const next = `#${section.id}`;
+  if (location.hash !== next) history.pushState(null, "", next);
+  scrollToSection(section.id);
+}
+
+function updateActiveSection() {
+  if (ignoreOutline) return;
+  const line = headerOffset() + 2;
+  let current = "";
+  document.querySelectorAll(".post-main h2[id], .post-main h3[id]").forEach((node) => {
+    if (node.getBoundingClientRect().top <= line) current = node.id;
+  });
+  if (!current) {
+    current = document.querySelector(".post-main h2[id], .post-main h3[id]")?.id || "";
+  }
+  if (current) activeId.value = current;
+}
+
+function onOutlineScroll() {
+  if (outlineFrame) return;
+  outlineFrame = requestAnimationFrame(() => {
+    outlineFrame = 0;
+    updateActiveSection();
+  });
+}
+
+function syncHash() {
+  const id = decodeURIComponent(location.hash.replace(/^#/, ""));
+  if (!id || !document.getElementById(id)) {
+    updateActiveSection();
+    return;
+  }
+  scrollToSection(id);
+}
 const preview = computed(() => theme.value.siteTarget === "preview");
 const modeLabel = computed(() =>
   mode.value === "dark" ? "Dark" : mode.value === "light" ? "Light" : "Auto",
@@ -118,12 +184,33 @@ onMounted(() => {
   media = window.matchMedia("(prefers-color-scheme: dark)");
   media.addEventListener?.("change", onMedia);
   window.addEventListener("keydown", onKey);
+  window.addEventListener("scroll", onOutlineScroll, { passive: true });
+  window.addEventListener("hashchange", syncHash);
+  window.addEventListener("popstate", syncHash);
+  nextTick(() => {
+    collectOutline();
+    syncHash();
+  });
 });
 
 onUnmounted(() => {
   media?.removeEventListener?.("change", onMedia);
   window.removeEventListener("keydown", onKey);
+  window.removeEventListener("scroll", onOutlineScroll);
+  window.removeEventListener("hashchange", syncHash);
+  window.removeEventListener("popstate", syncHash);
+  if (outlineFrame) cancelAnimationFrame(outlineFrame);
 });
+
+watch(
+  () => route.path,
+  async () => {
+    activeId.value = "";
+    await nextTick();
+    collectOutline();
+    syncHash();
+  },
+);
 
 function onMedia() {
   if (mode.value === "system") applyTheme("system");
@@ -241,61 +328,67 @@ const year = new Date().getUTCFullYear();
       </div>
     </div>
     <main id="content" class="site-main">
-      <div class="frame">
-        <p v-if="isFixture" class="fixture-note" role="note">
-          Nonpublished rendering fixture. This is not an article.
-        </p>
-        <div v-if="isPost || isFixture" class="post-grid">
-          <article class="post-main">
-            <Content />
-            <footer v-if="isPost" class="post-end">
-              <p v-if="preview && (frontmatter.sourceUrl || frontmatter.originalUrl)">
-                Live article:
-                <a :href="frontmatter.sourceUrl || frontmatter.originalUrl">{{
-                  frontmatter.sourceUrl || frontmatter.originalUrl
-                }}</a>
-              </p>
-              <p
-                v-if="
-                  frontmatter.originalUrl &&
-                  frontmatter.originalUrl !== frontmatter.sourceUrl
-                "
-              >
-                Original link:
-                <a :href="frontmatter.originalUrl">{{ frontmatter.originalUrl }}</a>
-              </p>
-              <nav class="pager" aria-label="Adjacent articles">
-                <a v-if="newer" :href="newer.url">Newer: {{ newer.title }}</a>
-                <a v-if="older" :href="older.url">Older: {{ older.title }}</a>
-              </nav>
-            </footer>
-          </article>
-          <aside v-if="headers.length" class="outline">
-            <details class="outline-mobile">
-              <summary>On this page</summary>
-              <nav aria-label="On this page">
-                <a
-                  v-for="header in headers"
-                  :key="header.link"
-                  :href="header.link"
-                  :class="`level-${header.level}`"
-                  >{{ header.title }}</a
-                >
-              </nav>
-            </details>
-            <nav class="outline-desktop" aria-label="On this page">
-              <p>On this page</p>
+      <div v-if="isPost || isFixture" class="post-stage">
+        <article class="post-main">
+          <p v-if="isFixture" class="fixture-note" role="note">
+            Nonpublished rendering fixture. This is not an article.
+          </p>
+          <details v-if="sections.length" class="outline-mobile">
+            <summary>On this page</summary>
+            <nav aria-label="On this page">
               <a
-                v-for="header in headers"
-                :key="`${header.link}-desktop`"
-                :href="header.link"
-                :class="`level-${header.level}`"
-                >{{ header.title }}</a
+                v-for="section in sections"
+                :key="section.id"
+                :href="`#${section.id}`"
+                :class="`level-${section.level}`"
+                :aria-current="activeId === section.id ? 'location' : undefined"
+                @click="onOutlineClick($event, section)"
+                >{{ section.title }}</a
               >
             </nav>
-          </aside>
-        </div>
-        <div v-else class="page">
+          </details>
+          <Content />
+          <footer v-if="isPost" class="post-end">
+            <p v-if="preview && (frontmatter.sourceUrl || frontmatter.originalUrl)">
+              Live article:
+              <a :href="frontmatter.sourceUrl || frontmatter.originalUrl">{{
+                frontmatter.sourceUrl || frontmatter.originalUrl
+              }}</a>
+            </p>
+            <p
+              v-if="
+                frontmatter.originalUrl &&
+                frontmatter.originalUrl !== frontmatter.sourceUrl
+              "
+            >
+              Original link:
+              <a :href="frontmatter.originalUrl">{{ frontmatter.originalUrl }}</a>
+            </p>
+            <nav class="pager" aria-label="Adjacent articles">
+              <a v-if="newer" :href="newer.url">Newer: {{ newer.title }}</a>
+              <a v-if="older" :href="older.url">Older: {{ older.title }}</a>
+            </nav>
+          </footer>
+        </article>
+        <aside v-if="sections.length" class="outline-rail">
+          <div class="outline-desktop">
+            <p>On this page</p>
+            <nav aria-label="On this page">
+              <a
+                v-for="section in sections"
+                :key="`${section.id}-desktop`"
+                :href="`#${section.id}`"
+                :class="`level-${section.level}`"
+                :aria-current="activeId === section.id ? 'location' : undefined"
+                @click="onOutlineClick($event, section)"
+                >{{ section.title }}</a
+              >
+            </nav>
+          </div>
+        </aside>
+      </div>
+      <div v-else class="frame">
+        <div class="page">
           <img
             v-if="isAbout"
             class="avatar"
