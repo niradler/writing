@@ -77,6 +77,7 @@ async function waitForServer() {
   throw new Error("preview server did not start");
 }
 
+const runs = Number(process.env.RUNS || 1);
 const results = [];
 try {
   await waitForServer();
@@ -84,92 +85,119 @@ try {
     headless: true,
     ...(chrome ? { executablePath: chrome } : {}),
   });
-  for (const profile of profiles) {
-    for (const [path, name] of pages) {
-      const context = await browser.newContext({
-        viewport: profile.viewport,
-        deviceScaleFactor: profile.deviceScaleFactor,
-      });
-      const page = await context.newPage();
-      const failed = [];
-      page.on("requestfailed", (request) => {
-        failed.push({ url: request.url(), error: request.failure()?.errorText || "" });
-      });
-      const client = await context.newCDPSession(page);
-      await client.send("Network.enable");
-      await client.send("Network.setCacheDisabled", { cacheDisabled: true });
-      if (profile.throttle) {
-        await client.send("Network.emulateNetworkConditions", {
-          offline: false,
-          latency: LATENCY,
-          downloadThroughput: DOWNLOAD,
-          uploadThroughput: UPLOAD,
+  for (let run = 1; run <= runs; run++) {
+    for (const profile of profiles) {
+      if (process.env.MOBILE_ONLY && profile.name !== "mobile-slow-4g") continue;
+      for (const [path, name] of pages) {
+        const context = await browser.newContext({
+          viewport: profile.viewport,
+          deviceScaleFactor: profile.deviceScaleFactor,
         });
+        const page = await context.newPage();
+        const failed = [];
+        page.on("requestfailed", (request) => {
+          failed.push({
+            url: request.url(),
+            error: request.failure()?.errorText || "",
+          });
+        });
+        const client = await context.newCDPSession(page);
+        await client.send("Network.enable");
+        await client.send("Network.setCacheDisabled", { cacheDisabled: true });
+        if (profile.throttle) {
+          await client.send("Network.emulateNetworkConditions", {
+            offline: false,
+            latency: LATENCY,
+            downloadThroughput: DOWNLOAD,
+            uploadThroughput: UPLOAD,
+          });
+        }
+        await page.addInitScript(() => {
+          window.__shifts = [];
+          window.__lcp = null;
+          new PerformanceObserver((list) => {
+            for (const entry of list.getEntries()) window.__lcp = entry;
+          }).observe({ type: "largest-contentful-paint", buffered: true });
+          new PerformanceObserver((list) => {
+            for (const entry of list.getEntries()) {
+              if (!entry.hadRecentInput) window.__shifts.push(entry.value);
+            }
+          }).observe({ type: "layout-shift", buffered: true });
+        });
+        const started = Date.now();
+        await page.goto(`${origin}${base}${path}`, {
+          waitUntil: "load",
+          timeout: 180000,
+        });
+        await page.evaluate(() =>
+          Promise.race([
+            document.fonts.ready.then(
+              () => new Promise((resolve) => setTimeout(resolve, 1500)),
+            ),
+            new Promise((resolve) => setTimeout(resolve, 12000)),
+          ]),
+        );
+        const measured = await page.evaluate(() => {
+          const resources = performance.getEntriesByType("resource").map((entry) => ({
+            name: entry.name,
+            type: entry.initiatorType,
+            transfer: entry.transferSize,
+            encoded: entry.encodedBodySize,
+            duration: Math.round(entry.duration),
+          }));
+          const images = [...document.images].map((image) => ({
+            currentSrc: image.currentSrc,
+            src: image.getAttribute("src"),
+            loading: image.getAttribute("loading"),
+            fetchPriority: image.getAttribute("fetchpriority"),
+            width: image.naturalWidth,
+            client: Math.round(image.getBoundingClientRect().width),
+          }));
+          const lcp = window.__lcp;
+          return {
+            lcpMs: lcp ? Math.round(lcp.startTime) : null,
+            lcpUrl: lcp && "url" in lcp ? lcp.url || "" : "",
+            cls: Number(
+              (window.__shifts || []).reduce((sum, value) => sum + value, 0).toFixed(4),
+            ),
+            resources,
+            images,
+          };
+        });
+        const imageResources = measured.resources.filter((entry) =>
+          /\.(png|jpe?g|gif|webp|avif|svg)(\?|$)/i.test(entry.name),
+        );
+        const sum = (entries, key) =>
+          entries.reduce((total, entry) => total + entry[key], 0);
+        results.push({
+          run,
+          profile: profile.name,
+          page: name,
+          elapsedMs: Date.now() - started,
+          lcpMs: measured.lcpMs,
+          lcpUrl: measured.lcpUrl,
+          cls: measured.cls,
+          requests: measured.resources.length + 1,
+          transferBytes: sum(measured.resources, "transfer"),
+          imageRequests: imageResources.length,
+          imageBytes: sum(imageResources, "transfer"),
+          failed,
+          images: measured.images
+            .filter((image) => image.client > 0)
+            .map((image) => ({
+              currentSrc: image.currentSrc.split("/").pop(),
+              client: image.client,
+            })),
+          fonts: measured.resources
+            .filter((entry) => entry.name.includes(".woff"))
+            .map((entry) => ({
+              name: entry.name.split("/").pop(),
+              duration: entry.duration,
+              transfer: entry.transfer,
+            })),
+        });
+        await context.close();
       }
-      await page.addInitScript(() => {
-        window.__shifts = [];
-        window.__lcp = null;
-        new PerformanceObserver((list) => {
-          for (const entry of list.getEntries()) window.__lcp = entry;
-        }).observe({ type: "largest-contentful-paint", buffered: true });
-        new PerformanceObserver((list) => {
-          for (const entry of list.getEntries()) {
-            if (!entry.hadRecentInput) window.__shifts.push(entry.value);
-          }
-        }).observe({ type: "layout-shift", buffered: true });
-      });
-      const started = Date.now();
-      await page.goto(`${origin}${base}${path}`, {
-        waitUntil: "load",
-        timeout: 180000,
-      });
-      await page.waitForTimeout(500);
-      const measured = await page.evaluate(() => {
-        const resources = performance.getEntriesByType("resource").map((entry) => ({
-          name: entry.name,
-          type: entry.initiatorType,
-          transfer: entry.transferSize,
-          encoded: entry.encodedBodySize,
-        }));
-        const images = [...document.images].map((image) => ({
-          currentSrc: image.currentSrc,
-          src: image.getAttribute("src"),
-          loading: image.getAttribute("loading"),
-          fetchPriority: image.getAttribute("fetchpriority"),
-          width: image.naturalWidth,
-          client: Math.round(image.getBoundingClientRect().width),
-        }));
-        const lcp = window.__lcp;
-        return {
-          lcpMs: lcp ? Math.round(lcp.startTime) : null,
-          lcpUrl: lcp && "url" in lcp ? lcp.url || "" : "",
-          cls: Number(
-            (window.__shifts || []).reduce((sum, value) => sum + value, 0).toFixed(4),
-          ),
-          resources,
-          images,
-        };
-      });
-      const imageResources = measured.resources.filter((entry) =>
-        /\.(png|jpe?g|gif|webp|avif|svg)(\?|$)/i.test(entry.name),
-      );
-      const sum = (entries, key) =>
-        entries.reduce((total, entry) => total + entry[key], 0);
-      results.push({
-        profile: profile.name,
-        page: name,
-        elapsedMs: Date.now() - started,
-        lcpMs: measured.lcpMs,
-        lcpUrl: measured.lcpUrl,
-        cls: measured.cls,
-        requests: measured.resources.length + 1,
-        transferBytes: sum(measured.resources, "transfer"),
-        imageRequests: imageResources.length,
-        imageBytes: sum(imageResources, "transfer"),
-        failed,
-        images: measured.images.filter((image) => image.client > 0),
-      });
-      await context.close();
     }
   }
   await browser.close();

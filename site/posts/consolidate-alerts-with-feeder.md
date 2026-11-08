@@ -28,19 +28,19 @@ Instead, I'm using my own framework, Statikly, which is basically an opinionated
 Feeder uses SSE (Server Sent Event), for real-time alert updates.
 
 <figure class="media" data-align="center">
-<img src="/media/consolidate-alerts-with-feeder/ccde9a3b-d97d-4aa4-8aad-e0c1939aed99.gif" alt="Feeder receiving live alerts over server-sent events" loading="lazy" decoding="async" data-align="center">
+<img src="/media/consolidate-alerts-with-feeder/ccde9a3b-d97d-4aa4-8aad-e0c1939aed99.gif" alt="Feeder alerts page with Postman posting a JSON webhook titled Real time alert" loading="lazy" decoding="async" data-align="center">
 </figure>
 
 Feeder has one main page, the alerts page, you can search alerts by content, and tags, powered by Htmx, the alerts interaction feels like SPA (Single Page Application).
 
 <figure class="media" data-align="center">
-<img src="/media/consolidate-alerts-with-feeder/1619a79e-d07e-4830-bc37-397b24751a52.png" alt="Feeder alerts page, where alerts can be searched by content and tags" loading="lazy" decoding="async" data-align="center">
+<img src="/media/consolidate-alerts-with-feeder/1619a79e-d07e-4830-bc37-397b24751a52.png" alt="Feeder alerts page with a search box and alerts for VPN, database backup, S3, a GitHub star, and SSH" loading="lazy" decoding="async" data-align="center">
 </figure>
 
 Another cool feature is the themes support, I'm using DaisyUI which comes with a pre-build set of themes, you can play with it and choose the theme you like.
 
 <figure class="media" data-align="center">
-<img src="/media/consolidate-alerts-with-feeder/50aac82b-4e9b-4ddb-a3ac-924a472066e5.png" alt="Feeder theme choices" loading="lazy" decoding="async" data-align="center">
+<img src="/media/consolidate-alerts-with-feeder/50aac82b-4e9b-4ddb-a3ac-924a472066e5.png" alt="Feeder alerts page in a dark theme, listing VPN connection alerts" loading="lazy" decoding="async" data-align="center">
 </figure>
 
 Alerts fields
@@ -72,5 +72,5 @@ Checkout the Github repository for more [https://github.com/niradler/feeder](htt
 Demo with n8n integration
 
 <figure class="media" data-align="center">
-<img src="/media/consolidate-alerts-with-feeder/ac9f29ae-6fff-4546-8452-05c9cf9252ec.gif" alt="Feeder demo with an n8n integration" loading="lazy" decoding="async" data-align="center">
+<img src="/media/consolidate-alerts-with-feeder/ac9f29ae-6fff-4546-8452-05c9cf9252ec.gif" alt="Feeder star alerts for niradler/feeder beside an n8n workflow with a Github Trigger and an HTTP Request" loading="lazy" decoding="async" data-align="center">
 </figure>

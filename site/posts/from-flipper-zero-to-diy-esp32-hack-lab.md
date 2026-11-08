@@ -49,7 +49,7 @@ Let's talk numbers. A Flipper Zero costs $199-299. A basic ESP32 dev board? $15-
 This isn't about cheap knockoffs. These are purpose-built tools that often exceed Flipper's capabilities in their respective domains.
 
 <figure class="media" data-align="center">
-<img src="/media/from-flipper-zero-to-diy-esp32-hack-lab/33551f27-bd83-4016-a2ec-2cbe7f8b65e2.jpeg" alt="Photo in the section comparing Flipper Zero with ESP32 boards" loading="lazy" decoding="async" data-align="center">
+<img src="/media/from-flipper-zero-to-diy-esp32-hack-lab/33551f27-bd83-4016-a2ec-2cbe7f8b65e2.jpeg" alt="WiFi development board with two antennas beside a Flipper handheld" loading="lazy" decoding="async" data-align="center">
 </figure>
 
 ## Why This Matters

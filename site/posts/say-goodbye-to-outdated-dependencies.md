@@ -53,7 +53,7 @@ It supports all the major registries: **npm, PyPI, Maven, NuGet, RubyGems,** [**
 So whether you’re in Node.js, Python, Java, .NET, Ruby, Rust, or Go, the AI never needs to guess again.
 
 <figure class="media" data-align="center">
-<img src="/media/say-goodbye-to-outdated-dependencies/443b6645-f0c3-4d9c-b30f-d4a370cf96c7.png" alt="Dependency MCP checking package versions across registries" loading="lazy" decoding="async" data-align="center">
+<img src="/media/say-goodbye-to-outdated-dependencies/443b6645-f0c3-4d9c-b30f-d4a370cf96c7.png" alt="Diagram labeled Dependency MCP: a request to add lodash, a check against the MCP server, and a reply that the latest version of lodash is 4.17.21" loading="lazy" decoding="async" data-align="center">
 </figure>
 
 ---
@@ -82,7 +82,7 @@ One of the coolest things about building MCP servers is that you can actually us
 The flow looks like this: you start by writing or updating your MCP server, then register it in Cursor’s configuration. Once it’s wired up, Cursor can immediately call your server and test each of the tools you’ve exposed. If something doesn’t work, Cursor surfaces the error right away - and even suggests fixes or improvements directly in your editor. That means you’re not just coding; you’re effectively building software that validates itself, with an AI co-pilot constantly reviewing and stress-testing your MCP server in real time.  
 
 <figure class="media" data-align="center">
-<img src="/media/say-goodbye-to-outdated-dependencies/41367b7c-0f25-4427-afad-30d147141da9.png" alt="Cursor calling a Dependency MCP server while it is being built" loading="lazy" decoding="async" data-align="center">
+<img src="/media/say-goodbye-to-outdated-dependencies/41367b7c-0f25-4427-afad-30d147141da9.png" alt="Diagram labeled Cursor: develop an MCP server, configure it, call it to validate tools, then fix issues" loading="lazy" decoding="async" data-align="center">
 </figure>
 
 ---

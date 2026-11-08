@@ -6,7 +6,7 @@
       "retrieved": "2026-11-08",
       "status": 403,
       "contentType": "text/html",
-      "note": "LinkedIn's CDN returned an HTML error page instead of image bytes. The live Hashnode markdown still points at the same expired URL. No substitute image was created."
+      "note": "LinkedIn's CDN returned an HTML error page instead of image bytes. The planned local path /media/lyve-cloud-hackathon-submission-1st-place/1628704518241 was never checked in. The live Hashnode markdown still points at the same expired URL, and the known Hashnode asset backup does not contain this file. No substitute image was created."
     }
   ]
 }

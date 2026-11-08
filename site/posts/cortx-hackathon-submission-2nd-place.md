@@ -24,7 +24,7 @@ I choose to leverage the advanced storage with great compatibility for creating 
 Demo:
 
 <figure class="media" data-align="left">
-<img src="/media/cortx-hackathon-submission-2nd-place/demo.gif" alt="Demo of CORTX-Images" loading="lazy" decoding="async" data-align="left">
+<img src="/media/cortx-hackathon-submission-2nd-place/demo.gif" alt="Cortx Images API page reading Fast, Secure and friendly integration, beside an image playground and a network panel" loading="lazy" decoding="async" data-align="left">
 </figure>
 
 Presentation:
