@@ -25,7 +25,8 @@
     "@fontsource/ibm-plex-sans": "5.2.8",
     "gray-matter": "4.0.3",
     "node-html-parser": "7.1.0",
-    "playwright-core": "^1.55.0",
+    "playwright": "1.65.0",
+    "playwright-core": "1.65.0",
     "prettier": "3.9.10",
     "turndown": "7.2.4",
     "vitepress": "1.6.4"
