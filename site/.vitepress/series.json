@@ -1,0 +1,22 @@
+[
+  {
+    "slug": "open-source",
+    "name": "Open source"
+  },
+  {
+    "slug": "diy",
+    "name": "DIY"
+  },
+  {
+    "slug": "hackathons",
+    "name": "Hackathons"
+  },
+  {
+    "slug": "chat-first",
+    "name": "Chat First"
+  },
+  {
+    "slug": "your-next-startup",
+    "name": "Your Next Startup"
+  }
+]

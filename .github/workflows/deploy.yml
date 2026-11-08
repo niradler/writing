@@ -1,6 +1,6 @@
 name: Deploy GitHub Pages
 
-# Deployment is manual while the Hashnode migration is being prepared.
+# Manual preview only. This does not publish a custom domain or change DNS.
 on:
   workflow_dispatch:
 
@@ -14,7 +14,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -25,6 +25,7 @@ jobs:
       - run: npm run format:check
       - run: npm run check
       - run: npm run build
+      - run: npm run check:built
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

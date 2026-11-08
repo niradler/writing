@@ -1,0 +1,301 @@
+{
+  "retrieved": "2026-11-08T12:02:48.773Z",
+  "completeness": "unverified",
+  "liveSitemapPosts": 54,
+  "considered": 54,
+  "written": [
+    {
+      "slug": "post-training-when-a-specialist-beats-a-bigger-model",
+      "title": "Post-Training: When a Specialist Beats a Bigger Model",
+      "publishedAt": "2026-11-04T23:06:03.454Z"
+    },
+    {
+      "slug": "coding-agents-are-reshaping-the-sdlc",
+      "title": "Coding Agents Are Reshaping the SDLC",
+      "publishedAt": "2026-11-04T22:44:01.703Z"
+    },
+    {
+      "slug": "version-controlling-ai-agent-assets-with-git-skill-and-github",
+      "title": "Version-controlling AI agent assets with git-skill and GitHub",
+      "publishedAt": "2026-05-25T21:01:18.303Z"
+    },
+    {
+      "slug": "your-next-startup-the-agentic-workflow-engine",
+      "title": "Your Next Startup: The Agentic Workflow Engine",
+      "publishedAt": "2026-05-03T22:28:54.400Z"
+    },
+    {
+      "slug": "the-third-interface-your-next-user-doesn-t-have-hands",
+      "title": "The Third Interface: Your Next User Doesn't Have Hands",
+      "publishedAt": "2026-05-02T20:54:27.627Z"
+    },
+    {
+      "slug": "your-database-already-has-an-authorization-system-you-re-just-not-using-it",
+      "title": "Your Database Already Has an Authorization System. You're Just Not Using It.",
+      "publishedAt": "2026-05-02T20:21:32.493Z"
+    },
+    {
+      "slug": "your-next-startup-the-auth-layer-for-the-agentic-era",
+      "title": "Your Next Startup: The Auth Layer for the Agentic Era",
+      "publishedAt": "2026-05-03T22:03:55.482Z"
+    },
+    {
+      "slug": "a-brief-history-of-kubernetes-fleet-controllers-and-essential-features",
+      "title": "A Brief History of Kubernetes Fleet Controllers & Essential Features",
+      "publishedAt": "2026-02-07T14:47:24.174Z"
+    },
+    {
+      "slug": "postgres-already-is-your-backend",
+      "title": "Postgres Already Is Your Backend",
+      "publishedAt": "2026-05-04T20:56:57.324Z"
+    },
+    {
+      "slug": "introducing-a-modern-web-interface-for-usb-army-knife-built-for-the-future",
+      "title": "Introducing a Modern Web Interface for USB Army Knife: Built for the Future",
+      "publishedAt": "2026-01-28T22:18:57.164Z"
+    },
+    {
+      "slug": "building-a-github-dashboard-on-esp32-e-paper",
+      "title": "Building a GitHub Dashboard on ESP32 E-Paper",
+      "publishedAt": "2025-11-18T23:24:47.072Z"
+    },
+    {
+      "slug": "from-flipper-zero-to-diy-esp32-hack-lab",
+      "title": "From Flipper Zero to DIY ESP32 Hack Lab",
+      "publishedAt": "2025-12-14T22:37:17.571Z"
+    },
+    {
+      "slug": "mcp-conductor-the-advantages-of-equipping-your-agent-with-code-execution-powers",
+      "title": "MCP Conductor: The Advantages of Equipping Your Agent with Code Execution Powers",
+      "publishedAt": "2025-11-11T18:58:36.096Z"
+    },
+    {
+      "slug": "cursor-as-an-ai-sre",
+      "title": "Cursor as an AI SRE",
+      "publishedAt": "2025-08-24T20:13:00.714Z"
+    },
+    {
+      "slug": "effortlessly-manage-mcp-configurations-with-cross-platform-mcp-manager-cli",
+      "title": "Effortlessly Manage MCP Configurations with Cross-Platform MCP Manager CLI",
+      "publishedAt": "2025-08-24T20:06:30.730Z"
+    },
+    {
+      "slug": "say-goodbye-to-outdated-dependencies",
+      "title": "Say Goodbye to Outdated Dependencies",
+      "publishedAt": "2025-08-19T08:58:18.470Z"
+    },
+    {
+      "slug": "ag-ui-protocol-vs-mcp-ui-which-one-should-you-use",
+      "title": "AG UI Protocol vs MCP UI: Which One Should You Use?",
+      "publishedAt": "2025-09-22T15:19:50.161Z"
+    },
+    {
+      "slug": "how-code-feedback-mcp-enhances-ai-generated-code-quality",
+      "title": "How Code Feedback MCP Enhances AI-Generated Code Quality",
+      "publishedAt": "2025-06-28T20:13:27.816Z"
+    },
+    {
+      "slug": "the-death-of-the-dashboard-why-your-next-saas-should-feel-like-a-conversation",
+      "title": "The Death of the Dashboard: Why Your Next SaaS Should Feel Like a Conversation",
+      "publishedAt": "2025-06-06T22:12:52.096Z"
+    },
+    {
+      "slug": "gpu-inference-servers-comparison-triton-vs-tgi-vs-vllm-vs-ollama",
+      "title": "GPU Inference Servers Comparison: Triton vs TGI vs vLLM vs Ollama",
+      "publishedAt": "2025-05-29T10:04:21.566Z"
+    },
+    {
+      "slug": "devops-developers-how-kro-finally-made-k8s-peace-possible",
+      "title": "DevOps ❤️ Developers: How Kro Finally Made K8s Peace Possible 🤝",
+      "publishedAt": "2025-05-29T09:00:32.647Z"
+    },
+    {
+      "slug": "training-our-first-kubernetes-expert-model",
+      "title": "Training Our First Kubernetes Expert Model",
+      "publishedAt": "2025-03-24T22:23:02.280Z"
+    },
+    {
+      "slug": "securing-your-supply-chain-mitigating-risks-from-pipelines-vcs-and-third-party-tools",
+      "title": "Securing Your Supply Chain: Mitigating Risks from Pipelines, VCS, and Third-Party Tools",
+      "publishedAt": "2024-10-31T22:00:00.000Z"
+    },
+    {
+      "slug": "introducing-hotpod-process-manager",
+      "title": "Fast Debugging and Process Management for Containers",
+      "publishedAt": "2025-02-07T19:36:06.217Z"
+    },
+    {
+      "slug": "autho-your-authy-desktop-alternative-and-beyond-open-source",
+      "title": "Autho: Your Authy Desktop Alternative and Beyond (Open Source)",
+      "publishedAt": "2024-04-27T12:44:39.129Z"
+    },
+    {
+      "slug": "zigbee2mqtt-and-unsupported-devices-how-to-add-your-own",
+      "title": "Zigbee2MQTT and Unsupported Devices: How to Add Your Own",
+      "publishedAt": "2023-12-11T22:00:00.000Z"
+    },
+    {
+      "slug": "preparing-for-a-fast-paced-startup-interview-a-backend-developer-guide",
+      "title": "Preparing for a Fast-Paced Startup Interview: A Backend Developer Guide",
+      "publishedAt": "2024-09-22T22:48:38.950Z"
+    },
+    {
+      "slug": "ai-on-microcontrollers-a-deep-dive-into-tinyml-esp-skainet-and-the-embedded-intelligence-revolution",
+      "title": "AI on Microcontrollers: A Deep Dive into TinyML, ESP-Skainet, and the Embedded Intelligence Revolution",
+      "publishedAt": "2026-02-07T13:17:57.330Z"
+    },
+    {
+      "slug": "consolidate-alerts-with-feeder",
+      "title": "Consolidate alerts with Feeder",
+      "publishedAt": "2023-02-07T21:03:46.148Z"
+    },
+    {
+      "slug": "docker-apps-organization-using-docker-homepage",
+      "title": "Docker Apps Organization Using Docker Homepage",
+      "publishedAt": "2023-01-04T21:33:20.468Z"
+    },
+    {
+      "slug": "statikly-no-hassle-full-stack-framework",
+      "title": "Statikly - No hassle full-stack framework",
+      "publishedAt": "2022-12-02T13:27:34.510Z"
+    },
+    {
+      "slug": "preparing-for-the-cka-exam-a-practical-guide",
+      "title": "Preparing for the CKA Exam: A Practical Guide",
+      "publishedAt": "2022-12-03T12:02:25.847Z"
+    },
+    {
+      "slug": "policyer-github-action",
+      "title": "Policyer Github Action",
+      "publishedAt": "2021-12-05T22:14:26.000Z"
+    },
+    {
+      "slug": "serverless-authentication-with-golang",
+      "title": "Serverless Authentication with Golang",
+      "publishedAt": "2022-07-04T12:40:16.000Z"
+    },
+    {
+      "slug": "the-web-has-evolved-finally-testing-has-too-cf6fe0f0d805",
+      "title": "The web has evolved.\nFinally, testing has too.",
+      "publishedAt": "2021-09-10T21:51:08.248Z"
+    },
+    {
+      "slug": "lyve-cloud-hackathon-submission-1st-place",
+      "title": "Lyve Cloud hackathon Submission - 1st Place",
+      "publishedAt": "2021-07-26T21:43:56.000Z"
+    },
+    {
+      "slug": "aws-cloudformation-outputs",
+      "title": "AWS CloudFormation Outputs",
+      "publishedAt": "2021-03-14T12:31:44.000Z"
+    },
+    {
+      "slug": "policyer-the-first-js-policy-engine",
+      "title": "Policyer - the first  JS policy engine",
+      "publishedAt": "2021-11-21T11:10:57.000Z"
+    },
+    {
+      "slug": "cortx-hackathon-submission-2nd-place",
+      "title": "Cortx hackathon Submission - 2nd Place",
+      "publishedAt": "2020-12-11T22:41:11.000Z"
+    },
+    {
+      "slug": "commit-secrets-to-git-encrypted",
+      "title": "Commit secrets to Git (encrypted)",
+      "publishedAt": "2020-04-04T15:27:31.000Z"
+    },
+    {
+      "slug": "refactor-common-cli-tools",
+      "title": "Refactor Common CLI Tools",
+      "publishedAt": "2020-02-10T23:22:19.000Z"
+    },
+    {
+      "slug": "javascript-object-reamp",
+      "title": "Javascript object reamp",
+      "publishedAt": "2020-02-11T09:59:30.000Z"
+    },
+    {
+      "slug": "vscode-extension-kill-process",
+      "title": "Vscode extension kill-process",
+      "publishedAt": "2019-11-09T16:05:37.000Z"
+    },
+    {
+      "slug": "open-source-dashboard-for-js-developers",
+      "title": "Open Source Dashboard (for js developers)",
+      "publishedAt": "2019-06-15T16:00:02.000Z"
+    },
+    {
+      "slug": "automatically-serve-swagger-ui-for-api-gateway-documentation",
+      "title": "Automatically serve Swagger ui for Api Gateway documentation",
+      "publishedAt": "2019-04-30T21:11:35.000Z"
+    },
+    {
+      "slug": "export-swagger-documentation-file-from-aws-apigateway",
+      "title": "Export Swagger documentation file from AWS ApiGateway",
+      "publishedAt": "2019-04-23T22:00:03.000Z"
+    },
+    {
+      "slug": "bootstrap-your-next-project-with-npm-init-f314c2b11027",
+      "title": "Bootstrap your next project with npm init",
+      "publishedAt": "2019-04-16T20:27:22.000Z"
+    },
+    {
+      "slug": "getting-started-with-elk-stack-by-building-uptime-monitor",
+      "title": "Getting Started With ELK Stack By Building Uptime Monitor.",
+      "publishedAt": "2018-12-05T23:20:39.000Z"
+    },
+    {
+      "slug": "introduction-for-remote-deployer",
+      "title": "Introduction for remote-deployer.",
+      "publishedAt": "2018-11-14T20:47:41.000Z"
+    },
+    {
+      "slug": "mongodb-playground",
+      "title": "MongoDB Playground",
+      "publishedAt": "2019-04-15T09:42:28.000Z"
+    },
+    {
+      "slug": "how-my-example-npm-package-got-9-5k-downloads-81015a316264",
+      "title": "How my example npm package got 9.5k+ downloads.",
+      "publishedAt": "2018-11-03T22:22:02.000Z"
+    },
+    {
+      "slug": "hackidc-hackathon-2015",
+      "title": "HackIDC  Hackathon  2015",
+      "publishedAt": "2015-04-27T20:07:46.000Z"
+    },
+    {
+      "slug": "cloudflare-automatic-dns-update-for-homelab",
+      "title": "Cloudflare automatic DNS update for homelab",
+      "publishedAt": "2022-03-26T08:31:40.000Z"
+    },
+    {
+      "slug": "serverless-integration-test-with-offline-plugin",
+      "title": "Serverless Integration Test with Offline Plugin",
+      "publishedAt": "2019-06-01T12:52:16.000Z"
+    }
+  ],
+  "skipped": [],
+  "failed": [],
+  "remoteImages": [
+    {
+      "slug": "lyve-cloud-hackathon-submission-1st-place",
+      "local": "/media/lyve-cloud-hackathon-submission-1st-place/1628704518241",
+      "source": "https://media-exp1.licdn.com/dms/image/C4D22AQG-CD9_VptqeA/feedshare-shrink_1280/0/1628704518241?e=1672876800&v=beta&t=g1jn22Rl2-U_Tfhk6HMFGvpyiBe1T7tQoSAmWNkOWxY"
+    }
+  ],
+  "missingAlt": [
+    {
+      "slug": "autho-your-authy-desktop-alternative-and-beyond-open-source",
+      "src": "/media/autho-your-authy-desktop-alternative-and-beyond-open-source/cover.img"
+    }
+  ],
+  "sources": {
+    "sitemap": "https://blog.niradler.com/sitemap.xml",
+    "markdown": "https://blog.niradler.com/{slug}.md",
+    "hashnodeRepo": "https://github.com/niradler/hashnode was not found on 2026-11-08",
+    "assetsBackup": "https://github.com/niradler/hashnode-assets-backup is the backup action, and it does not contain post assets",
+    "supportExport": "pending; Hashnode support was not contacted",
+    "graphql": "Hashnode's public GraphQL API now requires a paid plan and was not used"
+  }
+}

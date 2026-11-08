@@ -1,5 +1,9 @@
 node_modules/
 dist/
+dist-production/
+site/.vitepress/cache/
+site/.vitepress/dist/
+**/*.timestamp-*.mjs
 .astro/
 .env
 .env.*

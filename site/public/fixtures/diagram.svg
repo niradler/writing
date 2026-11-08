@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="Fixture diagram of three stacked blocks">
+  <rect width="640" height="360" fill="#fafafa"/>
+  <rect x="48" y="48" width="544" height="72" rx="8" fill="#e9eaed" stroke="#858991"/>
+  <rect x="48" y="144" width="544" height="72" rx="8" fill="#f3f3f5" stroke="#858991"/>
+  <rect x="48" y="240" width="544" height="72" rx="8" fill="#ffffff" stroke="#858991"/>
+  <text x="72" y="92" fill="#25262a" font-family="IBM Plex Sans, sans-serif" font-size="24">Fixture block</text>
+  <text x="72" y="188" fill="#25262a" font-family="IBM Plex Sans, sans-serif" font-size="24">Not an article</text>
+  <text x="72" y="284" fill="#25262a" font-family="IBM Plex Sans, sans-serif" font-size="24">Media check</text>
+</svg>
