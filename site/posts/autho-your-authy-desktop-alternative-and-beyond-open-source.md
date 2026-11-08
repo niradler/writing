@@ -14,6 +14,7 @@ sourceMarkdown: 'https://blog.niradler.com/autho-your-authy-desktop-alternative-
 series: Open source
 seriesSlug: open-source
 cover: /media/autho-your-authy-desktop-alternative-and-beyond-open-source/cover.png
+coverAlt: 'Title card reading Autho: Your Authy Desktop Alternative and Beyond (Open Source), by Nir Adler'
 ---
 # Autho: Your Authy Desktop Alternative and Beyond (Open Source)
 
@@ -120,7 +121,7 @@ To import the JSON data into Autho, we can utilize the `autho import --filePath 
 By following these steps, users can seamlessly migrate their authentication tokens and passwords from Authy to Autho, ensuring continuity and security in managing their digital identities.
 
 <figure class="media" data-align="center">
-<img src="/media/autho-your-authy-desktop-alternative-and-beyond-open-source/ad1aa163-2f3d-48c4-8e6e-dc37b8ff04cf.png" alt="" loading="lazy" decoding="async" data-align="center">
+<img src="/media/autho-your-authy-desktop-alternative-and-beyond-open-source/ad1aa163-2f3d-48c4-8e6e-dc37b8ff04cf.png" alt="PowerShell running autho to read a Bitbucket authenticator secret and show a one-time code with time remaining" loading="lazy" decoding="async" data-align="center">
 </figure>
 
 ---

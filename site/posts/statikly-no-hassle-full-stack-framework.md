@@ -36,7 +36,7 @@ npm run watch # visit localhost:3000
 ```
 
 <figure class="media" data-align="left">
-<img src="/media/statikly-no-hassle-full-stack-framework/d1a80db3-dbb8-4f63-9217-e8e990f6f618.png" alt="" loading="lazy" decoding="async" data-align="left">
+<img src="/media/statikly-no-hassle-full-stack-framework/d1a80db3-dbb8-4f63-9217-e8e990f6f618.png" alt="Demo page served after running statikly init" loading="lazy" decoding="async" data-align="left">
 </figure>
 
 The code behind this page can be found in `views/index.ejs` if you wonder where the rest of the HTML coming from we use the layout feature, the page layout is at `partials\layout.ejs` configured as env var

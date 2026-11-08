@@ -231,8 +231,32 @@ const year = new Date().getUTCFullYear();
     <header class="site-header">
       <div class="frame header-bar">
         <a class="brand" :href="withBase('/')" @click="closeMenu(false)">
-          <img class="logo light" :src="withBase('/brand/logo-light.png')" alt="" />
-          <img class="logo dark" :src="withBase('/brand/logo-dark.png')" alt="" />
+          <picture class="logo light">
+            <source
+              :srcset="withBase('/media-opt/brand/logo-light-64.webp')"
+              type="image/webp"
+              sizes="32px"
+            />
+            <img
+              :src="withBase('/media-opt/brand/logo-light-160.png')"
+              alt=""
+              width="32"
+              height="32"
+            />
+          </picture>
+          <picture class="logo dark">
+            <source
+              :srcset="withBase('/media-opt/brand/logo-dark-64.webp')"
+              type="image/webp"
+              sizes="32px"
+            />
+            <img
+              :src="withBase('/media-opt/brand/logo-dark-160.png')"
+              alt=""
+              width="32"
+              height="32"
+            />
+          </picture>
           <span>Piece by Piece</span>
         </a>
         <nav class="nav-desktop" aria-label="Primary">
@@ -389,12 +413,20 @@ const year = new Date().getUTCFullYear();
       </div>
       <div v-else class="frame">
         <div class="page">
-          <img
-            v-if="isAbout"
-            class="avatar"
-            :src="withBase('/brand/avatar.png')"
-            alt="Nir Adler"
-          />
+          <picture v-if="isAbout">
+            <source
+              :srcset="withBase('/media-opt/brand/avatar-160.webp')"
+              type="image/webp"
+              sizes="4.5rem"
+            />
+            <img
+              class="avatar"
+              :src="withBase('/media-opt/brand/avatar-160.png')"
+              alt="Nir Adler"
+              width="144"
+              height="144"
+            />
+          </picture>
           <Content />
         </div>
       </div>

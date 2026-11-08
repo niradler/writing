@@ -37,19 +37,19 @@ The current projects illustrate different places to intervene. Some preserve the
 **OpenAI's Pando** preserves Git clients and protocols while redesigning the backend for concurrent writes and high read throughput. It coordinates updates per reference, allowing unrelated branches to advance independently, and reuses stored packfiles across fetches. The consistency tradeoff is explicit: reading several branches does not guarantee a snapshot from one moment across the repository. OpenAI reports nearly five times lower median push latency in production and nearly a petabyte of Git data delivered daily. These are reported results for its own workload. [Read OpenAI's architecture](https://openai.com/index/scaling-git-at-openai/).
 
 <figure class="media" data-align="center">
-<img src="/media/coding-agents-are-reshaping-the-sdlc/e4aeeb62-badc-421d-9a8f-bf00143e56ab.png" alt="" loading="lazy" decoding="async" data-align="center">
+<img src="/media/coding-agents-are-reshaping-the-sdlc/e4aeeb62-badc-421d-9a8f-bf00143e56ab.png" alt="Diagram titled OpenAI Pando: coding agents write packfiles into shared storage that a regional cache serves to other agents and CI jobs" loading="lazy" decoding="async" data-align="center">
 </figure>
 
 **Cursor's Origin and Continuity** also preserve Git workflows, with a different storage and coordination design. Origin is the Git service, while Continuity uses a write-ahead log in S3-compatible storage as the source of truth and treats local repositories as reconstructable caches. Cursor describes published pushes as linearizable, with replicas checking the authoritative index before serving reads. It also performs compaction centrally so replicas can download the resulting packs instead of repeating that computation. [Read Cursor's architecture](https://cursor.com/blog/git-at-any-scale).
 
 <figure class="media" data-align="center">
-<img src="/media/coding-agents-are-reshaping-the-sdlc/dd82dc0c-3095-41ae-8122-27b7315e0970.png" alt="" loading="lazy" decoding="async" data-align="center">
+<img src="/media/coding-agents-are-reshaping-the-sdlc/dd82dc0c-3095-41ae-8122-27b7315e0970.png" alt="Diagram titled Cursor Origin / Continuity: a Git service writes a durable log to S3-compatible storage and repository replicas serve fetches" loading="lazy" decoding="async" data-align="center">
 </figure>
 
 **Anthropic's Scion** changes both sides of the relationship. Anthropic replaced Git for its internal monorepo after reaching an unusual workload: more than 30,000 merged changes per day by September 2026 and roughly 25 million daily CI checkouts. Scion moves operations such as history queries, commit creation, merges, and rebases to the server. Clients keep bounded caches and materialize the files they need, while some tools use APIs without a working copy. Anthropic credits earlier systems including Google's Piper and Meta's Sapling. [Read Anthropic's design](https://www.anthropic.com/research/redesigning-source-control).\
 
 <figure class="media" data-align="center">
-<img src="/media/coding-agents-are-reshaping-the-sdlc/3bd60d02-0803-4385-8020-5beb0c8719da.png" alt="" loading="lazy" decoding="async" data-align="center">
+<img src="/media/coding-agents-are-reshaping-the-sdlc/3bd60d02-0803-4385-8020-5beb0c8719da.png" alt="Diagram titled Anthropic Scion: clients request needed files from a source-control service that runs history, blame, commit, merge, and rebase" loading="lazy" decoding="async" data-align="center">
 </figure>
 
 **Gion** explores a lighter client against existing Git hosts. It retrieves repository objects on demand, shares a cache across processes, and supports selective workspaces and writes through the Git protocol. It is an example of making repository access more selective without requiring an organization to replace its source-control server. [Explore Gion](https://github.com/baz-scm/gion).

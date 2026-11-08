@@ -87,7 +87,7 @@ KasK is an open-source terminal-based application designed to simplify your inte
     
 
 <figure class="media" data-align="center">
-<img src="/media/training-our-first-kubernetes-expert-model/kask.gif" alt="" loading="lazy" decoding="async" data-align="center">
+<img src="/media/training-our-first-kubernetes-expert-model/kask.gif" alt="KasK terminal generating kubectl commands from a question" loading="lazy" decoding="async" data-align="center">
 </figure>
 
 ## Usage

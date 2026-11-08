@@ -20,7 +20,7 @@ coverAlt: Docker Apps Organization Using Docker Homepage
 doc-home is a way to manage and monitor your Docker containers from a graphical user interface.
 
 <figure class="media" data-align="left">
-<img src="/media/docker-apps-organization-using-docker-homepage/homepage.png" alt="" loading="lazy" decoding="async" data-align="left">
+<img src="/media/docker-apps-organization-using-docker-homepage/homepage.png" alt="DocHome dashboard of container cards with uptime, domain, image, ports, and networks" loading="lazy" decoding="async" data-align="left">
 </figure>
 
 To get started, simply run the following docker compose
@@ -73,7 +73,7 @@ services:
 ```
 
 <figure class="media" data-align="left">
-<img src="/media/docker-apps-organization-using-docker-homepage/containers.png" alt="" loading="lazy" decoding="async" data-align="left">
+<img src="/media/docker-apps-organization-using-docker-homepage/containers.png" alt="DocHome containers table with image, name, state, status, ports, and networks" loading="lazy" decoding="async" data-align="left">
 </figure>
 
 Visit the Github Repo at [https://github.com/niradler/doc-home](https://github.com/niradler/doc-home)

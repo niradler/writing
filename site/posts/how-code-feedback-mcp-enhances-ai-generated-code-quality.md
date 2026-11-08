@@ -186,7 +186,7 @@ export async function handleRequest(req: Request): Promise<Response> {
 **Step 5: Success!** The AI validates again and confirms everything works perfectly. No more broken code!
 
 <figure class="media" data-align="center">
-<img src="/media/how-code-feedback-mcp-enhances-ai-generated-code-quality/14207482-9f5c-4bb8-8f42-700c97a49056.gif" alt="" loading="lazy" decoding="async" data-align="center">
+<img src="/media/how-code-feedback-mcp-enhances-ai-generated-code-quality/14207482-9f5c-4bb8-8f42-700c97a49056.gif" alt="Code Feedback MCP validating generated code and applying a correction" loading="lazy" decoding="async" data-align="center">
 </figure>
 
 ## Advanced AI Code Intelligence: Beyond Basic Validation

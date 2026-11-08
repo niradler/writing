@@ -107,7 +107,7 @@ We designed the rule file to make the AI:
 Below is an actual run from Cursor using our rule file, in this case, debugging a **CrashLoopBackOff** issue.
 
 <figure class="media" data-align="center">
-<img src="/media/cursor-as-an-ai-sre/cursor-demo.gif" alt="" loading="lazy" decoding="async" data-align="center">
+<img src="/media/cursor-as-an-ai-sre/cursor-demo.gif" alt="Cursor debugging a CrashLoopBackOff pod" loading="lazy" decoding="async" data-align="center">
 </figure>
 
 > **User:** help me debug the issue  

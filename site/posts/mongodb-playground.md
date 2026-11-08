@@ -28,7 +28,7 @@ Build using electron framework.
     
 
 <figure class="media" data-align="left">
-<img src="/media/mongodb-playground/_NS18Mrne.png" alt="" loading="lazy" decoding="async" data-align="left">
+<img src="/media/mongodb-playground/_NS18Mrne.png" alt="MongoDB Playground file editor" loading="lazy" decoding="async" data-align="left">
 </figure>
 
 *   Export code to a runnable script.
@@ -45,5 +45,5 @@ Build using electron framework.
 ### Demo
 
 <figure class="media" data-align="left">
-<img src="/media/mongodb-playground/qU-2ZaS41.gif" alt="" loading="lazy" decoding="async" data-align="left">
+<img src="/media/mongodb-playground/qU-2ZaS41.gif" alt="MongoDB Playground demo" loading="lazy" decoding="async" data-align="left">
 </figure>

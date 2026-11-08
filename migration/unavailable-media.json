@@ -1,0 +1,12 @@
+{
+  "assets": [
+    {
+      "slug": "lyve-cloud-hackathon-submission-1st-place",
+      "url": "https://media-exp1.licdn.com/dms/image/C4D22AQG-CD9_VptqeA/feedshare-shrink_1280/0/1628704518241?e=1672876800&v=beta&t=g1jn22Rl2-U_Tfhk6HMFGvpyiBe1T7tQoSAmWNkOWxY",
+      "retrieved": "2026-11-08",
+      "status": 403,
+      "contentType": "text/html",
+      "note": "LinkedIn's CDN returned an HTML error page instead of image bytes. The live Hashnode markdown still points at the same expired URL. No substitute image was created."
+    }
+  ]
+}
