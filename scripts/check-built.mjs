@@ -1,3 +1,4 @@
+import { spawnSync } from "node:child_process";
 import { access, readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -183,3 +184,12 @@ if (errors.length) {
   for (const error of errors) console.error(`error ${error}`);
   process.exit(1);
 }
+const images = spawnSync(
+  process.execPath,
+  [path.join(root, "scripts/check-images.mjs")],
+  {
+    stdio: "inherit",
+    env: process.env,
+  },
+);
+if (images.status) process.exit(images.status || 1);

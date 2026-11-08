@@ -5,6 +5,7 @@ import matter from "gray-matter";
 import { loadMarkdownDir } from "../../lib/content.mjs";
 import { generateBuildFiles } from "../../lib/generate.mjs";
 import { injectPostHeader, postHeaderHtml } from "../../lib/header.mjs";
+import { socialSrc, rewriteContentImages } from "../../lib/images.mjs";
 import { prefixHtmlMedia } from "../../lib/media.mjs";
 import { readFileSync } from "node:fs";
 import {
@@ -61,6 +62,31 @@ export default defineConfig({
   vite: {
     build: { target: "es2022" },
     server: { fs: { allow: [repoRoot] } },
+    plugins: [
+      {
+        name: "prefix-responsive-srcset",
+        transform(code, id) {
+          if (!id.includes(".md") || !code.includes("srcset=")) return;
+          const basePath = site.base === "/" ? "" : site.base.replace(/\/$/, "");
+          if (!basePath) return;
+          return code.replace(
+            /(\ssrcset=)(["'])([\s\S]*?)\2/gi,
+            (_, attr, quote, value) => {
+              const next = value
+                .split(",")
+                .map((part) => {
+                  const bits = part.trim().split(/\s+/);
+                  if (bits[0]?.startsWith("/media-opt/"))
+                    bits[0] = `${basePath}${bits[0]}`;
+                  return bits.join(" ");
+                })
+                .join(", ");
+              return `${attr}${quote}${next}${quote}`;
+            },
+          );
+        },
+      },
+    ],
   },
   head: [
     [
@@ -99,7 +125,7 @@ export default defineConfig({
         const next = startsWithFrontmatter
           ? matter.stringify(content, parsed.data, { lineWidth: 1000 })
           : content;
-        return render(next, env);
+        return rewriteContentImages(render(next, env), loadImageManifest());
       };
     },
   },
@@ -132,7 +158,9 @@ export default defineConfig({
     const canonical = canonicalUrl({ path: pagePath, frontmatter, site });
     const description =
       pageData.description || frontmatter.description || SITE_DESCRIPTION;
-    const image = absoluteImage(frontmatter.cover || "/brand/logo-light.png");
+    const image = absoluteImage(
+      socialSrc(loadImageManifest(), frontmatter.cover || "/brand/logo-light.png"),
+    );
     const heads = [
       ["meta", { name: "robots", content: robotsFor(site, frontmatter) }],
       ["link", { rel: "canonical", href: canonical }],
@@ -217,6 +245,16 @@ export default defineConfig({
 });
 
 const PRODUCTION_HOME = "https://blog.niradler.com/";
+
+function loadImageManifest() {
+  try {
+    return JSON.parse(
+      readFileSync(path.join(repoRoot, "site/.vitepress/image-manifest.json"), "utf8"),
+    );
+  } catch {
+    return { images: {} };
+  }
+}
 
 function absoluteImage(url) {
   if (/^https?:\/\//i.test(url)) return url;

@@ -33,6 +33,4 @@ Presentation:
 https://lyvehack.startisrael.co.il/  
 https://www.linkedin.com/posts/niradler\_first-place-had-a-great-experience-activity-6831281878838849538-mUp5](https://www.israelclouds.com/news/seagate-cloud-hackathon-winners%EF%BF%BChttps://lyvehack.startisrael.co.il/%EF%BF%BChttps://www.linkedin.com/posts/niradler_first-place-had-a-great-experience-activity-6831281878838849538-mUp5)
 
-<figure class="media" data-align="left">
-<img src="https://media-exp1.licdn.com/dms/image/C4D22AQG-CD9_VptqeA/feedshare-shrink_1280/0/1628704518241?e=1672876800&v=beta&t=g1jn22Rl2-U_Tfhk6HMFGvpyiBe1T7tQoSAmWNkOWxY" alt="" loading="lazy" decoding="async" data-align="left">
-</figure>
+The photo for this post was only ever hosted on LinkedIn, and it is not in the site's checked-in files. On 8 Nov 2026 that address returned an HTML error page instead of the image, so this page links the source instead of showing a broken or replacement image. [Original LinkedIn image address](https://media-exp1.licdn.com/dms/image/C4D22AQG-CD9_VptqeA/feedshare-shrink_1280/0/1628704518241?e=1672876800&v=beta&t=g1jn22Rl2-U_Tfhk6HMFGvpyiBe1T7tQoSAmWNkOWxY).

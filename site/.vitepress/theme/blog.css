@@ -12,12 +12,40 @@
   --link: #315797;
   --code-bg: #f3f3f5;
   --shadow: 0 12px 40px rgb(0 0 0 / 12%);
-  --sans: "IBM Plex Sans", "Segoe UI", sans-serif;
+  --sans: "IBM Plex Sans", "Plex Sans Fallback", "Segoe UI", sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, monospace;
   --gutter: clamp(1.25rem, 3.2vw, 2rem);
   --frame: 76rem;
   --reading: 42rem;
   --header-offset: 5.75rem;
+}
+
+/* Noto Sans Regular at 40px measured 1939px; IBM Plex Sans measured 1858px at 400 and 1903px at 500. */
+@font-face {
+  font-family: "Plex Sans Fallback";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Noto Sans Regular");
+  size-adjust: 95.82%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Plex Sans Fallback";
+  font-style: italic;
+  font-weight: 400;
+  src: local("Noto Sans Italic");
+  size-adjust: 95.82%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Plex Sans Fallback";
+  font-style: normal;
+  font-weight: 500;
+  src: local("Noto Sans Regular");
+  size-adjust: 98.14%;
+  line-gap-override: 0%;
 }
 
 html.dark {
@@ -177,6 +205,14 @@ a:hover {
   height: 32px;
   flex: none;
   border-radius: 8px;
+}
+
+.logo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: inherit;
 }
 
 .logo.dark,
@@ -463,10 +499,18 @@ html.dark .logo.dark {
   margin: 1.35rem 0 1.5rem;
 }
 
+.cover picture,
+.media picture,
+.post-main picture {
+  display: block;
+}
+
 .cover img,
-.media img {
+.media img,
+.post-main img {
   display: block;
   width: 100%;
+  height: auto;
 }
 
 .avatar {

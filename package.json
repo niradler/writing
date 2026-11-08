@@ -7,9 +7,9 @@
     "node": ">=24.0.0 <25"
   },
   "scripts": {
-    "dev": "vitepress dev site --host 127.0.0.1",
-    "build": "SITE_TARGET=preview vitepress build site",
-    "build:production": "SITE_TARGET=production vitepress build site",
+    "dev": "node scripts/optimize-images.mjs && vitepress dev site --host 127.0.0.1",
+    "build": "node scripts/optimize-images.mjs && SITE_TARGET=preview vitepress build site && SITE_TARGET=preview node scripts/prune-originals.mjs",
+    "build:production": "node scripts/optimize-images.mjs && SITE_TARGET=production vitepress build site && SITE_TARGET=production node scripts/prune-originals.mjs",
     "preview": "vitepress preview site --host 127.0.0.1 --port 4173",
     "test": "node --test",
     "check": "npm run test && node scripts/check-content.mjs",
@@ -28,6 +28,7 @@
     "playwright": "1.65.0",
     "playwright-core": "1.65.0",
     "prettier": "3.9.10",
+    "sharp": "0.34.5",
     "turndown": "7.2.4",
     "vitepress": "1.6.4"
   }

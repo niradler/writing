@@ -248,7 +248,7 @@ The model uses the `run_deno_code` tool:
 Conductor spawns a **fresh Deno subprocess** for each execution:
 
 <figure class="media" data-align="center">
-<img src="/media/mcp-conductor-the-advantages-of-equipping-your-agent-with-code-execution-powers/ce968db6-4a3c-491b-8b69-39dee0aba91e.png" alt="" loading="lazy" decoding="async" data-align="center">
+<img src="/media/mcp-conductor-the-advantages-of-equipping-your-agent-with-code-execution-powers/ce968db6-4a3c-491b-8b69-39dee0aba91e.png" alt="Diagram of the MCP Conductor server process spawning a Deno sandbox that connects to a GitHub MCP server and the gh and git CLI tools" loading="lazy" decoding="async" data-align="center">
 </figure>
 
 **Key security features:**

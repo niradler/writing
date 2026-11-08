@@ -37,15 +37,15 @@ Press Button (GPIO 39) to cycle through:
 Each screen fetches fresh data when you switch to it.
 
 <figure class="media" data-align="left">
-<img src="/media/building-a-github-dashboard-on-esp32-e-paper/93307ebe-527a-4486-8140-8a92dc524dad.jpeg" alt="" loading="lazy" decoding="async" data-align="left">
+<img src="/media/building-a-github-dashboard-on-esp32-e-paper/93307ebe-527a-4486-8140-8a92dc524dad.jpeg" alt="E-paper display titled GitHub Notifications, with review, mention, assigned, and other counts" loading="lazy" decoding="async" data-align="left">
 </figure>
 
 <figure class="media" data-align="left">
-<img src="/media/building-a-github-dashboard-on-esp32-e-paper/6f13df5f-c80f-445d-acad-7a18df806901.jpeg" alt="" loading="lazy" decoding="async" data-align="left">
+<img src="/media/building-a-github-dashboard-on-esp32-e-paper/6f13df5f-c80f-445d-acad-7a18df806901.jpeg" alt="E-paper display titled GitHub Profile, with repos, stars, open PRs, and followers" loading="lazy" decoding="async" data-align="left">
 </figure>
 
 <figure class="media" data-align="left">
-<img src="/media/building-a-github-dashboard-on-esp32-e-paper/43055dd7-a97a-4c02-a726-83e72fdc327f.jpeg" alt="" loading="lazy" decoding="async" data-align="left">
+<img src="/media/building-a-github-dashboard-on-esp32-e-paper/43055dd7-a97a-4c02-a726-83e72fdc327f.jpeg" alt="E-paper display titled GitHub Activity, with today, streak, week, and 30 days" loading="lazy" decoding="async" data-align="left">
 </figure>
 
 ## Hardware
@@ -87,7 +87,7 @@ First boot creates AP: "NotificationHub" (password: `configure`)
 Connect and go to `192.168.4.1`
 
 <figure class="media" data-align="left">
-<img src="/media/building-a-github-dashboard-on-esp32-e-paper/d9d701a3-3408-4718-b04f-686530807c94.png" alt="" loading="lazy" decoding="async" data-align="left">
+<img src="/media/building-a-github-dashboard-on-esp32-e-paper/d9d701a3-3408-4718-b04f-686530807c94.png" alt="Notification Hub dashboard showing a connected status and a refresh button" loading="lazy" decoding="async" data-align="left">
 </figure>
 
 Four tabs:
@@ -102,15 +102,15 @@ Four tabs:
     
 
 <figure class="media" data-align="left">
-<img src="/media/building-a-github-dashboard-on-esp32-e-paper/bab16d42-1bc4-4391-8cf9-31435a7f44f8.png" alt="" loading="lazy" decoding="async" data-align="left">
+<img src="/media/building-a-github-dashboard-on-esp32-e-paper/bab16d42-1bc4-4391-8cf9-31435a7f44f8.png" alt="Notification Hub WiFi page with SSID, WiFi password, and admin password fields" loading="lazy" decoding="async" data-align="left">
 </figure>
 
 <figure class="media" data-align="left">
-<img src="/media/building-a-github-dashboard-on-esp32-e-paper/fa3744ad-3551-4d3b-a300-08e0d5e9b8ed.png" alt="" loading="lazy" decoding="async" data-align="left">
+<img src="/media/building-a-github-dashboard-on-esp32-e-paper/fa3744ad-3551-4d3b-a300-08e0d5e9b8ed.png" alt="Notification Hub providers page with a GitHub API token field" loading="lazy" decoding="async" data-align="left">
 </figure>
 
 <figure class="media" data-align="left">
-<img src="/media/building-a-github-dashboard-on-esp32-e-paper/e61fb79f-855b-4eb1-a83a-3e28cc3a977a.png" alt="" loading="lazy" decoding="async" data-align="left">
+<img src="/media/building-a-github-dashboard-on-esp32-e-paper/e61fb79f-855b-4eb1-a83a-3e28cc3a977a.png" alt="Notification Hub settings page with an update interval in minutes" loading="lazy" decoding="async" data-align="left">
 </figure>
 
 ## GitHub Token

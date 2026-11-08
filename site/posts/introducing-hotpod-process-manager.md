@@ -18,7 +18,7 @@ coverAlt: 'Introducing HotPod: Fast Debugging and Process Management for Contain
 # Introducing HotPod: Fast Debugging and Process Management for Containers
 
 <figure class="media" data-align="center">
-<img src="/media/introducing-hotpod-process-manager/99dc03de-7a21-4a41-ad8f-02f4f03268a3.png" alt="" loading="lazy" decoding="async" data-align="center">
+<img src="/media/introducing-hotpod-process-manager/99dc03de-7a21-4a41-ad8f-02f4f03268a3.png" alt="Illustration of a server labeled HotPod with flames rising from the top and cables underneath" loading="lazy" decoding="async" data-align="center">
 </figure>
 
 # Overview

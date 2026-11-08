@@ -48,10 +48,13 @@ for (const post of posts) {
       errors.push(`${slug}: missing media ${local}`);
     }
   }
-  if (!data.coverAlt && data.cover) warnings.push(`${slug}: cover has no alt text`);
-  for (const src of refs.missingAlt)
-    warnings.push(`${slug}: image missing alt (${src || "unknown"})`);
-  for (const src of refs.remote) warnings.push(`${slug}: remote media ${src}`);
+  if (!data.coverAlt && data.cover) errors.push(`${slug}: cover has no alt text`);
+  for (const src of refs.missingAlt) {
+    if (src.startsWith("/media/") || /^https?:\/\//i.test(src)) {
+      errors.push(`${slug}: image missing alt (${src})`);
+    }
+  }
+  for (const src of refs.remote) errors.push(`${slug}: remote image ${src}`);
 }
 
 for (const [, target] of REDIRECTS) {
