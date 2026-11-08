@@ -20,8 +20,10 @@ const format = (value) =>
 <p>{{ matches.length }} articles.</p>
 
 <ol class="post-list">
-  <li v-for="post in matches" :key="post.url">
-    <p class="meta"><time :datetime="post.publishedAt">{{ format(post.publishedAt) }}</time></p>
-    <h2><a :href="post.url">{{ post.title }}</a></h2>
+  <li v-for="post in matches" :key="post.url" class="entry">
+    <p class="entry-date"><time :datetime="post.publishedAt">{{ format(post.publishedAt) }}</time></p>
+    <div class="entry-main">
+      <h2><a :href="post.url">{{ post.title }}</a></h2>
+    </div>
   </li>
 </ol>

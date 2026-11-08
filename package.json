@@ -14,6 +14,7 @@
     "test": "node --test",
     "check": "npm run test && node scripts/check-content.mjs",
     "check:built": "node scripts/check-built.mjs",
+    "check:layout": "node scripts/check-layout.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "import:hashnode": "node scripts/import-hashnode.mjs",
@@ -24,6 +25,8 @@
     "@fontsource/ibm-plex-sans": "5.2.8",
     "gray-matter": "4.0.3",
     "node-html-parser": "7.1.0",
+    "playwright": "1.65.0",
+    "playwright-core": "1.65.0",
     "prettier": "3.9.10",
     "turndown": "7.2.4",
     "vitepress": "1.6.4"

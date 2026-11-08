@@ -3,6 +3,8 @@ title: About
 description: Nir Adler about page.
 originalUrl: 'https://blog.niradler.com/page/about'
 ---
+# About
+
 Hey there! 👋 I'm Nir Adler a developer, maker, and open-source enthusiast who loves building things that make an impact. Whether it's crafting high-scale software, tinkering with electronics, or contributing to open-source projects, I'm always exploring new ways to create, automate, and optimize.
 
 ## What I Do
