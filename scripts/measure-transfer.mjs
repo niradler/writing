@@ -1,6 +1,7 @@
 import { spawn } from "node:child_process";
 import { existsSync } from "node:fs";
 import { createServer } from "node:net";
+import { resolveSiteTarget } from "../lib/site.mjs";
 import { chromium } from "playwright-core";
 
 // Lab only. Applied Chrome network throttling, not Lighthouse simulated
@@ -19,7 +20,7 @@ const port = await new Promise((resolve) => {
   });
 });
 const origin = `http://127.0.0.1:${port}`;
-const base = "/writing";
+const base = resolveSiteTarget("preview").base.replace(/\/$/, "");
 const pages = [
   ["/", "home"],
   ["/post-training-when-a-specialist-beats-a-bigger-model", "article"],

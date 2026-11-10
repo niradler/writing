@@ -14,7 +14,7 @@ Reading page tokens come from ORC's design guide: IBM Plex Sans and IBM Plex Mon
 
 Node.js 24 and `npm ci`. Commit `package-lock.json` when dependencies change.
 
-- `npm run dev` serves the preview base `/writing/`.
+- `npm run dev` serves the preview at `/`.
 - `npm test` runs unit tests for URLs, canonicals, media rewriting, and feed generation.
 - `npm run check` runs those tests and checks imported frontmatter, slugs, dates, and local media files.
 - `npm run build` writes the preview site to `dist/`.
@@ -22,7 +22,7 @@ Node.js 24 and `npm ci`. Commit `package-lock.json` when dependencies change.
 - `npm run check:built` checks the site that `SITE_TARGET` selects. CI runs it for both builds.
 - `npm run import:hashnode` refreshes public articles. It skips files that already exist unless you pass `--update`.
 
-Do not add a `CNAME`, change DNS, or point `blog.niradler.com` at this project. Preview pages stay on `niradler.github.io/writing` and send `noindex`.
+Do not add a `CNAME` file, change DNS, or point `blog.niradler.com` at this project. Preview pages are served at `writing.niradler.com` and send `noindex`.
 
 ## Content rules
 
@@ -34,7 +34,7 @@ Keep the original slug, `publishedAt`, `updatedAt`, tags, series, and `originalU
 
 ## Media
 
-Imported images are stored under `site/public/media/<slug>/`. Markdown keeps root-relative `/media/...` paths. The VitePress render prefixes them with the active base, so the same files work at `/writing/` and at `/`.
+Imported images are stored under `site/public/media/<slug>/`. Markdown keeps root-relative `/media/...` paths. The VitePress render prefixes them with the active base, so the same files work under any base.
 
 Hashnode's `align="left"` suffix is rewritten out of the URL. Code fences are left alone, including sample markup such as `public/image.jpg`. YouTube embeds use `youtube-nocookie`. Google Slides embeds from the articles are kept. Other iframes become links.
 
@@ -46,12 +46,12 @@ Hashnode's `align="left"` suffix is rewritten out of the URL. Code fences are le
 
 `site/.vitepress/config.mjs` switches on `SITE_TARGET`:
 
-|                   | Preview                      | Production                  |
-| ----------------- | ---------------------------- | --------------------------- |
-| Origin            | `https://niradler.github.io` | `https://blog.niradler.com` |
-| Base              | `/writing/`                  | `/`                         |
-| Robots            | `noindex, nofollow`          | `index, follow`             |
-| Article canonical | the live `originalUrl`       | the same URL on this site   |
+|                   | Preview                        | Production                  |
+| ----------------- | ------------------------------ | --------------------------- |
+| Origin            | `https://writing.niradler.com` | `https://blog.niradler.com` |
+| Base              | `/`                            | `/`                         |
+| Robots            | `noindex, nofollow`            | `index, follow`             |
+| Article canonical | the live `originalUrl`         | the same URL on this site   |
 
 Root slugs are preserved with VitePress rewrites from `site/posts/*.md`. Series and tag URLs match the live site (`/series/<slug>`, `/tag/<slug>`). The about page stays at `/page/about`. Three old Hashnode paths redirect with HTML refresh pages because GitHub Pages cannot emit a custom HTTP 301 from this repo. See `REDIRECTS` in `lib/site.mjs`.
 

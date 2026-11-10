@@ -20,10 +20,10 @@ import { parsePostHtml } from "../lib/hashnode.mjs";
 import { renderRedirect, renderRobots, renderRss } from "../lib/generate.mjs";
 
 describe("site target", () => {
-  it("keeps the preview on the project path and out of the index", () => {
+  it("serves the preview from its own domain and out of the index", () => {
     const site = resolveSiteTarget("preview");
-    assert.equal(site.origin, "https://niradler.github.io");
-    assert.equal(site.base, "/writing/");
+    assert.equal(site.origin, "https://writing.niradler.com");
+    assert.equal(site.base, "/");
     assert.equal(site.robots, "noindex, nofollow");
     assert.equal(robotsFor(site, {}), "noindex, nofollow");
     assert.equal(robotsFor(site, { fixture: true }), "noindex, nofollow");
@@ -74,7 +74,7 @@ describe("site target", () => {
     const site = resolveSiteTarget("preview");
     assert.equal(
       canonicalUrl({ path: "/fixtures/media", frontmatter: { fixture: true }, site }),
-      "https://niradler.github.io/writing/fixtures/media",
+      "https://writing.niradler.com/fixtures/media",
     );
   });
 });
@@ -226,7 +226,7 @@ describe("generated files", () => {
         },
       },
     ]);
-    assert.match(rss, /https:\/\/niradler\.github\.io\/writing\/example/);
+    assert.match(rss, /https:\/\/writing\.niradler\.com\/example/);
     assert.match(rss, /Example &amp; title/);
     assert.doesNotMatch(rss, /<description>A <description>/);
     const redirect = renderRedirect(
@@ -234,10 +234,7 @@ describe("generated files", () => {
       "/kubernetes-administrator-cka",
       "/preparing-for-the-cka-exam-a-practical-guide",
     );
-    assert.match(
-      redirect,
-      /url=\/writing\/preparing-for-the-cka-exam-a-practical-guide/,
-    );
+    assert.match(redirect, /url=\/preparing-for-the-cka-exam-a-practical-guide/);
     assert.match(
       redirect,
       /canonical" href="https:\/\/blog\.niradler\.com\/preparing-for-the-cka-exam-a-practical-guide"/,
