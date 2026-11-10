@@ -49,7 +49,7 @@ No single benchmark answers either question, so **we cross-check against multipl
 
 **Same harness, which model?**
 
-| If you live in… | Top scorer | Best value so far | Weaker spot |
+| If you live in… | Highest score so far | Strong value so far | Weaker spot |
 |---|---|---|---|
 | **Claude Code** | Opus 5.5 | **DeepSeek V4.1 Flash** (Sonnet-level in long sessions at about 1/9 of the cost) | Qwen3.8 Max on long terminal tasks (coding itself is fine) |
 | **Codex CLI** | GPT-6 Astra / GPT-6.1 Sol | GPT-6.1 Terra or DeepSeek V4.1 Flash | — |
@@ -60,7 +60,7 @@ No single benchmark answers either question, so **we cross-check against multipl
 
 **Combining models:** escalating on failure and using cheap subagents are low-risk ways to start. Planner → executor and advisor setups can work, but the gains are situational (Part 4).
 
-**The big pattern:** a model is often strongest in **its own vendor's harness**, but the gap is usually **2–4 points, often within run-to-run noise**. What changes a lot between harnesses is **cost and time**. DeepSeek V4.1 Flash is currently the stand-out *value* model across harnesses. That makes harness choice much more about workflow and economics than raw quality, which is good news: you have room to experiment.
+**The big pattern:** a model is often strongest in **its own vendor's harness**, but the gap is usually **2–4 points, often within run-to-run noise**. What changes a lot between harnesses is **cost and time**. DeepSeek V4.1 Flash currently shows up as a strong *value* option across harnesses. That makes harness choice much more about workflow and economics than raw quality, which is good news: you have room to experiment.
 
 ---
 
@@ -103,7 +103,7 @@ This is the best-covered model, with five independent sources.
 - **Cost:** Pi is the cheapest in two of two sources, with accuracy about equal to the native CLI.
 - **Codex's one advantage:** the highest *FrontierCode* score (53 vs 47 on AA), so it's slightly better at pure code-writing tasks and worse at terminal work.
 
-**→ So far, DeepSeek's own CLI has shown the best results and Pi the lowest cost. Claude Code is a perfectly reasonable choice if your team already lives there; the gap is within noise. Codex is worth testing for code-writing tasks, but expect slower long runs.**
+**→ So far, DeepSeek's own CLI has the highest scores and Pi the lowest cost. Claude Code is a perfectly reasonable choice if your team already lives there; the gap is within noise. Codex is worth testing for code-writing tasks, but expect slower long runs.**
 
 ### Qwen3.8 Max: Claude Code vs Qwen Code
 
@@ -141,12 +141,12 @@ What we can cross-reference:
 
 ### Grok 4.7: Grok Build only
 
-xAI deprecated its Anthropic-compatible endpoint, so **Grok 4.7 can't run in Claude Code** ([Lindy](https://www.lindy.ai/blog/grok-build-vs-claude-code)). In its native Grok Build it scores 37.6% on the official Terminal-Bench 4.0 and 47 on AA's index, at $9.48/task. No sources test it in OpenCode or Codex. **→ Grok Build is effectively the only option today. On these benchmarks it trails Codex + GPT-6 Astra (55, $7.04), though Grok's very fast output (about 188 tokens/s) may matter more than benchmark points for some workflows.**
+xAI deprecated its Anthropic-compatible endpoint, so **Grok 4.7 can't run in Claude Code** ([Lindy](https://www.lindy.ai/blog/grok-build-vs-claude-code)). In its native Grok Build it scores 37.6% on the official Terminal-Bench 4.0 and 47 on AA's index, at $9.48/task. No sources test it in OpenCode or Codex. **→ Grok Build is the only way to run Grok 4.7 today. On these benchmarks it trails Codex + GPT-6 Astra (55, $7.04), though Grok's very fast output (about 188 tokens/s) may matter more than benchmark points for some workflows.**
 
 ### GPT-6.x and Claude: is the home harness best?
 
 - **GPT in Codex vs others:** on Terminal-Bench 2.1, GPT-5.5 scored 83.4% in Codex vs 78.2% in the neutral Terminus 2 harness. On OpenBench, GPT-5.6 Sol scored OpenCode 81.0%, Pi 76.2%, Codex 73.8%, which is *not* statistically significant. **→ Codex has a slight edge on terminal work; elsewhere it's a tie.**
-- **Claude in Claude Code vs others:** reports conflict. One secondary source claims Opus scored higher in Cursor than in Claude Code on Terminal-Bench 2.0 (93% vs 77%), while CORE-Bench shows Opus at 78% in Claude Code vs 42% in a minimal scaffold ([Vaughan](https://codex.danielvaughan.com/2026/04/19/the-harness-effect-same-model-different-tool-different-score/)). Pi's author placed Pi + Opus 4.5 8th on Terminal-Bench 2.0 with only four tools. **→ Claude Code is the safe default; Pi is a credible minimal alternative.**
+- **Claude in Claude Code vs others:** reports conflict. One secondary source claims Opus scored higher in Cursor than in Claude Code on Terminal-Bench 2.0 (93% vs 77%), while CORE-Bench shows Opus at 78% in Claude Code vs 42% in a minimal scaffold ([Vaughan](https://codex.danielvaughan.com/2026/04/19/the-harness-effect-same-model-different-tool-different-score/)). Pi's author placed Pi + Opus 4.5 8th on Terminal-Bench 2.0 with only four tools. **→ Claude Code is the familiar home for Claude models; Pi is a credible minimal alternative worth trying.**
 
 ### The pattern across all models
 
@@ -170,7 +170,7 @@ xAI deprecated its Anthropic-compatible endpoint, so **Grok 4.7 can't run in Cla
 
 Three independent sources rank models in the same Claude Code setup:
 
-| Model | AA index | Official TB 4.0 | Bito long sessions | Bug Hunt (/105) | Cost signal |
+| Model | AA index | Official TB 4.0 board | Bito long sessions | Bug Hunt (/105) | Cost signal |
 |---|---:|---:|---:|---:|---|
 | Claude Opus 5.5 | **62** | **64.8%** | **87%** | — | $11.42/task (AA) |
 | Claude Sonnet 5.5 | 59 | 61.8% | 77% | **51.3** | $13.30/task (AA) |
@@ -183,12 +183,12 @@ Three independent sources rank models in the same Claude Code setup:
 | Step 5 Preview | 43 | — | — | — | $1.84/task |
 | Qwen3.8 Max | 39 | 27.0% | — | — | $3.80/task |
 
-![Scatter inside Claude Code of long-session score vs cost (Bito): Opus 87% at $5.42; Sonnet 77% at $1.28; Haiku 76% at $0.69; DeepSeek V4.1 Flash 77% at $0.14; GLM-5.3, Kimi K3 and Kimi K3.1 Pro at 70–71% for $2.46–$4.28.](/media/harness-x-model-field-guide-coding-agents/claude-code-model-swap-bito.png)
+![Scatter inside Claude Code of long-session score vs cost (Bito): Opus 87% at $5.42 per session; Sonnet 77% at $1.28; Haiku 76% at $0.69; DeepSeek V4.1 Flash 77% at $0.14; GLM-5.3, Kimi K3 and Kimi K3.1 Pro at 70–71% for $2.46–$4.28.](/media/harness-x-model-field-guide-coding-agents/claude-code-model-swap-bito.png)
 
 **Cross-referenced verdict:**
 
-- **Opus 5.5 is the clear #1** in every source that tests it.
-- **DeepSeek V4.1 Flash is the best non-Anthropic brain for Claude Code.** It ties Sonnet on Bito (77%) at about 1/9 the cost. On the harder Bug Hunt it reaches 76% of Sonnet's score (39.1 vs 51.3) at under 1% of the cost ($1.01 vs $154 per run at list prices).
+- **Opus 5.5 has the highest AA index and Bito score** in this setup. Sonnet edges it on AA's Terminal-Bench 4.0 subscore, and Bug Hunt didn't test Opus, so which Claude model leads depends on the task.
+- **DeepSeek V4.1 Flash is the strongest non-Anthropic swap-in in these tests.** It ties Sonnet on Bito (77%) at about 1/9 the cost. On the harder Bug Hunt it reaches 76% of Sonnet's score (39.1 vs 51.3) at $1.01 per run.
 - **Kimi K3 / K3.1 Pro and GLM-5.3** land 6–7 points below DeepSeek at 18–31× the cost.
 - **Qwen3.8 Max is good at code and weak at autonomy.** Its FrontierCode (45) and Q&A (56) scores are respectable at a third of Opus's cost. Its Terminal-Bench 4.0 score is the lowest of any Claude Code entry, which pulls its overall index down to 39.
 - **Grok 4.7:** not possible.
@@ -212,11 +212,11 @@ Three independent sources rank models in the same Claude Code setup:
 | GPT-6.1 Terra (xhigh) | 48 | 45 | 46 | $0.69 | **16.4 m** | — |
 | DeepSeek V4.1 Flash | 47 | **53** | 28 | **$0.39** | 38.1 m | 33.2* ($3.97) |
 
-**Verdict:** **GPT-6.1 Sol is the default brain for Codex.** It's essentially tied with Astra at about 1/5 the cost. DeepSeek is the best *coder* in Codex (FrontierCode 53) but the weakest at terminal autonomy and twice as slow. That makes it great for "write this function" work and poor for "go fix the build." No sources test Qwen, Kimi or Grok in Codex.
+**Verdict:** **GPT-6.1 Sol is a good place to start in Codex.** It's essentially tied with Astra at about 1/5 the cost. DeepSeek has the top FrontierCode score in Codex (53) but the lowest terminal score and twice the runtime, so it suits "write this function" work better than "go fix the build." No sources test Qwen, Kimi or Grok in Codex.
 
 ### Inside OpenCode
 
-Clean same-harness data is thin. AA tests only GLM-5.3 (49, $5.23). OpenBench shows GPT-5.6 Sol (81.0%) ahead of DeepSeek V4 Flash (70.3%), but on different task bundles. Kimi via OpenRouter failed on schema validation. **→ The OpenCode verdict is unproven. Its strengths are openness and provider breadth, not benchmark leadership.**
+Clean same-harness data is thin. AA tests only GLM-5.3 (49, $5.23). OpenBench shows GPT-5.6 Sol (81.0%) ahead of DeepSeek V4 Flash (70.3%), but on different task bundles. Kimi via OpenRouter failed on schema validation. **→ OpenCode is an open question on benchmarks. Its strengths are openness and provider breadth, which makes it a good place to run your own comparisons.**
 
 ### Inside Pi
 
@@ -225,7 +225,7 @@ Two independent DeepSeek tests both have Pi at or near the top for the lowest co
 - Tensorlake: 20/30 for $0.56
 - Bug Hunt: 42.2 for $0.83, vs 42.7 for the native CLI at $1.84
 
-Its author's Opus 4.5 run placed it 8th on Terminal-Bench 2.0 with only four tools. **→ Pi + DeepSeek is the best cost-per-point combination we found. Pi + Opus is the build-your-own power option.**
+Its author's Opus 4.5 run placed it 8th on Terminal-Bench 2.0 with only four tools. **→ Pi + DeepSeek had the lowest cost per point in the tests we found. Pi + Opus is a build-your-own option to try.**
 
 ---
 
@@ -237,12 +237,12 @@ These are reasonable *first experiments* for each goal, based on current data, n
 
 | Goal | Combo | Why |
 |---|---|---|
-| **Maximum quality** | Claude Code + Opus 5.5 | #1 in every source |
-| **Best value** | Codex + GPT-6.1 Sol | 87% of Opus's AA score at 13% of the cost |
+| **Highest scores so far** | Claude Code + Opus 5.5 | Top AA index and Bito score; Sonnet is close and ahead on some terminal work |
+| **Value** | Codex + GPT-6.1 Sol | 87% of Opus's AA score at 13% of the cost |
 | **Lowest cost** | DeepSeek CLI or Pi + DeepSeek V4.1 Flash | Sonnet-level on long sessions for cents; off-peak pricing halves it again |
-| **Cheap brain, keep Claude Code** | Claude Code + DeepSeek V4.1 Flash | Best swap-in in 2 of 2 multi-model Claude Code tests |
+| **Cheap brain, keep Claude Code** | Claude Code + DeepSeek V4.1 Flash | Top swap-in in 2 of 2 multi-model Claude Code tests |
 | **Speed** | Codex + GPT-6.1 Terra | 16 min per task |
-| **Build your own** | Pi | Minimal core, SDK, extensions; best cost per point |
+| **Build your own** | Pi | Minimal core, SDK, extensions; lowest cost per point in 2 of 2 tests |
 
 **Things to keep an eye on when you experiment:**
 
@@ -262,7 +262,7 @@ The sub-benchmarks show *where* each combo is strong, so you can route by the ki
 | Task type | Benchmark signal | Route to |
 |---|---|---|
 | **Architecture, hard debugging, security-sensitive changes** | Highest overall and FrontierCode (Opus 56) | Claude Code + **Opus 5.5** |
-| **Long autonomous terminal / ops work** (fix the build, infra, CI) | Terminal-Bench 4.0: Sonnet 66, Opus 63; everything non-native ≤ 33 | Claude Code + **Sonnet 5.5** or Opus. *Don't* use cheap swap-ins here |
+| **Long autonomous terminal / ops work** (fix the build, infra, CI) | AA Terminal-Bench 4.0 subscore: Sonnet 66, Opus 63; every non-Anthropic model in Claude Code ≤ 33 | Claude Code + **Sonnet 5.5** or Opus. Cheap swap-ins struggle here, so test before relying on them |
 | **Everyday feature tickets** | Index 54 at $1.50, 24 min | Codex + **GPT-6.1 Sol** |
 | **"Write this function / module"** (pure code generation) | FrontierCode: DeepSeek 53 in Codex, ahead of GPT-6.1 Sol's 49 | **DeepSeek V4.1 Flash** (Codex or its own CLI) |
 | **Bulk mechanical work** (migrations, tests, lint, docs) | Sonnet-level long sessions at $0.14 (Bito) | DeepSeek CLI or **Pi + DeepSeek**, off-peak |
@@ -329,8 +329,8 @@ You don't have to pick one model. There are four common ways to combine them, an
 |---|---|---|---|
 | **Planner → executor** | A strong model writes the plan; a cheap model implements it | 🟡 One independent test (Akita, Apr 2026, older models, one app per setup) | Loses **3–7 points** vs the strong model alone; saves money only with a really cheap executor |
 | **Advisor ("teacher–student")** | A cheap or mid model works and *asks* a stronger model on hard steps | 🟡 Anthropic self-reported; one independent paper (Gemini) | Helps **only if the executor actually asks**; gains about what "more effort" buys |
-| **Escalate on failure** | Run cheap first; hand failed tasks to a strong model | 🟢 Follows directly from cost per *solved* task (below) | The safest way to save money |
-| **Cheap subagents** | The strong main agent delegates search, reads and tests to a cheap model | 🟢 Cache-safe by design (Claude Code docs) | Free win; no quality risk on the main thread |
+| **Escalate on failure** | Run cheap first; hand failed tasks to a strong model | 🟢 Follows from cost per *solved* task (below) | A low-risk way to save money |
+| **Cheap subagents** | The strong main agent delegates search, reads and tests to a cheap model | 🟢 Cache-safe by design (Claude Code docs) | Cheap to try; the main thread keeps its model |
 
 ### Planner → executor
 
@@ -347,7 +347,7 @@ The only measured test held an Opus planner fixed and swapped the executor ([Aki
 
 Close supervision recovers quality but also brings back the cost. The author's conclusion: let the frontier model decide when to delegate, rather than forcing a fixed split. These are earlier model versions; nobody has yet tested Opus 5.5 with Qwen3.8 or DeepSeek V4.1 Flash executors.
 
-**Why the savings are smaller than per-token prices suggest:** cheap models fail more, so look at cost per *solved* task. On Terminal-Bench 4.0, from AA data compiled in a [routing study](https://github.com/Wladefant/super-board/issues/211):
+**Why the savings are smaller than per-token prices suggest:** cheap models fail more, so look at cost per *solved* task. On Terminal-Bench 4.0, from AA data compiled in a routing study (no longer online):
 
 | Model | Solved | Cost per solved task |
 |---|---:|---:|
@@ -357,7 +357,7 @@ Close supervision recovers quality but also brings back the cost. The author's c
 
 That's about 30× cheaper per token but only about 2× cheaper per solved hard task. A good plan should close part of that gap by taking the long-horizon reasoning away from the executor.
 
-**Best executor candidates, by skill profile** (not yet tested head-to-head):
+**Executor candidates worth testing, by skill profile** (not yet tested head-to-head):
 
 1. **DeepSeek V4.1 Flash:** strongest code-from-spec score among cheap models (FrontierCode 53); its weak spot, autonomy, is what the plan covers.
 2. **Qwen3.8 Max:** same profile (code 45, autonomy 17), at about a third of Opus's cost per task.
@@ -390,9 +390,9 @@ A multi-model setup has real overhead: a cold cache on every switch, handoff fil
 - **The task needs long-horizon autonomy.** Cheap executors are weakest exactly here (Terminal-Bench 17–31 vs 63 for Opus), and failures cost more in engineer time than the API bill saves.
 - **It needs supervision to work.** When Opus had to supervise the executor closely, quality matched Opus alone but cost about **3×** more.
 
-**Combining pays off when** the price gap is large (≥10×, for example Opus vs DeepSeek or Qwen Flash), the work is well-specified or repetitive (bulk edits, tests, migrations, code from a clear spec), and you're paying per token. Otherwise, pick one good combo and keep it.
+**Combining pays off when** the price gap is large (≥10×, for example Opus vs DeepSeek or Qwen Flash), the work is well-specified or repetitive (bulk edits, tests, migrations, code from a clear spec), and you're paying per token. Otherwise, one good combo may be all you need.
 
-### Escalate on failure (the safe default)
+### Escalate on failure (a low-risk start)
 
 Run the task on the cheap combo first. If it fails twice or touches critical code, write `HANDOFF.md` and start a fresh strong-model session from it. Because most everyday tasks don't *need* Opus, this captures most of the savings without risking quality on the hard ones.
 
@@ -413,7 +413,7 @@ Keep the strong model as the main agent and push search, file reading and test r
 
 Source: [DeepSeek API changelog](https://api-docs.deepseek.com/updates/).
 
-**Use `deepseek-flash`, which is V4.1-Flash-1017.** It's the best *value* model in this article, not the strongest: Opus 5.5 still leads on every independent benchmark. Vendor numbers also run high. DeepSeek reports 42.3% on Terminal-Bench 4.0 for 1017, while independent runs measured about 27–31%.
+**Use `deepseek-flash`, which is V4.1-Flash-1017.** It's a strong *value* option in this article, not the top scorer: Opus 5.5 scores higher on the independent benchmarks here. Vendor numbers also run high. DeepSeek reports 42.3% on Terminal-Bench 4.0 for 1017, while independent runs measured about 27–31%.
 
 ---
 
@@ -458,6 +458,6 @@ The most interesting space right now is in the combinations: cheap models doing 
 - [Lindy: Grok Build vs Claude Code](https://www.lindy.ai/blog/grok-build-vs-claude-code)
 - Setup: [Avinash Sangle: DeepSeek in Claude Code](https://avinashsangle.com/blog/deepseek-v4-1-flash-multimodal-coding-guide) · [CodeAgentSwarm: Kimi K3 with Claude Code](https://www.codeagentswarm.com/en/guides/kimi-k3-with-claude-code)
 - Caching: [Claude Code prompt caching docs](https://code.claude.com/docs/en/prompt-caching) · [Anthropic prompt caching pricing](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) · [agentpatterns: cache-safe routing boundaries](https://agentpatterns.ai/patterns/agent-design/cache-safe-routing-boundaries/) · [agentpatterns: mid-session cache invalidators](https://agentpatterns.ai/patterns/anti-patterns/mid-session-config-cache-invalidators/) · [JFrog: why model routing backfires](https://jfrog.com/blog/why-model-routing-backfires) · [Puter: DeepSeek pricing](https://developer.puter.com/tutorials/deepseek-api-pricing/) · [Alibaba Cloud pricing](https://www.alibabacloud.com/help/en/model-studio/model-pricing)
-- Combining models: [Akita: planner + executor](https://akitaonrails.com/en/2026/04/25/llm-benchmarks-vale-a-pena-misturar-2-modelos/) · [DevelopersDigest: Claude advisor tool](https://www.developersdigest.tech/blog/claude-advisor-tool-vs-bigger-model-2026) · [Learn Agentic: ARIA advisor study](https://learnagentic.substack.com/p/your-cheap-agent-doesnt-know-when) · [Routing study (AA Terminal-Bench cost per solved task)](https://github.com/Wladefant/super-board/issues/211) · [Codersera: Qwen 3.8 Flash](https://codersera.com/blog/qwen-3-8-flash-complete-guide-2026/amp/)
+- Combining models: [Akita: planner + executor](https://akitaonrails.com/en/2026/04/25/llm-benchmarks-vale-a-pena-misturar-2-modelos/) · [DevelopersDigest: Claude advisor tool](https://www.developersdigest.tech/blog/claude-advisor-tool-vs-bigger-model-2026) · [Learn Agentic: ARIA advisor study](https://learnagentic.substack.com/p/your-cheap-agent-doesnt-know-when) · [Codersera: Qwen 3.8 Flash](https://codersera.com/blog/qwen-3-8-flash-complete-guide-2026/amp/)
 - DeepSeek versions: [DeepSeek API changelog](https://api-docs.deepseek.com/updates/) · [SiliconANGLE: V4.1-Flash-1017](https://siliconangle.com/2026/10/18/deepseek-releases-updated-v4-1-flash-model-it-says-completes-tasks-faster/)
 - Pi: [Mario Zechner](https://mariozechner.at/posts/2025-11-30-pi-coding-agent/) · [Zechner on Terminal-Bench](https://x.com/badlogicgames/status/1995295577907593690)
