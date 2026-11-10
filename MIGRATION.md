@@ -2,7 +2,7 @@
 
 Completeness is **unverified**.
 
-The public site reported 54 posts in its sitemap on 8 November 2026. This repository imports those public posts so the blog can render real articles. That is not a full backup.
+The public sitemap lists 54 posts. On 10 November 2026 its slugs matched `site/posts` exactly (54 of 54). Drafts and history are not in the public sitemap, so this is not a full backup until the support export is compared.
 
 ## What was available
 

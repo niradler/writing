@@ -149,17 +149,6 @@ a:hover {
   padding-inline: var(--gutter);
 }
 
-.preview-note {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  color: var(--text);
-  font-size: 0.875rem;
-}
-
-.preview-note .frame {
-  padding-block: 0.7rem;
-}
-
 .fixture-note {
   margin: 0 0 1.25rem;
   padding: 0.75rem 0.9rem;

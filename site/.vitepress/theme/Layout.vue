@@ -86,7 +86,6 @@ function syncHash() {
   }
   scrollToSection(id);
 }
-const preview = computed(() => theme.value.siteTarget === "preview");
 const modeLabel = computed(() =>
   mode.value === "dark" ? "Dark" : mode.value === "light" ? "Light" : "Auto",
 );
@@ -222,12 +221,6 @@ const year = new Date().getUTCFullYear();
 <template>
   <div class="shell">
     <a class="skip" href="#content">Skip to content</a>
-    <div v-if="preview" class="preview-note" role="note">
-      <div class="frame">
-        Preview build. The live blog stays at
-        <a href="https://blog.niradler.com/">blog.niradler.com</a>.
-      </div>
-    </div>
     <header class="site-header">
       <div class="frame header-bar">
         <a class="brand" :href="withBase('/')" @click="closeMenu(false)">
@@ -373,12 +366,6 @@ const year = new Date().getUTCFullYear();
           </details>
           <Content />
           <footer v-if="isPost" class="post-end">
-            <p v-if="preview && (frontmatter.sourceUrl || frontmatter.originalUrl)">
-              Live article:
-              <a :href="frontmatter.sourceUrl || frontmatter.originalUrl">{{
-                frontmatter.sourceUrl || frontmatter.originalUrl
-              }}</a>
-            </p>
             <p
               v-if="
                 frontmatter.originalUrl &&
