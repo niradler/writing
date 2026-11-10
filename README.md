@@ -1,8 +1,6 @@
 # Piece by Piece
 
-Nir Adler's blog. The live site stays at <https://blog.niradler.com/> until a separate cutover. This repository is the writing, the preview build, and the future production source.
-
-The preview address, after a manual GitHub Pages deploy, is <https://niradler.github.io/writing/>. Nothing here redirects that preview to the live domain.
+Nir Adler's blog, <https://blog.niradler.com/>. This repository is the source for every post, the about page, and the site that serves them.
 
 ## Read locally
 
@@ -22,14 +20,14 @@ npm run build
 npm run build:production
 ```
 
-`npm run build` is the preview site. `npm run build:production` is the root-domain site and is checked in CI. It is not deployed.
+`npm run build` writes the GitHub Pages site at <https://niradler.github.io/writing/>. `npm run build:production` writes the root-domain site for `blog.niradler.com`. CI checks both.
 
 ## Publishing and migration
 
-- [Publishing, preview, and domain cutover](PUBLISHING.md)
+- [Publishing and domain cutover](PUBLISHING.md)
 - [Migration status](MIGRATION.md)
 
-Article import is not complete. The Hashnode support export is still pending, and this checkout must not be treated as a full backup.
+All 54 public posts on the Hashnode sitemap are in `site/posts`, slug for slug.
 
 ## For agents
 
