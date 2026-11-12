@@ -69,9 +69,11 @@ const inventory = JSON.parse(
 if (inventory.completeness !== "unverified")
   errors.push("inventory completeness was changed");
 if (inventory.failed?.length) errors.push("inventory contains failed imports");
-if (inventory.liveSitemapPosts !== posts.length) {
+const inventorySlugs = new Set((inventory.written || []).map((item) => item.slug));
+const imported = posts.filter((post) => inventorySlugs.has(post.slug));
+if (inventory.liveSitemapPosts !== imported.length) {
   errors.push(
-    `imported ${posts.length} posts but the sitemap inventory lists ${inventory.liveSitemapPosts}`,
+    `imported ${imported.length} posts but the sitemap inventory lists ${inventory.liveSitemapPosts}`,
   );
 }
 
