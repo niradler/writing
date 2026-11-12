@@ -11,7 +11,7 @@ npm ci
 npm run dev
 ```
 
-The dev server uses the GitHub project path: <http://127.0.0.1:5173/writing/>.
+The dev server runs at <http://127.0.0.1:5173/>.
 
 ```sh
 npm test
@@ -20,7 +20,7 @@ npm run build
 npm run build:production
 ```
 
-`npm run build` writes the GitHub Pages site at <https://niradler.github.io/writing/>. `npm run build:production` writes the root-domain site for `blog.niradler.com`. CI checks both.
+`npm run build` writes the GitHub Pages site at <https://writing.niradler.com/>. `npm run build:production` writes the root-domain site for `blog.niradler.com`. CI checks both.
 
 ## Publishing and migration
 

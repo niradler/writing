@@ -1,6 +1,7 @@
 import { spawn } from "node:child_process";
 import { existsSync, mkdirSync } from "node:fs";
 import { createServer } from "node:net";
+import { resolveSiteTarget } from "../lib/site.mjs";
 import { chromium } from "playwright-core";
 
 const port = await new Promise((resolve) => {
@@ -11,7 +12,7 @@ const port = await new Promise((resolve) => {
   });
 });
 const origin = `http://127.0.0.1:${port}`;
-const base = "/writing";
+const base = resolveSiteTarget("preview").base.replace(/\/$/, "");
 const widths = [320, 390, 768, 1280, 1440, 1920];
 const outlined = new Set(["long-title", "specialist"]);
 const plain = new Set(["code-image"]);

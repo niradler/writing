@@ -74,7 +74,7 @@ if (site.target === "production" && canonicalHome !== "https://blog.niradler.com
   errors.push(`production home canonical is ${canonicalHome}`);
 }
 
-if (site.target === "preview") {
+if (site.base !== "/") {
   const assetDir = path.join(dist, "assets");
   let bundled = "";
   for (const name of await readdir(assetDir)) {
@@ -146,8 +146,7 @@ const items = rss.match(/<item>/g)?.length || 0;
 if (items < 50) errors.push(`rss has ${items} items`);
 if (rss.includes("fixtures/media")) errors.push("fixture leaked into rss");
 if (!rss.includes(site.origin)) errors.push("rss is missing the build origin");
-if (site.target === "preview" && !rss.includes("/writing/"))
-  errors.push("preview rss is missing the base");
+if (!rss.includes(`${site.origin}${site.base}`)) errors.push("rss is missing the base");
 
 const robots = await readFile(path.join(dist, "robots.txt"), "utf8");
 if (site.target === "preview" && !robots.includes("Disallow: /"))

@@ -1,7 +1,5 @@
 name: Deploy GitHub Pages
 
-# Preview only. A push to main publishes https://niradler.github.io/writing/
-# after this workflow's checks. No custom domain, CNAME, or production build.
 on:
   workflow_dispatch:
   push:
