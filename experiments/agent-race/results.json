@@ -1,0 +1,372 @@
+[
+ {
+  "arm": "cc-blind",
+  "run": 1,
+  "wall_seconds": 642.1,
+  "exit": 0,
+  "session_id": "55552809-0b8f-4e12-b5f4-0ee6caa85e0f",
+  "agent_seconds": 640.4,
+  "turns": 102,
+  "result_events": 1,
+  "tool_calls": 101,
+  "tools": {
+   "Bash": 79,
+   "Edit": 14,
+   "Read": 8
+  },
+  "tokens": {
+   "input": 204,
+   "cache_read": 8375494,
+   "cache_write": 109413,
+   "output": 40613
+  },
+  "cost_usd": 2.5206,
+  "cost_source": "Claude Code total_cost_usd",
+  "models": [
+   "claude-haiku-4-5-20251001",
+   "claude-sonnet-5"
+  ],
+  "stop": "success",
+  "resolved": true,
+  "fail_to_pass": "4/4",
+  "pass_to_pass": "89/89",
+  "diff": {
+   "files": [
+    "django/contrib/contenttypes/fields.py",
+    "django/db/models/fields/related_descriptors.py",
+    "docs/ref/models/querysets.txt",
+    "docs/releases/4.2.txt",
+    "tests/prefetch_related/tests.py"
+   ],
+   "source_lines_changed": 93,
+   "test_lines_added": 65
+  }
+ },
+ {
+  "arm": "cc-blind",
+  "run": 2,
+  "wall_seconds": 829.5,
+  "exit": 0,
+  "session_id": "587faafa-f621-4096-bc55-f64d361dc95a",
+  "agent_seconds": 823.1,
+  "turns": 86,
+  "result_events": 1,
+  "tool_calls": 85,
+  "tools": {
+   "Bash": 58,
+   "Edit": 7,
+   "Read": 19,
+   "ScheduleWakeup": 1
+  },
+  "tokens": {
+   "input": 170,
+   "cache_read": 7964468,
+   "cache_write": 127017,
+   "output": 53497
+  },
+  "cost_usd": 2.6376,
+  "cost_source": "Claude Code total_cost_usd",
+  "models": [
+   "claude-haiku-4-5-20251001",
+   "claude-sonnet-5"
+  ],
+  "stop": "success",
+  "resolved": true,
+  "fail_to_pass": "4/4",
+  "pass_to_pass": "89/89",
+  "diff": {
+   "files": [
+    "django/contrib/contenttypes/fields.py",
+    "django/db/models/fields/related_descriptors.py"
+   ],
+   "source_lines_changed": 66,
+   "test_lines_added": 0
+  }
+ },
+ {
+  "arm": "cc-blind",
+  "run": 3,
+  "wall_seconds": 713.1,
+  "exit": 0,
+  "session_id": "5aa90892-4954-42c6-97d4-f899b9500979",
+  "agent_seconds": 710.1,
+  "turns": 99,
+  "result_events": 2,
+  "tool_calls": 95,
+  "tools": {
+   "Bash": 54,
+   "Edit": 11,
+   "Read": 24,
+   "ScheduleWakeup": 4,
+   "TaskStop": 1,
+   "ToolSearch": 1
+  },
+  "tokens": {
+   "input": 198,
+   "cache_read": 8282471,
+   "cache_write": 113385,
+   "output": 40395
+  },
+  "cost_usd": 2.5157,
+  "cost_source": "Claude Code total_cost_usd",
+  "models": [
+   "claude-haiku-4-5-20251001",
+   "claude-sonnet-5"
+  ],
+  "stop": "success",
+  "resolved": false,
+  "fail_to_pass": "0/4",
+  "pass_to_pass": "89/89",
+  "diff": {
+   "files": [],
+   "source_lines_changed": 0,
+   "test_lines_added": 0
+  }
+ },
+ {
+  "arm": "cc-told",
+  "run": 1,
+  "wall_seconds": 915.7,
+  "exit": 0,
+  "session_id": "3f9a07a6-aacc-4fc1-b6b5-daeaf7b4c5b5",
+  "agent_seconds": 909.1,
+  "turns": 113,
+  "result_events": 1,
+  "tool_calls": 112,
+  "tools": {
+   "Bash": 83,
+   "Edit": 12,
+   "Read": 17
+  },
+  "tokens": {
+   "input": 202,
+   "cache_read": 10554147,
+   "cache_write": 140189,
+   "output": 57360
+  },
+  "cost_usd": 3.247,
+  "cost_source": "Claude Code total_cost_usd",
+  "models": [
+   "claude-haiku-4-5-20251001",
+   "claude-sonnet-5"
+  ],
+  "stop": "success",
+  "resolved": false,
+  "fail_to_pass": "3/4",
+  "pass_to_pass": "89/89",
+  "diff": {
+   "files": [
+    "django/db/models/fields/related_descriptors.py",
+    "docs/ref/models/querysets.txt",
+    "docs/releases/4.2.txt",
+    "tests/prefetch_related/tests.py"
+   ],
+   "source_lines_changed": 78,
+   "test_lines_added": 100
+  }
+ },
+ {
+  "arm": "cc-told",
+  "run": 2,
+  "wall_seconds": 708.0,
+  "exit": 0,
+  "session_id": "3681acf9-75eb-4605-8183-b71064bd3775",
+  "agent_seconds": 701.1,
+  "turns": 111,
+  "result_events": 1,
+  "tool_calls": 110,
+  "tools": {
+   "Bash": 73,
+   "Edit": 9,
+   "Read": 26,
+   "ScheduleWakeup": 2
+  },
+  "tokens": {
+   "input": 192,
+   "cache_read": 8174066,
+   "cache_write": 106013,
+   "output": 39097
+  },
+  "cost_usd": 2.4516,
+  "cost_source": "Claude Code total_cost_usd",
+  "models": [
+   "claude-haiku-4-5-20251001",
+   "claude-sonnet-5"
+  ],
+  "stop": "success",
+  "resolved": true,
+  "fail_to_pass": "4/4",
+  "pass_to_pass": "89/89",
+  "diff": {
+   "files": [
+    "django/db/models/fields/related_descriptors.py",
+    "docs/ref/models/querysets.txt",
+    "docs/releases/4.2.txt",
+    "tests/prefetch_related/tests.py"
+   ],
+   "source_lines_changed": 67,
+   "test_lines_added": 28
+  }
+ },
+ {
+  "arm": "cc-told",
+  "run": 3,
+  "wall_seconds": 1076.5,
+  "exit": 0,
+  "session_id": "69d6c420-56ba-416d-bfc2-b71920d9eab7",
+  "agent_seconds": 1074.4,
+  "turns": 152,
+  "result_events": 1,
+  "tool_calls": 151,
+  "tools": {
+   "Bash": 91,
+   "Edit": 21,
+   "Read": 39
+  },
+  "tokens": {
+   "input": 280,
+   "cache_read": 16398394,
+   "cache_write": 172766,
+   "output": 70426
+  },
+  "cost_usd": 4.6769,
+  "cost_source": "Claude Code total_cost_usd",
+  "models": [
+   "claude-haiku-4-5-20251001",
+   "claude-sonnet-5"
+  ],
+  "stop": "success",
+  "resolved": true,
+  "fail_to_pass": "4/4",
+  "pass_to_pass": "89/89",
+  "diff": {
+   "files": [
+    "django/contrib/contenttypes/fields.py",
+    "django/db/models/fields/related_descriptors.py",
+    "docs/ref/models/querysets.txt",
+    "docs/releases/4.2.txt"
+   ],
+   "source_lines_changed": 107,
+   "test_lines_added": 0
+  }
+ },
+ {
+  "arm": "codex-told",
+  "run": 1,
+  "wall_seconds": 112.4,
+  "exit": 0,
+  "session_id": "01a1e495-17f9-74a0-8028-05588c8437c1",
+  "rollout": "/tmp/agent-race/home/.codex/sessions/2026/11/16/rollout-2026-11-16T15-38-58-01a1e495-17f9-74a0-8028-05588c8437c1.jsonl",
+  "agent_seconds": 110.3,
+  "turns": 18,
+  "tool_calls": 17,
+  "tools": {
+   "command_execution": 17
+  },
+  "tokens": {
+   "input": 61053,
+   "cache_read": 407552,
+   "cache_write": 0,
+   "output": 4443,
+   "reasoning_in_output": 488
+  },
+  "cost_usd": 0.1036,
+  "cost_source": "tokens x OpenAI list price, 0 of 18 requests in the >272K tier",
+  "models": [
+   "gpt-6.1-terra"
+  ],
+  "resolved": true,
+  "fail_to_pass": "4/4",
+  "pass_to_pass": "89/89",
+  "diff": {
+   "files": [
+    "django/db/models/fields/related_descriptors.py",
+    "django/db/models/query.py",
+    "docs/ref/models/querysets.txt",
+    "docs/releases/4.2.txt"
+   ],
+   "source_lines_changed": 63,
+   "test_lines_added": 0
+  }
+ },
+ {
+  "arm": "codex-told",
+  "run": 2,
+  "wall_seconds": 107.9,
+  "exit": 0,
+  "session_id": "01a1e4a0-fda1-79c0-9c02-f4cb3a272d8c",
+  "rollout": "/tmp/agent-race/home/.codex/sessions/2026/11/16/rollout-2026-11-16T15-51-58-01a1e4a0-fda1-79c0-9c02-f4cb3a272d8c.jsonl",
+  "agent_seconds": 104.9,
+  "turns": 15,
+  "tool_calls": 14,
+  "tools": {
+   "command_execution": 14
+  },
+  "tokens": {
+   "input": 25300,
+   "cache_read": 296064,
+   "cache_write": 0,
+   "output": 4449,
+   "reasoning_in_output": 459
+  },
+  "cost_usd": 0.0623,
+  "cost_source": "tokens x OpenAI list price, 0 of 15 requests in the >272K tier",
+  "models": [
+   "gpt-6.1-terra"
+  ],
+  "resolved": true,
+  "fail_to_pass": "4/4",
+  "pass_to_pass": "89/89",
+  "diff": {
+   "files": [
+    "django/db/models/fields/related_descriptors.py",
+    "django/db/models/query.py",
+    "docs/ref/models/querysets.txt",
+    "docs/releases/4.2.txt"
+   ],
+   "source_lines_changed": 59,
+   "test_lines_added": 0
+  }
+ },
+ {
+  "arm": "codex-told",
+  "run": 3,
+  "wall_seconds": 106.6,
+  "exit": 0,
+  "session_id": "01a1e4ad-fc7c-71c2-b4b7-6748fe1ca3a4",
+  "rollout": "/tmp/agent-race/home/.codex/sessions/2026/11/16/rollout-2026-11-16T16-06-10-01a1e4ad-fc7c-71c2-b4b7-6748fe1ca3a4.jsonl",
+  "agent_seconds": 104.4,
+  "turns": 19,
+  "tool_calls": 20,
+  "tools": {
+   "command_execution": 17,
+   "file_change": 3
+  },
+  "tokens": {
+   "input": 46701,
+   "cache_read": 366208,
+   "cache_write": 0,
+   "output": 4181,
+   "reasoning_in_output": 650
+  },
+  "cost_usd": 0.0859,
+  "cost_source": "tokens x OpenAI list price, 0 of 19 requests in the >272K tier",
+  "models": [
+   "gpt-6.1-terra"
+  ],
+  "resolved": true,
+  "fail_to_pass": "4/4",
+  "pass_to_pass": "89/89",
+  "diff": {
+   "files": [
+    "django/contrib/contenttypes/fields.py",
+    "django/db/models/fields/related_descriptors.py",
+    "django/db/models/query.py",
+    "docs/ref/models/querysets.txt",
+    "docs/releases/4.2.txt"
+   ],
+   "source_lines_changed": 66,
+   "test_lines_added": 0
+  }
+ }
+]

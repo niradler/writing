@@ -1,0 +1,3 @@
+Implemented sliced `Prefetch` querysets for reverse foreign keys, many-to-many relations, and generic reverse relations. Slices apply per parent using SQL window functions, with a clear error on databases that don’t support them. The behavior is documented in the queryset reference and release notes.
+
+Validation: all 179 `prefetch_related` and `generic_relations` tests passed. Manual checks also passed for sliced prefetches with and without `to_attr`.

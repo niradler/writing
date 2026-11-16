@@ -1,0 +1,3 @@
+Implemented sliced prefetching for reverse foreign-key and many-to-many relations. Django now applies the slice per parent using a window function and raises `NotSupportedError` when the database lacks window-function support. The change also supports sliced results stored in related-manager caches and documents the behavior.
+
+The relevant Django suites passed: 177 tests, with one skipped. Additional SQLite checks covered offsets, empty slices, both many-to-many directions, custom attributes, manager caches, and unsupported backends.

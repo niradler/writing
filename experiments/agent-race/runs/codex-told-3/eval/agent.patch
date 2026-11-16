@@ -1,0 +1,148 @@
+diff --git a/django/contrib/contenttypes/fields.py b/django/contrib/contenttypes/fields.py
+index 5b327b6..607444f 100644
+--- a/django/contrib/contenttypes/fields.py
++++ b/django/contrib/contenttypes/fields.py
+@@ -13,6 +13,7 @@ from django.db.models.fields.related import (
+     ReverseManyToOneDescriptor,
+     lazy_related_operation,
+ )
++from django.db.models.fields.related_descriptors import _filter_prefetch_queryset
+ from django.db.models.query_utils import PathInfo
+ from django.db.models.sql import AND
+ from django.db.models.sql.where import WhereNode
+@@ -645,7 +646,11 @@ def create_generic_related_manager(superclass, rel):
+             object_id_converter = instances[0]._meta.pk.to_python
+             content_type_id_field_name = "%s_id" % self.content_type_field_name
+             return (
+-                queryset.filter(query),
++                _filter_prefetch_queryset(
++                    queryset,
++                    query,
++                    [self.content_type_field_name, self.object_id_field_name],
++                ),
+                 lambda relobj: (
+                     object_id_converter(getattr(relobj, self.object_id_field_name)),
+                     getattr(relobj, content_type_id_field_name),
+diff --git a/django/db/models/fields/related_descriptors.py b/django/db/models/fields/related_descriptors.py
+index b192df4..632d782 100644
+--- a/django/db/models/fields/related_descriptors.py
++++ b/django/db/models/fields/related_descriptors.py
+@@ -64,14 +64,36 @@ and two directions (forward and reverse) for a total of six combinations.
+ """
+ 
+ from django.core.exceptions import FieldError
+-from django.db import connections, router, transaction
+-from django.db.models import Q, signals
++from django.db import NotSupportedError, connections, router, transaction
++from django.db.models import Q, Window, signals
++from django.db.models.functions import RowNumber
++from django.db.models.lookups import GreaterThan, LessThanOrEqual
+ from django.db.models.query import QuerySet
+ from django.db.models.query_utils import DeferredAttribute
+ from django.db.models.utils import resolve_callables
+ from django.utils.functional import cached_property
+ 
+ 
++def _filter_prefetch_queryset(queryset, predicate, partition_by):
++    if queryset.query.is_sliced:
++        db = queryset._db or router.db_for_read(queryset.model, **queryset._hints)
++        if not connections[db].features.supports_over_clause:
++            raise NotSupportedError(
++                "Prefetching from a limited queryset is only supported on backends "
++                "that support window functions."
++            )
++        low_mark, high_mark = queryset.query.low_mark, queryset.query.high_mark
++        order_by = [
++            expr for expr, _ in queryset.query.get_compiler(using=db).get_order_by()
++        ]
++        window = Window(RowNumber(), partition_by=partition_by, order_by=order_by)
++        predicate &= GreaterThan(window, low_mark)
++        if high_mark is not None:
++            predicate &= LessThanOrEqual(window, high_mark)
++        queryset.query.clear_limits()
++    return queryset.filter(predicate)
++
++
+ class ForeignKeyDeferredAttribute(DeferredAttribute):
+     def __set__(self, instance, value):
+         if instance.__dict__.get(self.field.attname) != value and self.field.is_cached(
+@@ -718,8 +740,9 @@ def create_reverse_many_to_one_manager(superclass, rel):
+             rel_obj_attr = self.field.get_local_related_value
+             instance_attr = self.field.get_foreign_related_value
+             instances_dict = {instance_attr(inst): inst for inst in instances}
+-            query = {"%s__in" % self.field.name: instances}
+-            queryset = queryset.filter(**query)
++            queryset = _filter_prefetch_queryset(
++                queryset, Q(**{f"{self.field.name}__in": instances}), self.field.name
++            )
+ 
+             # Since we just bypassed this class' get_queryset(), we must manage
+             # the reverse relation manually.
+@@ -1051,8 +1074,11 @@ def create_forward_many_to_many_manager(superclass, rel, reverse):
+             queryset._add_hints(instance=instances[0])
+             queryset = queryset.using(queryset._db or self._db)
+ 
+-            query = {"%s__in" % self.query_field_name: instances}
+-            queryset = queryset._next_is_sticky().filter(**query)
++            queryset = _filter_prefetch_queryset(
++                queryset._next_is_sticky(),
++                Q(**{f"{self.query_field_name}__in": instances}),
++                self.query_field_name,
++            )
+ 
+             # M2M: need to annotate the query in order to get the primary model
+             # that the secondary model was actually related to. We know that
+diff --git a/django/db/models/query.py b/django/db/models/query.py
+index be0deb9..e8159c5 100644
+--- a/django/db/models/query.py
++++ b/django/db/models/query.py
+@@ -2520,7 +2520,11 @@ def prefetch_one_level(instances, prefetcher, lookup, level):
+             else:
+                 manager = getattr(obj, to_attr)
+                 if leaf and lookup.queryset is not None:
+-                    qs = manager._apply_rel_filters(lookup.queryset)
++                    queryset = lookup.queryset
++                    if queryset.query.is_sliced:
++                        queryset = queryset._chain()
++                        queryset.query.clear_limits()
++                    qs = manager._apply_rel_filters(queryset)
+                 else:
+                     qs = manager.get_queryset()
+                 qs._result_cache = vals
+diff --git a/docs/ref/models/querysets.txt b/docs/ref/models/querysets.txt
+index 223bb45..4e1b254 100644
+--- a/docs/ref/models/querysets.txt
++++ b/docs/ref/models/querysets.txt
+@@ -1270,6 +1270,18 @@ This can be used to change the default ordering of the queryset:
+     >>> Restaurant.objects.prefetch_related(
+     ...     Prefetch('pizzas__toppings', queryset=Toppings.objects.order_by('name')))
+ 
++For a multi-valued relation, the queryset can also be sliced to limit the
++number of related objects fetched for each instance. This requires database
++support for window functions:
++
++    >>> Restaurant.objects.prefetch_related(
++    ...     Prefetch('pizzas', queryset=Pizza.objects.order_by('name')[:3],
++    ...              to_attr='example_pizzas'))
++
++.. versionchanged:: 4.2
++
++    Support for sliced querysets was added.
++
+ Or to call :meth:`~django.db.models.query.QuerySet.select_related()` when
+ applicable to reduce the number of queries even further:
+ 
+diff --git a/docs/releases/4.2.txt b/docs/releases/4.2.txt
+index ed00ee1..42cbec4 100644
+--- a/docs/releases/4.2.txt
++++ b/docs/releases/4.2.txt
+@@ -189,6 +189,9 @@ Migrations
+ Models
+ ~~~~~~
+ 
++* :class:`~django.db.models.Prefetch` now supports sliced querysets for
++  prefetching multi-valued relations on databases that support window functions.
++
+ * ``QuerySet`` now extensively supports filtering against
+   :ref:`window-functions` with the exception of disjunctive filter lookups
+   against window functions when performing aggregation.

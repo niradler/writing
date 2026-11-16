@@ -1,0 +1,174 @@
+diff --git a/django/db/models/fields/related_descriptors.py b/django/db/models/fields/related_descriptors.py
+index b192df4..59fcacb 100644
+--- a/django/db/models/fields/related_descriptors.py
++++ b/django/db/models/fields/related_descriptors.py
+@@ -64,14 +64,43 @@ and two directions (forward and reverse) for a total of six combinations.
+ """
+ 
+ from django.core.exceptions import FieldError
+-from django.db import connections, router, transaction
+-from django.db.models import Q, signals
++from django.db import NotSupportedError, connections, router, transaction
++from django.db.models import Q, Window, signals
++from django.db.models.functions import RowNumber
++from django.db.models.lookups import GreaterThan, LessThanOrEqual
+ from django.db.models.query import QuerySet
+ from django.db.models.query_utils import DeferredAttribute
+ from django.db.models.utils import resolve_callables
+ from django.utils.functional import cached_property
+ 
+ 
++def _filter_prefetch_queryset(queryset, field_name, instances):
++    """
++    Filter the queryset for the instances related to field_name, handling
++    the case where queryset has already been sliced by converting the
++    slice into a per-instance window function restriction.
++    """
++    predicate = Q(**{"%s__in" % field_name: instances})
++    db = queryset.db
++    if queryset.query.is_sliced:
++        if not connections[db].features.supports_over_clause:
++            raise NotSupportedError(
++                "Prefetching a sliced queryset is not supported on backend "
++                "%s." % connections[db].display_name
++            )
++        low_mark, high_mark = queryset.query.low_mark, queryset.query.high_mark
++        order_by = [
++            expr
++            for expr, _ in queryset.query.get_compiler(using=db).get_order_by()
++        ]
++        window = Window(RowNumber(), partition_by=field_name, order_by=order_by)
++        predicate &= GreaterThan(window, low_mark)
++        if high_mark is not None:
++            predicate &= LessThanOrEqual(window, high_mark)
++        queryset.query.clear_limits()
++    return queryset.filter(predicate)
++
++
+ class ForeignKeyDeferredAttribute(DeferredAttribute):
+     def __set__(self, instance, value):
+         if instance.__dict__.get(self.field.attname) != value and self.field.is_cached(
+@@ -139,13 +168,12 @@ class ForwardManyToOneDescriptor:
+         # The check for len(...) == 1 is a special case that allows the query
+         # to be join-less and smaller. Refs #21760.
+         if remote_field.is_hidden() or len(self.field.foreign_related_fields) == 1:
+-            query = {
+-                "%s__in"
+-                % related_field.name: {instance_attr(inst)[0] for inst in instances}
+-            }
++            field_name = related_field.name
++            filter_values = {instance_attr(inst)[0] for inst in instances}
+         else:
+-            query = {"%s__in" % self.field.related_query_name(): instances}
+-        queryset = queryset.filter(**query)
++            field_name = self.field.related_query_name()
++            filter_values = instances
++        queryset = _filter_prefetch_queryset(queryset, field_name, filter_values)
+ 
+         # Since we're going to assign directly in the cache,
+         # we must manage the reverse relation cache manually.
+@@ -403,8 +431,9 @@ class ReverseOneToOneDescriptor:
+         rel_obj_attr = self.related.field.get_local_related_value
+         instance_attr = self.related.field.get_foreign_related_value
+         instances_dict = {instance_attr(inst): inst for inst in instances}
+-        query = {"%s__in" % self.related.field.name: instances}
+-        queryset = queryset.filter(**query)
++        queryset = _filter_prefetch_queryset(
++            queryset, self.related.field.name, instances
++        )
+ 
+         # Since we're going to assign directly in the cache,
+         # we must manage the reverse relation cache manually.
+@@ -718,8 +747,7 @@ def create_reverse_many_to_one_manager(superclass, rel):
+             rel_obj_attr = self.field.get_local_related_value
+             instance_attr = self.field.get_foreign_related_value
+             instances_dict = {instance_attr(inst): inst for inst in instances}
+-            query = {"%s__in" % self.field.name: instances}
+-            queryset = queryset.filter(**query)
++            queryset = _filter_prefetch_queryset(queryset, self.field.name, instances)
+ 
+             # Since we just bypassed this class' get_queryset(), we must manage
+             # the reverse relation manually.
+@@ -1051,8 +1079,9 @@ def create_forward_many_to_many_manager(superclass, rel, reverse):
+             queryset._add_hints(instance=instances[0])
+             queryset = queryset.using(queryset._db or self._db)
+ 
+-            query = {"%s__in" % self.query_field_name: instances}
+-            queryset = queryset._next_is_sticky().filter(**query)
++            queryset = _filter_prefetch_queryset(
++                queryset._next_is_sticky(), self.query_field_name, instances
++            )
+ 
+             # M2M: need to annotate the query in order to get the primary model
+             # that the secondary model was actually related to. We know that
+diff --git a/docs/ref/models/querysets.txt b/docs/ref/models/querysets.txt
+index 223bb45..2789530 100644
+--- a/docs/ref/models/querysets.txt
++++ b/docs/ref/models/querysets.txt
+@@ -4016,6 +4016,14 @@ attribute:
+     >>> Question.objects.prefetch_related(prefetch).get().choice_set.all()
+     <QuerySet [<Choice: Not much>, <Choice: The sky>, <Choice: Just hacking again>]>
+ 
++The ``queryset`` argument also supports sliced querysets. For example, to
++limit the prefetch operation to the first two related objects for each
++instance:
++
++    >>> prefetch = Prefetch('choice_set', queryset=Choice.objects.order_by('id')[:2], to_attr='first_choices')
++    >>> Question.objects.prefetch_related(prefetch).get().first_choices
++    [<Choice: Not much>, <Choice: The sky>]
++
+ .. note::
+ 
+     When using ``to_attr`` the prefetched result is stored in a list. This can
+diff --git a/docs/releases/4.2.txt b/docs/releases/4.2.txt
+index ed00ee1..86cb684 100644
+--- a/docs/releases/4.2.txt
++++ b/docs/releases/4.2.txt
+@@ -193,6 +193,8 @@ Models
+   :ref:`window-functions` with the exception of disjunctive filter lookups
+   against window functions when performing aggregation.
+ 
++* :class:`~django.db.models.Prefetch` objects now allow sliced querysets.
++
+ Requests and Responses
+ ~~~~~~~~~~~~~~~~~~~~~~
+ 
+diff --git a/tests/prefetch_related/tests.py b/tests/prefetch_related/tests.py
+index 1ac17fd..f45f833 100644
+--- a/tests/prefetch_related/tests.py
++++ b/tests/prefetch_related/tests.py
+@@ -1021,6 +1021,34 @@ class CustomPrefetchTests(TestCase):
+             with self.assertNumQueries(0):
+                 self.assertEqual(person.cached_all_houses, all_houses)
+ 
++    def test_reverse_m2o_sliced_queryset(self):
++        houses = House.objects.prefetch_related(
++            Prefetch(
++                "rooms",
++                queryset=Room.objects.order_by("id")[1:3],
++                to_attr="some_rooms",
++            )
++        )
++        for house in houses:
++            self.assertEqual(
++                house.some_rooms,
++                list(Room.objects.filter(house=house).order_by("id")[1:3]),
++            )
++
++    def test_m2m_sliced_queryset(self):
++        persons = Person.objects.prefetch_related(
++            Prefetch(
++                "houses",
++                queryset=House.objects.order_by("id")[:1],
++                to_attr="first_house",
++            )
++        )
++        for person in persons:
++            self.assertEqual(
++                person.first_house,
++                list(House.objects.filter(occupants=person).order_by("id")[:1]),
++            )
++
+     def test_filter_deferred(self):
+         """
+         Related filtering of prefetched querysets is deferred until necessary.

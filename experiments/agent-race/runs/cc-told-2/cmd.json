@@ -1,0 +1,1 @@
+["claude", "-p", "<prompt>", "--setting-sources", "project", "--strict-mcp-config", "--model", "sonnet", "--effort", "high", "--permission-mode", "bypassPermissions", "--disallowedTools", "WebFetch", "WebSearch", "--output-format", "stream-json", "--verbose", "--max-budget-usd", "25"]

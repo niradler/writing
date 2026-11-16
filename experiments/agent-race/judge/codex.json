@@ -1,0 +1,83 @@
+{
+  "A": {
+    "design": 8,
+    "robustness": 8,
+    "scope": 9,
+    "readability": 8,
+    "tests": 6,
+    "overall": 8,
+    "why": "Uses compiler-resolved ordering, backend guards, and clear documentation, but duplicates window logic for generic relations and leaves offsets and cache behavior under-tested."
+  },
+  "B": {
+    "design": 8,
+    "robustness": 7,
+    "scope": 8,
+    "readability": 8,
+    "tests": 4,
+    "overall": 7,
+    "why": "The shared helper fits the architecture, but single-valued relation changes lack coverage, documentation omits backend restrictions, and tests lack backend feature guards."
+  },
+  "C": {
+    "design": 7,
+    "robustness": 5,
+    "scope": 8,
+    "readability": 7,
+    "tests": 8,
+    "overall": 7,
+    "why": "Provides useful cache, offset, reverse-relation, and nested-prefetch tests, but manually reconstructs ordering instead of using compiler semantics and duplicates slice-handling branches."
+  },
+  "D": {
+    "design": 8,
+    "robustness": 7,
+    "scope": 9,
+    "readability": 9,
+    "tests": 1,
+    "overall": 7,
+    "why": "The implementation is focused and readable, but clearing slices during cache construction needs a clearer semantic justification and regression coverage."
+  },
+  "E": {
+    "design": 5,
+    "robustness": 4,
+    "scope": 8,
+    "readability": 6,
+    "tests": 1,
+    "overall": 4,
+    "why": "Bypasses QuerySet filtering through direct query mutation, uses fragile slice detection and default-database selection, and provides neither explicit unsupported-backend handling nor tests."
+  },
+  "F": {
+    "design": 1,
+    "robustness": 1,
+    "scope": 10,
+    "readability": 1,
+    "tests": 1,
+    "overall": 1,
+    "why": "The empty patch introduces no unrelated changes but provides no implementation or tests to review."
+  },
+  "G": {
+    "design": 9,
+    "robustness": 8,
+    "scope": 9,
+    "readability": 9,
+    "tests": 1,
+    "overall": 7,
+    "why": "Combines a focused window helper with routing-aware backend selection and explicit cache-slice preservation, but supplies no tests for these subtle behaviors."
+  },
+  "H": {
+    "design": 9,
+    "robustness": 7,
+    "scope": 9,
+    "readability": 9,
+    "tests": 1,
+    "overall": 7,
+    "why": "Cleanly shares predicate and partition handling across ordinary and generic relations, but cache slice removal and the broader relation support lack regression tests."
+  },
+  "I": {
+    "design": 7,
+    "robustness": 6,
+    "scope": 7,
+    "readability": 7,
+    "tests": 1,
+    "overall": 6,
+    "why": "Shares window logic effectively, but spreads it into individual-manager filtering, overlooks router-based database selection, and adds substantial untested behavior."
+  }
+}
