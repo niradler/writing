@@ -21,6 +21,7 @@ The scripts work in `/tmp/agent-race` (override with `--root`).
    git fetch -q --depth 1 origin f387d024fc75569d2a4a338bfda76cc2f328f627 && git checkout -q FETCH_HEAD && git remote remove origin
    echo .venv >> .git/info/exclude
    cp <this folder>/instance.json /tmp/agent-race/swe/instance.json
+   cp -r <this folder>/bin /tmp/agent-race/bin
    ```
 2. A clean home for Codex and a neutral git identity:
    ```bash
