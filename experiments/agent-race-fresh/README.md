@@ -12,6 +12,27 @@ Data and scripts for the second round of [I Told Coding Agents They Were in a Co
 | `judge/<ticket>/`                          | The anonymized review packet, the letter-to-run key, and both judges' raw scores                                                                                                                      |
 | `bin/`                                     | Instance builder, runner, scorer, collector, judge-packet builder, chart renderer                                                                                                                     |
 
+## Setup and metrics
+
+Both CLIs load your personal configuration by default. Each run strips it:
+
+|                                         | Claude Code 2.1.280                                                  | Codex CLI 0.167.0                                                          |
+| --------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Command                                 | `claude -p --model sonnet --effort high --output-format stream-json` | `codex exec -m gpt-6.1-terra -c model_reasoning_effort=high --json`        |
+| My instructions, skills, hooks, plugins | Off: `--setting-sources project`                                     | Off: a separate empty `HOME` and `CODEX_HOME` holding only the login file  |
+| MCP servers and app connectors          | Off: `--strict-mcp-config`                                           | Off: `-c features.apps=false` (otherwise about 240 ChatGPT app tools load) |
+| Web access                              | Off: `--disallowedTools WebFetch WebSearch`                          | Off: `-c web_search="disabled"`                                            |
+| Permissions                             | `--permission-mode bypassPermissions`                                | `--dangerously-bypass-approvals-and-sandbox`                               |
+
+One gotcha: `codex exec` was killed with SIGKILL within 0.2 seconds when the round-one issue text was passed as a command-line argument. Passing the same prompt on stdin (`codex exec -`) works.
+
+| Metric          | Source                                                                                                                                                                                                                                                                                 |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Correctness     | The fix commit's tests, run after the agent finished. Before any agent ran, every unfixed checkout scored 0 on them and every upstream fix passed all of them.                                                                                                                         |
+| Wall-clock time | The runner's clock around the agent process, cross-checked with Claude Code's `duration_ms` and the timestamps in Codex's session log.                                                                                                                                                 |
+| Tokens and cost | Claude Code: the `usage` block and `total_cost_usd` from its `result` event. Codex: the `token_count` events in its session log, times OpenAI's list price.                                                                                                                            |
+| Quality         | Patches renamed to letters in random order and scored by Claude Opus 5.5 and by GPT-6.1 Sol in Codex (read-only sandbox) on design, robustness, scope, readability, tests, and an overall 1–10. Judges saw the upstream fix as a reference and were told other designs are acceptable. |
+
 ## Reproduce
 
 The scripts work in `/tmp/agent-race2` (override with `--root`).
