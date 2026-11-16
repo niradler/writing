@@ -9,3 +9,7 @@ site/page/about.md
 site/public/
 package-lock.json
 migration/media-sources.json
+experiments/agent-race/runs/
+experiments/agent-race/judge/
+experiments/agent-race/instance.json
+experiments/agent-race/results.json

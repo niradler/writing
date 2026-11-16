@@ -2,13 +2,13 @@
 
 Data and scripts for the post [I Told a Coding Agent It Was in a Competition](https://blog.niradler.com/claude-code-vs-codex-swe-bench-competition).
 
-| Path | Contents |
-| --- | --- |
-| `instance.json` | The SWE-bench Verified instance: issue, base commit, hidden tests, upstream fix |
-| `results.json` | Per-run time, tokens, cost, tool calls, hidden-test results, diff size |
+| Path                         | Contents                                                                                                                                                                                   |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `instance.json`              | The SWE-bench Verified instance: issue, base commit, hidden tests, upstream fix                                                                                                            |
+| `results.json`               | Per-run time, tokens, cost, tool calls, hidden-test results, diff size                                                                                                                     |
 | `runs/<competitor>-<round>/` | `prompt.txt`, `cmd.json`, `timing.json`, `agent.jsonl.gz` (the CLI's event stream), `eval/agent.patch`, `eval/test.log`, `eval/eval.json`; Codex runs also have `codex-token-counts.jsonl` |
-| `judge/` | The anonymized review packet, the letter-to-run key, and both judges' raw scores |
-| `bin/` | The runner, scorer, collector, judge-packet builder and chart renderer |
+| `judge/`                     | The anonymized review packet, the letter-to-run key, and both judges' raw scores                                                                                                           |
+| `bin/`                       | The runner, scorer, collector, judge-packet builder and chart renderer                                                                                                                     |
 
 ## Reproduce
 
