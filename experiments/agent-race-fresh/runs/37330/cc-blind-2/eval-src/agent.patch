@@ -1,0 +1,21 @@
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index 4633756..3404454 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -1942,6 +1942,16 @@ class Query(BaseExpression):
+         def final_transformer(field, alias):
+             if not self.alias_cols:
+                 alias = None
++            if not hasattr(field, "model") and not path:
++                # The field comes directly from an annotation that isn't
++                # attached to a model (e.g. Value() or ExpressionWrapper()
++                # with an explicit output_field), so there's no column for
++                # get_col() to dereference. Use the annotation's expression
++                # itself, mirroring resolve_ref()'s handling of transforms
++                # chained onto annotation references.
++                annotation = self.annotations.get(names[pivot - 1])
++                if annotation is not None and annotation.output_field is field:
++                    return annotation
+             return field.get_col(alias)
+ 
+         # Try resolving all the names as fields first. If there's an error,

@@ -1,0 +1,65 @@
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index 4633756..051d406 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -2286,6 +2286,16 @@ class Query(BaseExpression):
+         try:
+             cols = []
+             for name in field_names:
++                if self.annotations:
++                    annotation_name, transform_names = refs_expression(
++                        name.split(LOOKUP_SEP), self.annotations
++                    )
++                    if annotation_name:
++                        expression = self.annotations[annotation_name]
++                        for transform_name in transform_names:
++                            expression = self.try_transform(expression, transform_name)
++                        cols.append(expression)
++                        continue
+                 names_to_join = self.get_names_to_join(name)
+                 # Join promotion note - we must not remove any rows here, so
+                 # if there is no existing joins, use outer join.
+diff --git a/tests/annotations/tests.py b/tests/annotations/tests.py
+index 0ad4a0d..4c3dcba 100644
+--- a/tests/annotations/tests.py
++++ b/tests/annotations/tests.py
+@@ -10,6 +10,7 @@ from django.db.models import (
+     Case,
+     CharField,
+     Count,
++    DateField,
+     DateTimeField,
+     DecimalField,
+     Exists,
+@@ -610,6 +611,31 @@ class NonAggregateAnnotationTestCase(TestCase):
+             [{"published__year": self.b1.pubdate.year}],
+         )
+ 
++    def test_values_transform_on_annotation_with_unattached_output_field(self):
++        qs = (
++            Book.objects.filter(pk=self.b1.pk)
++            .annotate(
++                published=ExpressionWrapper(
++                    F("pubdate"), output_field=DateField()
++                )
++            )
++            .values("published__year")
++        )
++        self.assertEqual(
++            list(qs),
++            [{"published__year": self.b1.pubdate.year}],
++        )
++
++    def test_values_transform_on_value_annotation(self):
++        published = datetime.date(2026, 1, 1)
++        qs = Book.objects.filter(pk=self.b1.pk).annotate(
++            published=Value(published, output_field=DateField())
++        ).values("published__year")
++        self.assertEqual(
++            list(qs),
++            [{"published__year": published.year}],
++        )
++
+     def test_values_fields_annotations_order(self):
+         qs = Book.objects.annotate(other_rating=F("rating") - 1).values(
+             "other_rating", "rating"

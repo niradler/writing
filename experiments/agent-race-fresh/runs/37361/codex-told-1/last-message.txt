@@ -1,0 +1,3 @@
+Fixed chained permission renames in [django/contrib/auth/management/__init__.py](/private/tmp/agent-race2/runs/37361/codex-told-1/repo/django/contrib/auth/management/__init__.py). Renames now run in migration order within a transaction, with operations reversed when a migration is unapplied. A conflict rolls back the permission changes.
+
+All 77 auth management tests passed. I also verified forward and backward rename chains and rollback on a conflict in a later rename.

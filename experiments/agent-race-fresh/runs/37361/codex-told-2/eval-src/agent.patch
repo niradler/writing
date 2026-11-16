@@ -1,0 +1,150 @@
+diff --git a/django/contrib/auth/management/__init__.py b/django/contrib/auth/management/__init__.py
+index a91fbab..9f3f228 100644
+--- a/django/contrib/auth/management/__init__.py
++++ b/django/contrib/auth/management/__init__.py
+@@ -150,82 +150,87 @@ def rename_permissions_after_model_rename(
+ 
+     app_label = app_config.label
+ 
+-    # Collect (from_model, to_model) pairs
++    # Reverse the operation order when unapplying a migration.
+     renames = [
+         (op.new_name, op.old_name) if backward else (op.old_name, op.new_name)
+         for migration, backward in (plan or [])
+-        for op in migration.operations
++        if migration.app_label == app_label
++        for op in (
++            reversed(migration.operations) if backward else migration.operations
++        )
+         if isinstance(op, migrations.RenameModel)
+-        and migration.app_label == app_config.label
+     ]
+ 
+     if not renames:
+         return
+ 
+-    planned = []
+-    conflicts = []
+-
+-    for old_name, new_name in renames:
+-        old_suffix = f"_{old_name.lower()}"
+-        new_suffix = f"_{new_name.lower()}"
+-
+-        actions, verbose_name_raw = _get_permission_metadata(apps, app_label, new_name)
+-        perms = Permission.objects.using(db).filter(
+-            content_type__app_label=app_label,
+-            codename__in=[f"{action}{old_suffix}" for action in actions],
+-        )
+-
+-        for perm in perms:
+-            for action in actions:
+-                if not perm.codename.startswith(action + "_"):
+-                    continue
+-
+-                old_codename = perm.codename
+-                new_codename = f"{action}{new_suffix}"
+-                new_name_str = f"Can {action} {verbose_name_raw}"
+-
+-                planned.append((perm, old_codename, new_codename, new_name_str))
+-
+-    existing = {
+-        p.codename
+-        for p in Permission.objects.using(db).filter(
+-            content_type__app_label=app_label,
+-            codename__in=[new for _, _, new, _ in planned],
+-        )
+-    }
+-
+-    # Look for conflicts
+-    for perm, old, new, _ in planned:
+-        if new in existing and perm.codename != new:
+-            conflicts.append((perm.pk, old, new))
+-
+-    # Raise error if conflicts found
+-    if conflicts:
+-        if verbosity:
+-            style = color_style()
+-            for pk, old, new in conflicts:
+-                msg = (
+-                    f"Failed to rename permission {pk} from '{old}' to '{new}'. "
+-                    f"Please resolve the conflict manually.\n"
++    renamed = []
++    with transaction.atomic(using=db):
++        for old_name, new_name in renames:
++            old_suffix = f"_{old_name.lower()}"
++            new_suffix = f"_{new_name.lower()}"
++            actions, verbose_name_raw = _get_permission_metadata(
++                apps, app_label, new_name
++            )
++            perms = Permission.objects.using(db).filter(
++                content_type__app_label=app_label,
++                codename__in=[f"{action}{old_suffix}" for action in actions],
++            )
++            planned = []
++            for perm in perms:
++                for action in actions:
++                    if perm.codename == f"{action}{old_suffix}":
++                        planned.append(
++                            (
++                                perm,
++                                perm.codename,
++                                f"{action}{new_suffix}",
++                                f"Can {action} {verbose_name_raw}",
++                            )
++                        )
++                        break
++
++            existing = set(
++                Permission.objects.using(db)
++                .filter(
++                    content_type__app_label=app_label,
++                    codename__in=[new for _, _, new, _ in planned],
++                )
++                .values_list("codename", flat=True)
++            )
++            conflicts = [
++                (perm.pk, old, new)
++                for perm, old, new, _ in planned
++                if new in existing and old != new
++            ]
++            if conflicts:
++                if verbosity:
++                    style = color_style()
++                    for pk, old, new in conflicts:
++                        msg = (
++                            f"Failed to rename permission {pk} from '{old}' to '{new}'. "
++                            f"Please resolve the conflict manually.\n"
++                        )
++                        stdout.write(style.WARNING(msg))
++                raise RuntimeError(
++                    f"{len(conflicts)} permission rename conflict(s) detected."
+                 )
+-                stdout.write(style.WARNING(msg))
+-        error_message = f"{len(conflicts)} permission rename conflict(s) detected."
+-        raise RuntimeError(error_message)
+ 
+-    with transaction.atomic(using=db):
+-        for perm, _, new_codename, new_name_str in planned:
+-            perm.codename = new_codename
+-            perm.name = new_name_str
+-            perm.save(update_fields={"codename", "name"}, using=db)
++            for perm, old_codename, new_codename, new_name_str in planned:
++                perm.codename = new_codename
++                perm.name = new_name_str
++                perm.save(update_fields={"codename", "name"}, using=db)
++                renamed.append((old_codename, new_codename))
+ 
+-    for _, from_codename, to_codename, _ in planned:
+-        if verbosity >= 2:
++    if verbosity >= 2:
++        for from_codename, to_codename in renamed:
+             stdout.write(
+                 f"Renamed permission(s): "
+                 f"{app_label}.{from_codename} → {to_codename}\n"
+             )
+ 
+ 
++
+ def get_system_username():
+     """
+     Return the current system user's username, or an empty string if the

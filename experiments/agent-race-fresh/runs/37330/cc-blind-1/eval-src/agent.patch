@@ -1,0 +1,20 @@
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index 4633756..2609f45 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -1940,6 +1940,15 @@ class Query(BaseExpression):
+         # fields to the appropriate wrapped version.
+ 
+         def final_transformer(field, alias):
++            if not hasattr(field, "model"):
++                # QuerySet.annotate() may introduce fields that aren't
++                # attached to a model. Such fields don't have a column of
++                # their own to reference, so fall back to the annotation's
++                # expression itself, onto which any transforms are applied
++                # below.
++                annotation = self.annotations.get(names[0])
++                if annotation is not None:
++                    return annotation
+             if not self.alias_cols:
+                 alias = None
+             return field.get_col(alias)

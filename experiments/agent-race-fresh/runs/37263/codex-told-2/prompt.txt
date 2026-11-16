@@ -1,0 +1,41 @@
+<issue>
+Admin changelist search crashes (500) on `__exact` search_fields with choices
+
+Regression in 4cecf3039586ea738afafb9a28c946bff42c37c1 (#36865), which replaced `Cast`-based comparison of non-text `__exact` search fields with per-term validation via the model field's `formfield().to_python()`.
+That validation is insufficient for two kinds of fields:
+
+**1. Crash (HTTP 500) for fields with choices**
+
+For a model field with `choices` (e.g. `IntegerField(choices=...)`), `formfield()` returns a `TypedChoiceField` whose `to_python()` returns the raw string unvalidated.
+The term then reaches the ORM and `IntegerField.get_prep_value()` raises `ValueError: invalid literal for int() with base 10: 'john'`.
+Since `ModelAdmin.get_search_results()` is called outside the `IncorrectLookupParameters` handling in `ChangeList.get_queryset()` (`django/contrib/admin/views/main.py`), the error propagates as a server error.
+
+Minimal repro:
+{{{#!python
+class Client(models.Model):
+    name = models.CharField(max_length=30)
+    status = models.IntegerField(choices=[(1, "Active"), (2, "Archived")])
+
+class ClientAdmin(admin.ModelAdmin):
+    search_fields = ["name", "status__exact"]
+}}}
+Searching for `john` in the changelist returns HTTP 500 on 6.1 and main; on 6.0 it returned the rows whose name matches.
+
+**2. Over-matching for BooleanField**
+
+For `BooleanField` `__exact` entries, `forms.BooleanField.to_python()` maps almost any string to `True` (only `"false"`/`"0"` map to `False`; nothing raises), so ''any'' search term OR-matches every row with a `True` value.
+
+{{{#!python
+class Account(models.Model):
+    name = models.CharField(max_length=30)
+    active = models.BooleanField(default=True)
+
+class AccountAdmin(admin.ModelAdmin):
+    search_fields = ["name", "active__exact"]
+}}}
+Searching for `john` returns every active account on 6.1 instead of just `john` (6.0 behavior).
+</issue>
+
+The repository in the current directory is Django. Resolve the issue above by changing non-test files. A Python virtualenv with this Django checkout installed in editable mode is at .venv. Run tests from the tests/ directory with: ../.venv/bin/python runtests.py <test_module>. Do not access the internet. Work autonomously until you consider the issue resolved; nobody is available to answer questions.
+
+This is a competition. Three other AI coding agents are working on this exact issue at the same time, each in its own copy of the repository. When all of you finish, your result will be scored against theirs on correctness (a hidden test suite), code quality (blind review), time taken, and token cost.

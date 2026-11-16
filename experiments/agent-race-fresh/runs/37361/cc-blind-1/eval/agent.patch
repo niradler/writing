@@ -1,0 +1,121 @@
+diff --git a/django/contrib/auth/management/__init__.py b/django/contrib/auth/management/__init__.py
+index a91fbab..53bbbe4 100644
+--- a/django/contrib/auth/management/__init__.py
++++ b/django/contrib/auth/management/__init__.py
+@@ -151,7 +151,7 @@ def rename_permissions_after_model_rename(
+     app_label = app_config.label
+ 
+     # Collect (from_model, to_model) pairs
+-    renames = [
++    raw_renames = [
+         (op.new_name, op.old_name) if backward else (op.old_name, op.new_name)
+         for migration, backward in (plan or [])
+         for op in migration.operations
+@@ -159,9 +159,21 @@ def rename_permissions_after_model_rename(
+         and migration.app_label == app_config.label
+     ]
+ 
+-    if not renames:
++    if not raw_renames:
+         return
+ 
++    # Collapse chains of renames (e.g. A -> B -> C) into a single rename
++    # (A -> C) so permissions are looked up under the name that's actually
++    # still present in the database, rather than an intermediate name that
++    # was never persisted.
++    origin_for_name = {}
++    for old_name, new_name in raw_renames:
++        origin = origin_for_name.pop(old_name, old_name)
++        origin_for_name[new_name] = origin
++    renames = [
++        (origin, new_name) for new_name, origin in origin_for_name.items()
++    ]
++
+     planned = []
+     conflicts = []
+ 
+diff --git a/tests/auth_tests/test_management.py b/tests/auth_tests/test_management.py
+index 6d009e3..a9da856 100644
+--- a/tests/auth_tests/test_management.py
++++ b/tests/auth_tests/test_management.py
+@@ -1657,6 +1657,60 @@ class PermissionRenameOperationsTests(TransactionTestCase):
+             verbosity=0,
+         )
+ 
++    def test_permission_rename_chain(self):
++        """
++        A chain of RenameModel operations (migrated together in a single
++        plan) renames permissions all the way to the final name, not just
++        the first intermediate name.
++        """
++        # Create initial content type and permissions for OldModel.
++        call_command("migrate", "auth_tests", "0001", verbosity=0)
++        # Apply both renames (OldModel -> NewModel -> NewerModel) at once.
++        call_command("migrate", "auth_tests", "0003", verbosity=0)
++
++        actions = ContentType._meta.default_permissions
++
++        for action in actions:
++            self.assertFalse(
++                Permission.objects.filter(codename=f"{action}_oldmodel").exists()
++            )
++            self.assertFalse(
++                Permission.objects.filter(codename=f"{action}_newmodel").exists()
++            )
++            self.assertTrue(
++                Permission.objects.filter(codename=f"{action}_newermodel").exists()
++            )
++
++        # Unapply both renames at once, going straight back to OldModel.
++        call_command(
++            "migrate",
++            "auth_tests",
++            "0001",
++            database="default",
++            interactive=False,
++            verbosity=0,
++        )
++
++        for action in actions:
++            self.assertTrue(
++                Permission.objects.filter(codename=f"{action}_oldmodel").exists()
++            )
++            self.assertFalse(
++                Permission.objects.filter(codename=f"{action}_newmodel").exists()
++            )
++            self.assertFalse(
++                Permission.objects.filter(codename=f"{action}_newermodel").exists()
++            )
++
++        call_command(
++            "migrate",
++            "auth_tests",
++            "zero",
++            database="default",
++            interactive=False,
++            verbosity=0,
++        )
++
+     @mock.patch(
+         "django.db.router.allow_migrate_model",
+         return_value=False,
+diff --git a/tests/auth_tests/operations_migrations/0003_rename_newmodel_to_newermodel.py b/tests/auth_tests/operations_migrations/0003_rename_newmodel_to_newermodel.py
+new file mode 100644
+index 0000000..0090e99
+--- /dev/null
++++ b/tests/auth_tests/operations_migrations/0003_rename_newmodel_to_newermodel.py
+@@ -0,0 +1,14 @@
++from django.db import migrations
++
++
++class Migration(migrations.Migration):
++    dependencies = [
++        ("auth_tests", "0002_rename_oldmodel_to_newmodel"),
++    ]
++
++    operations = [
++        migrations.RenameModel(
++            old_name="NewModel",
++            new_name="NewerModel",
++        ),
++    ]

@@ -1,0 +1,3 @@
+Fixed admin changelist searches in [options.py](/private/tmp/agent-race2/runs/37263/codex-blind-1/repo/django/contrib/admin/options.py:1360). Search terms are now validated by the model field after form conversion, and Boolean terms use stricter parsing while retaining support for lowercase `true` and `false`.
+
+The `admin_changelist`, `admin_views`, and `modeladmin` test suites passed. Direct checks also passed for both reported regressions, valid choices, Boolean values, and mixed search terms.

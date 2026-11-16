@@ -13,3 +13,9 @@ experiments/agent-race/runs/
 experiments/agent-race/judge/
 experiments/agent-race/instance.json
 experiments/agent-race/results.json
+experiments/agent-race-fresh/runs/
+experiments/agent-race-fresh/judge/
+experiments/agent-race-fresh/tasks/
+experiments/agent-race-fresh/controls/
+experiments/agent-race-fresh/screen/
+experiments/agent-race-fresh/results.json

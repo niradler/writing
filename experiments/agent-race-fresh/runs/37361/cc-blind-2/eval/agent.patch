@@ -1,0 +1,114 @@
+diff --git a/django/contrib/auth/management/__init__.py b/django/contrib/auth/management/__init__.py
+index a91fbab..4883497 100644
+--- a/django/contrib/auth/management/__init__.py
++++ b/django/contrib/auth/management/__init__.py
+@@ -159,6 +159,28 @@ def rename_permissions_after_model_rename(
+         and migration.app_label == app_config.label
+     ]
+ 
++    if not renames:
++        return
++
++    # Collapse chains of renames (e.g. A -> B -> C) into their net effect
++    # (A -> C), since the database only ever contains permissions for the
++    # original model name and the intermediate name never gets persisted.
++    origin_for_current = {}
++    order = []
++    for old_name, new_name in renames:
++        origin = origin_for_current.pop(old_name, old_name)
++        if origin not in order:
++            order.append(origin)
++        origin_for_current[new_name] = origin
++    current_for_origin = {
++        origin: current for current, origin in origin_for_current.items()
++    }
++    renames = [
++        (origin, current_for_origin[origin])
++        for origin in order
++        if origin != current_for_origin[origin]
++    ]
++
+     if not renames:
+         return
+ 
+diff --git a/tests/auth_tests/test_management.py b/tests/auth_tests/test_management.py
+index 6d009e3..28e0d67 100644
+--- a/tests/auth_tests/test_management.py
++++ b/tests/auth_tests/test_management.py
+@@ -1657,6 +1657,56 @@ class PermissionRenameOperationsTests(TransactionTestCase):
+             verbosity=0,
+         )
+ 
++    def test_permission_rename_chain(self):
++        # Create initial content type and permissions for OldModel.
++        call_command("migrate", "auth_tests", "0001", verbosity=0)
++        # Apply the migrations that rename OldModel to NewModel and then
++        # NewModel to NewestModel.
++        call_command("migrate", "auth_tests", "0003", verbosity=0)
++
++        actions = ContentType._meta.default_permissions
++
++        for action in actions:
++            self.assertFalse(
++                Permission.objects.filter(codename=f"{action}_oldmodel").exists()
++            )
++            self.assertFalse(
++                Permission.objects.filter(codename=f"{action}_newmodel").exists()
++            )
++            self.assertTrue(
++                Permission.objects.filter(codename=f"{action}_newestmodel").exists()
++            )
++
++        # Unapply both migrations, renaming NewestModel back to OldModel.
++        call_command(
++            "migrate",
++            "auth_tests",
++            "0001",
++            database="default",
++            interactive=False,
++            verbosity=0,
++        )
++
++        for action in actions:
++            self.assertTrue(
++                Permission.objects.filter(codename=f"{action}_oldmodel").exists()
++            )
++            self.assertFalse(
++                Permission.objects.filter(codename=f"{action}_newmodel").exists()
++            )
++            self.assertFalse(
++                Permission.objects.filter(codename=f"{action}_newestmodel").exists()
++            )
++
++        call_command(
++            "migrate",
++            "auth_tests",
++            "zero",
++            database="default",
++            interactive=False,
++            verbosity=0,
++        )
++
+     @mock.patch(
+         "django.db.router.allow_migrate_model",
+         return_value=False,
+diff --git a/tests/auth_tests/operations_migrations/0003_rename_newmodel_to_newestmodel.py b/tests/auth_tests/operations_migrations/0003_rename_newmodel_to_newestmodel.py
+new file mode 100644
+index 0000000..1b67fe6
+--- /dev/null
++++ b/tests/auth_tests/operations_migrations/0003_rename_newmodel_to_newestmodel.py
+@@ -0,0 +1,14 @@
++from django.db import migrations
++
++
++class Migration(migrations.Migration):
++    dependencies = [
++        ("auth_tests", "0002_rename_oldmodel_to_newmodel"),
++    ]
++
++    operations = [
++        migrations.RenameModel(
++            old_name="NewModel",
++            new_name="NewestModel",
++        ),
++    ]

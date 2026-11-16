@@ -1,0 +1,71 @@
+diff --git a/django/contrib/auth/management/__init__.py b/django/contrib/auth/management/__init__.py
+index a91fbab..d6927bd 100644
+--- a/django/contrib/auth/management/__init__.py
++++ b/django/contrib/auth/management/__init__.py
+@@ -162,29 +162,59 @@ def rename_permissions_after_model_rename(
+     if not renames:
+         return
+ 
+-    planned = []
+     conflicts = []
+ 
++    # Map a permission's pk to its planned rename, so that a chain of
++    # RenameModel operations (A -> B -> C) is collapsed into a single
++    # rename per permission (e.g. add_a -> add_c), since the intermediate
++    # state (add_b) is never written to the database.
++    planned_by_pk = {}
++
+     for old_name, new_name in renames:
+         old_suffix = f"_{old_name.lower()}"
+         new_suffix = f"_{new_name.lower()}"
+ 
+         actions, verbose_name_raw = _get_permission_metadata(apps, app_label, new_name)
+-        perms = Permission.objects.using(db).filter(
+-            content_type__app_label=app_label,
+-            codename__in=[f"{action}{old_suffix}" for action in actions],
++        old_codenames = [f"{action}{old_suffix}" for action in actions]
++
++        # Permissions already renamed earlier in this chain have a pending
++        # codename that doesn't exist in the database yet, so match against
++        # that instead of querying the database again.
++        chained = {
++            pk: entry
++            for pk, entry in planned_by_pk.items()
++            if entry["new_codename"] in old_codenames
++        }
++        perms = [entry["perm"] for entry in chained.values()]
++        perms += list(
++            Permission.objects.using(db)
++            .filter(content_type__app_label=app_label, codename__in=old_codenames)
++            .exclude(pk__in=chained)
+         )
+ 
+         for perm in perms:
++            previous = planned_by_pk.get(perm.pk)
++            current_codename = previous["new_codename"] if previous else perm.codename
++            original_codename = previous["old_codename"] if previous else perm.codename
++
+             for action in actions:
+-                if not perm.codename.startswith(action + "_"):
++                if not current_codename.startswith(action + "_"):
+                     continue
+ 
+-                old_codename = perm.codename
+                 new_codename = f"{action}{new_suffix}"
+                 new_name_str = f"Can {action} {verbose_name_raw}"
+ 
+-                planned.append((perm, old_codename, new_codename, new_name_str))
++                planned_by_pk[perm.pk] = {
++                    "perm": perm,
++                    "old_codename": original_codename,
++                    "new_codename": new_codename,
++                    "new_name": new_name_str,
++                }
++
++    planned = [
++        (entry["perm"], entry["old_codename"], entry["new_codename"], entry["new_name"])
++        for entry in planned_by_pk.values()
++    ]
+ 
+     existing = {
+         p.codename

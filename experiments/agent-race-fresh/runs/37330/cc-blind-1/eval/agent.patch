@@ -1,0 +1,62 @@
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index 4633756..2609f45 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -1940,6 +1940,15 @@ class Query(BaseExpression):
+         # fields to the appropriate wrapped version.
+ 
+         def final_transformer(field, alias):
++            if not hasattr(field, "model"):
++                # QuerySet.annotate() may introduce fields that aren't
++                # attached to a model. Such fields don't have a column of
++                # their own to reference, so fall back to the annotation's
++                # expression itself, onto which any transforms are applied
++                # below.
++                annotation = self.annotations.get(names[0])
++                if annotation is not None:
++                    return annotation
+             if not self.alias_cols:
+                 alias = None
+             return field.get_col(alias)
+diff --git a/tests/annotations/tests.py b/tests/annotations/tests.py
+index 0ad4a0d..dd85e57 100644
+--- a/tests/annotations/tests.py
++++ b/tests/annotations/tests.py
+@@ -10,6 +10,7 @@ from django.db.models import (
+     Case,
+     CharField,
+     Count,
++    DateField,
+     DateTimeField,
+     DecimalField,
+     Exists,
+@@ -610,6 +611,29 @@ class NonAggregateAnnotationTestCase(TestCase):
+             [{"published__year": self.b1.pubdate.year}],
+         )
+ 
++    def test_values_transform_on_annotation_unattached_output_field(self):
++        qs = (
++            Book.objects.filter(pk=self.b1.pk)
++            .annotate(
++                published=ExpressionWrapper(F("pubdate"), output_field=DateField())
++            )
++            .values("published__year")
++        )
++        self.assertEqual(
++            list(qs),
++            [{"published__year": self.b1.pubdate.year}],
++        )
++
++        qs = (
++            Book.objects.filter(pk=self.b1.pk)
++            .annotate(published=Value(self.b1.pubdate, output_field=DateField()))
++            .values("published__year")
++        )
++        self.assertEqual(
++            list(qs),
++            [{"published__year": self.b1.pubdate.year}],
++        )
++
+     def test_values_fields_annotations_order(self):
+         qs = Book.objects.annotate(other_rating=F("rating") - 1).values(
+             "other_rating", "rating"

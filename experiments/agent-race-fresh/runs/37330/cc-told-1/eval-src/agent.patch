@@ -1,0 +1,21 @@
+diff --git a/django/db/models/sql/query.py b/django/db/models/sql/query.py
+index 4633756..051d406 100644
+--- a/django/db/models/sql/query.py
++++ b/django/db/models/sql/query.py
+@@ -2286,6 +2286,16 @@ class Query(BaseExpression):
+         try:
+             cols = []
+             for name in field_names:
++                if self.annotations:
++                    annotation_name, transform_names = refs_expression(
++                        name.split(LOOKUP_SEP), self.annotations
++                    )
++                    if annotation_name:
++                        expression = self.annotations[annotation_name]
++                        for transform_name in transform_names:
++                            expression = self.try_transform(expression, transform_name)
++                        cols.append(expression)
++                        continue
+                 names_to_join = self.get_names_to_join(name)
+                 # Join promotion note - we must not remove any rows here, so
+                 # if there is no existing joins, use outer join.

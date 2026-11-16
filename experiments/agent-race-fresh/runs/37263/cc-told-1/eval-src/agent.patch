@@ -1,0 +1,65 @@
+diff --git a/django/contrib/admin/options.py b/django/contrib/admin/options.py
+index bb8ae23..35594f6 100644
+--- a/django/contrib/admin/options.py
++++ b/django/contrib/admin/options.py
+@@ -1298,6 +1298,45 @@ class ModelAdmin(BaseModelAdmin):
+         """
+         return self.search_fields
+ 
++    # Case-insensitive tokens accepted for an exact lookup against a
++    # BooleanField, matching the tokens django.db.models.BooleanField's own
++    # to_python() accepts (plus case-insensitivity).
++    _BOOLEAN_SEARCH_TERMS = {
++        "1": True,
++        "t": True,
++        "true": True,
++        "0": False,
++        "f": False,
++        "false": False,
++    }
++
++    @classmethod
++    def _get_exact_lookup_value(cls, field, term):
++        """
++        Convert a raw search term to a value suitable for an __exact lookup
++        against a non-text model field, raising ValidationError if the term
++        isn't a valid representation of the field's type.
++        """
++        if isinstance(field, models.BooleanField) and field.choices is None:
++            # forms.BooleanField.to_python() treats almost any non-empty
++            # string as True, so it can't be used to validate the term.
++            try:
++                return cls._BOOLEAN_SEARCH_TERMS[term.lower()]
++            except KeyError:
++                raise ValidationError("Invalid boolean term.")
++        if field.choices is not None:
++            # The form field for a field with choices doesn't validate the
++            # term's type in to_python(), only in validate() (which also
++            # requires the term to be one of the choices). Convert using the
++            # model field directly instead, since that's what the form
++            # field's coercion would delegate to anyway.
++            return field.to_python(term)
++        formfield = field.formfield()
++        if formfield is not None:
++            return formfield.to_python(term)
++        # Fields like AutoField lack a form field.
++        return field.to_python(term)
++
+     def get_search_results(self, request, queryset, search_term):
+         """
+         Return a tuple containing a queryset to implement the search
+@@ -1360,13 +1399,8 @@ class ModelAdmin(BaseModelAdmin):
+                 bit_lookups = []
+                 for orm_lookup, validate_field in orm_lookups:
+                     if validate_field is not None:
+-                        formfield = validate_field.formfield()
+                         try:
+-                            if formfield is not None:
+-                                value = formfield.to_python(bit)
+-                            else:
+-                                # Fields like AutoField lack a form field.
+-                                value = validate_field.to_python(bit)
++                            value = self._get_exact_lookup_value(validate_field, bit)
+                         except ValidationError:
+                             # Skip this lookup for invalid values.
+                             continue
