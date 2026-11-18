@@ -13,6 +13,7 @@ import {
   SITE_AUTHOR,
   SITE_DESCRIPTION,
   SITE_TITLE,
+  analyticsHead,
   canonicalUrl,
   joinUrl,
   pagePathFromRelative,
@@ -193,6 +194,7 @@ export default defineConfig({
       ["meta", { name: "twitter:description", content: description }],
       ["meta", { name: "twitter:image", content: image }],
     ];
+    heads.push(...analyticsHead(frontmatter));
     if (frontmatter.publishedAt) {
       heads.push([
         "meta",

@@ -31,6 +31,6 @@ Descriptions that end in an ellipsis are Hashnode's truncated meta descriptions.
 
 ## Not migrated
 
-Drafts, revision history, comments, reactions, the newsletter, view counts, and Hashnode analytics IDs are not copied. Analytics identifiers from the live page were intentionally left out.
+Drafts, revision history, comments, reactions, the newsletter, view counts, and Hashnode analytics IDs are not copied. The blog's own GA4 property (`G-BQ26N8LNFQ`) is loaded on built pages through `transformHead`, so it runs on the deployed site but not in local dev. Hashnode's platform trackers (its own GA ID, Plausible, Hotjar) were left out.
 
 A post whose image download fails keeps the remote URL and is listed in the inventory. Empty alt text is reported by `npm run audit:media` and is not replaced with generated text.

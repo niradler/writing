@@ -2,7 +2,9 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   articlePath,
+  analyticsHead,
   canonicalUrl,
+  GA_MEASUREMENT_ID,
   prefixRoot,
   resolveSiteTarget,
   robotsFor,
@@ -76,6 +78,22 @@ describe("site target", () => {
       canonicalUrl({ path: "/fixtures/media", frontmatter: { fixture: true }, site }),
       "https://writing.niradler.com/fixtures/media",
     );
+  });
+});
+
+describe("analytics", () => {
+  it("loads the GA4 property on published pages", () => {
+    const heads = analyticsHead({});
+    assert.equal(heads.length, 2);
+    assert.equal(
+      heads[0][1].src,
+      `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`,
+    );
+    assert.ok(heads[1][2].includes(`gtag('config','${GA_MEASUREMENT_ID}')`));
+  });
+
+  it("keeps the rendering fixture out of analytics", () => {
+    assert.deepEqual(analyticsHead({ fixture: true }), []);
   });
 });
 
