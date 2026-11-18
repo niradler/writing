@@ -5,6 +5,7 @@ import {
   analyticsHead,
   canonicalUrl,
   GA_MEASUREMENT_ID,
+  HOTJAR_SITE_ID,
   prefixRoot,
   resolveSiteTarget,
   robotsFor,
@@ -84,12 +85,18 @@ describe("site target", () => {
 describe("analytics", () => {
   it("loads the GA4 property on published pages", () => {
     const heads = analyticsHead({});
-    assert.equal(heads.length, 2);
+    assert.equal(heads.length, 3);
     assert.equal(
       heads[0][1].src,
       `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`,
     );
     assert.ok(heads[1][2].includes(`gtag('config','${GA_MEASUREMENT_ID}')`));
+  });
+
+  it("loads the Hotjar site on published pages", () => {
+    const heads = analyticsHead({});
+    assert.ok(heads[2][2].includes(`hjid:${HOTJAR_SITE_ID}`));
+    assert.ok(heads[2][2].includes("https://static.hotjar.com/c/hotjar-"));
   });
 
   it("keeps the rendering fixture out of analytics", () => {

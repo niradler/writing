@@ -2,7 +2,12 @@ import { spawnSync } from "node:child_process";
 import { access, readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { REDIRECTS, GA_MEASUREMENT_ID, resolveSiteTarget } from "../lib/site.mjs";
+import {
+  REDIRECTS,
+  GA_MEASUREMENT_ID,
+  HOTJAR_SITE_ID,
+  resolveSiteTarget,
+} from "../lib/site.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const site = resolveSiteTarget(process.env.SITE_TARGET);
@@ -67,6 +72,8 @@ if (!home.includes("Piece by Piece"))
   errors.push("home page is missing the site title");
 if (!home.includes(`gtag/js?id=${GA_MEASUREMENT_ID}`))
   errors.push("home page is missing the analytics tag");
+if (!home.includes(`hjid:${HOTJAR_SITE_ID}`))
+  errors.push("home page is missing the Hotjar tag");
 if (!home.includes(site.robots)) errors.push(`home robots should be ${site.robots}`);
 const canonicalHome = home.match(/<link rel="canonical" href="([^"]+)"/)?.[1];
 if (site.target === "preview" && canonicalHome !== "https://blog.niradler.com/") {
