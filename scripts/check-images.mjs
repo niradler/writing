@@ -96,7 +96,6 @@ for (const file of htmlFiles) {
   if (!file.endsWith(".html")) continue;
   const rel = path.relative(dist, file).replaceAll("\\", "/");
   const list = [
-    "index.html",
     "archive.html",
     "archive/index.html",
     "tags.html",
@@ -116,6 +115,23 @@ for (const file of htmlFiles) {
         errors.push(`${rel} loads an article image`);
       }
     }
+  }
+  if (rel === "index.html") {
+    const cards = html.match(/<a class="card"[\s\S]*?<\/a>/g) || [];
+    if (!cards.length) errors.push("home page has no article cards");
+    cards.forEach((card, index) => {
+      for (const tag of card.match(/<img\b[^>]*>/gi) || []) {
+        const src = tag.match(/\bsrc="([^"]+)"/)?.[1] || "";
+        const keptOriginal =
+          manifest.images?.[src] && !manifest.images[src].omitOriginal;
+        if (!/\/media-opt\//.test(src) && !keptOriginal)
+          errors.push(`home card ${index} does not use an optimized cover`);
+        if (!/loading="(lazy|eager)"/.test(tag))
+          errors.push(`home card ${index} cover has no loading hint`);
+        if (index >= 2 && /loading="eager"/.test(tag))
+          errors.push(`home card ${index} loads a below-fold cover eagerly`);
+      }
+    });
   }
   if (rel === "post-training-when-a-specialist-beats-a-bigger-model.html") {
     const cover = html.match(/<figure class="cover">[\s\S]*?<\/figure>/)?.[0] || "";

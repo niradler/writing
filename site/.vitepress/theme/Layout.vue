@@ -117,7 +117,7 @@ const older = computed(() =>
 );
 
 const primary = [
-  ["Writing", "/"],
+  ["Posts", "/"],
   ["Archive", "/archive"],
   ["Tags", "/tags"],
   ["About", "/page/about"],
@@ -399,7 +399,7 @@ const year = new Date().getUTCFullYear();
         </aside>
       </div>
       <div v-else class="frame">
-        <div class="page">
+        <div class="page" :class="{ 'page-home': frontmatter.home }">
           <picture v-if="isAbout">
             <source
               :srcset="withBase('/media-opt/brand/avatar-160.webp')"

@@ -207,6 +207,48 @@ try {
               fail(`${label} compact outline starts expanded`);
             }
           }
+        } else if (name === "home") {
+          if (!measure.brand || !measure.frame) {
+            fail(`${label} missing layout boxes`);
+            continue;
+          }
+          const contentLeft = measure.frame.left + measure.padLeft;
+          const contentRight = measure.frame.right - measure.padRight;
+          if (measure.padLeft < 20 || measure.padRight < 20) {
+            fail(`${label} frame padding ${measure.padLeft}/${measure.padRight}`);
+          }
+          if (contentLeft < 20 || measure.client - contentRight < 20) {
+            fail(`${label} content edge ${contentLeft}..${contentRight}`);
+          }
+          if (Math.abs(measure.brand.left - contentLeft) > 2) {
+            fail(
+              `${label} brand is not aligned to the content (${measure.brand.left} vs ${contentLeft})`,
+            );
+          }
+          if (measure.outlineCount) fail(`${label} shows an article outline`);
+          const home = await page.evaluate(() => ({
+            toggle: document.querySelectorAll(".view-toggle button").length,
+            cards: document.querySelectorAll(".post-grid .card").length,
+            covers: document.querySelectorAll(".post-grid .card-cover img").length,
+            entries: document.querySelectorAll(".post-list .entry").length,
+          }));
+          if (home.toggle !== 2) fail(`${label} home view toggle is missing`);
+          if (!home.cards || !home.covers)
+            fail(`${label} home grid has no cards with covers`);
+          if (home.entries) fail(`${label} home starts in list view`);
+          await page.locator('.view-toggle button[aria-pressed="false"]').click();
+          try {
+            await page.waitForFunction(
+              () =>
+                document.querySelectorAll(".post-list .entry").length > 0 &&
+                document.querySelectorAll(".post-grid .card").length === 0,
+              null,
+              { timeout: 3000 },
+            );
+          } catch {
+            fail(`${label} list view did not replace the grid`);
+          }
+          await page.locator('.view-toggle button[aria-pressed="false"]').click();
         } else {
           if (!measure.h1 || !measure.brand || !measure.frame) {
             fail(`${label} missing layout boxes`);
