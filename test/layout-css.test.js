@@ -43,3 +43,36 @@ describe("layout frame", () => {
     assert.doesNotMatch(css, /\.site-main\s*\{[^}]*padding:\s*[^;]*\s0(?:px)?\s/s);
   });
 });
+
+describe("home views", () => {
+  it("lets the home page use the full frame while other pages keep the reading width", () => {
+    assert.match(css, /\.page\s*\{[^}]*max-width:\s*48rem/s);
+    assert.match(css, /\.page-home\s*\{[^}]*max-width:\s*none/s);
+  });
+
+  it("shows a two-column card grid with covers on wide screens", () => {
+    assert.match(
+      css,
+      /\.post-grid\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/s,
+    );
+    assert.match(
+      css,
+      /@media \(min-width:\s*720px\)\s*\{[\s\S]*\.post-grid\s*\{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/,
+    );
+    assert.match(css, /\.card-cover\s*\{[^}]*aspect-ratio:\s*800\s*\/\s*420/s);
+    assert.match(css, /\.card-cover img\s*\{[^}]*object-fit:\s*cover/s);
+    assert.match(css, /\.card-title\s*\{[^}]*-webkit-line-clamp:\s*2/s);
+    assert.match(css, /\.card-dek\s*\{[^}]*-webkit-line-clamp:\s*2/s);
+  });
+
+  it("keeps dateless search entries full width instead of the date column", () => {
+    assert.match(
+      css,
+      /@media \(min-width:\s*720px\)\s*\{[\s\S]*\.post-list\.plain \.entry\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/,
+    );
+  });
+
+  it("keeps the tag count inside the tag pill", () => {
+    assert.match(css, /\.tag-count\s*\{[^}]*color:\s*var\(--muted\)/s);
+  });
+});

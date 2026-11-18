@@ -1,5 +1,34 @@
+import { readFileSync } from "node:fs";
 import { createContentLoader } from "vitepress";
 import { articlePath, resolveSiteTarget } from "../../../lib/site.mjs";
+
+function loadManifest() {
+  try {
+    return JSON.parse(
+      readFileSync(new URL("../image-manifest.json", import.meta.url), "utf8"),
+    );
+  } catch {
+    return { images: {} };
+  }
+}
+
+const manifest = loadManifest();
+
+function coverFor(frontmatter) {
+  const src = frontmatter.cover ? String(frontmatter.cover) : "";
+  if (!src) return null;
+  const entry = manifest.images?.[src];
+  const variants = entry?.variants || [];
+  const webp = variants.filter((item) => item.role === "webp");
+  const fallback = variants.find((item) => item.role === "fallback") || webp.at(-1);
+  return {
+    src: fallback?.src || src,
+    srcset: webp.map((item) => `${item.src} ${item.width}w`).join(", "),
+    width: entry?.width || 0,
+    height: entry?.height || 0,
+    alt: String(frontmatter.coverAlt || ""),
+  };
+}
 
 function plainText(markdown) {
   return String(markdown)
@@ -39,6 +68,7 @@ export default createContentLoader("posts/*.md", {
         seriesSlug: page.frontmatter.seriesSlug
           ? String(page.frontmatter.seriesSlug)
           : "",
+        cover: coverFor(page.frontmatter),
         text: plainText(page.src || "").slice(0, 5000),
       }))
       .sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt));
