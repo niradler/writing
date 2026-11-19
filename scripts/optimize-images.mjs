@@ -111,13 +111,13 @@ async function stillImage(file, source, info, bytes) {
     .jpeg({ quality: 75, mozjpeg: true })
     .toBuffer();
   const socialMeta = await sharp(socialBuffer).metadata();
-  const social =
-    info.hasAlpha && png
-      ? fallbackSrc
-      : await writePublic(
-          variantPath(source, `social-${socialMeta.width}`, "jpg"),
-          socialBuffer,
-        );
+  const socialIsFallback = info.hasAlpha && png;
+  const social = socialIsFallback
+    ? fallbackSrc
+    : await writePublic(
+        variantPath(source, `social-${socialMeta.width}`, "jpg"),
+        socialBuffer,
+      );
   return {
     width: info.width,
     height: info.height,
@@ -125,6 +125,8 @@ async function stillImage(file, source, info, bytes) {
     bytes,
     variants,
     social,
+    socialWidth: socialIsFallback ? fallbackMeta.width : socialMeta.width,
+    socialHeight: socialIsFallback ? fallbackMeta.height : socialMeta.height,
     omitOriginal,
   };
 }
@@ -190,6 +192,8 @@ async function animatedImage(file, source, info, bytes) {
     bytes,
     variants,
     social: gifSrc,
+    socialWidth: width,
+    socialHeight: height,
     omitOriginal: gifSrc !== source,
   };
 }
@@ -207,7 +211,11 @@ for (const file of files) {
   const fileStat = await stat(file);
   const stamp = `${fileStat.mtimeMs}:${fileStat.size}`;
   const cached = previous[source];
-  if (cached?.stamp === stamp && cached.variants?.every((item) => item.src)) {
+  if (
+    cached?.stamp === stamp &&
+    cached.schema === 2 &&
+    cached.variants?.every((item) => item.src)
+  ) {
     const present = await Promise.all(
       cached.variants.map((item) =>
         stat(path.join(publicDir, item.src.replace(/^\//, "")))
@@ -231,6 +239,7 @@ for (const file of files) {
       throw new Error(`${source} emitted a wider variant`);
   }
   entry.stamp = stamp;
+  entry.schema = 2;
   images[source] = entry;
   const shipped = entry.variants.reduce((sum, item) => sum + item.bytes, 0);
   console.log(

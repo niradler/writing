@@ -101,6 +101,10 @@ else {
   const post = await readFile(postFile, "utf8");
   if (!post.includes("Postgres Already Is Your Backend"))
     errors.push("article title missing");
+  if (!post.includes('property="og:image:width"'))
+    errors.push("article is missing og:image dimensions");
+  if (!post.includes('name="twitter:image:alt"'))
+    errors.push("article is missing twitter:image:alt");
   if (
     !post.includes(
       'rel="canonical" href="https://blog.niradler.com/postgres-already-is-your-backend"',

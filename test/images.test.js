@@ -1,9 +1,35 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { pictureHtml, rewriteContentImages, variantWidths } from "../lib/images.mjs";
+import {
+  pictureHtml,
+  rewriteContentImages,
+  socialSize,
+  variantWidths,
+} from "../lib/images.mjs";
 import { prefixHtmlMedia } from "../lib/media.mjs";
 
 describe("responsive images", () => {
+  it("reports the social image size for sharing tags", () => {
+    assert.deepEqual(socialSize({ socialWidth: 1200, socialHeight: 800 }), {
+      width: 1200,
+      height: 800,
+    });
+    assert.deepEqual(socialSize({ width: 2000, height: 1240 }), {
+      width: 1200,
+      height: 744,
+    });
+    assert.deepEqual(socialSize({ width: 800, height: 420 }), {
+      width: 800,
+      height: 420,
+    });
+    assert.deepEqual(socialSize({ width: 640, height: 360, animated: true }), {
+      width: 640,
+      height: 360,
+    });
+    assert.equal(socialSize(null), null);
+    assert.equal(socialSize({}), null);
+  });
+
   it("never invents pixels beyond the intrinsic width", () => {
     assert.deepEqual(variantWidths(4000), [64, 160, 480, 800, 1280, 1600]);
     assert.deepEqual(variantWidths(600), [64, 160, 480, 600]);

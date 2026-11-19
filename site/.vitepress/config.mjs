@@ -5,7 +5,7 @@ import matter from "gray-matter";
 import { loadMarkdownDir } from "../../lib/content.mjs";
 import { generateBuildFiles } from "../../lib/generate.mjs";
 import { injectPostHeader, postHeaderHtml } from "../../lib/header.mjs";
-import { socialSrc, rewriteContentImages } from "../../lib/images.mjs";
+import { socialSize, socialSrc, rewriteContentImages } from "../../lib/images.mjs";
 import { prefixHtmlMedia } from "../../lib/media.mjs";
 import { readFileSync } from "node:fs";
 import {
@@ -160,9 +160,11 @@ export default defineConfig({
     const canonical = canonicalUrl({ path: pagePath, frontmatter, site });
     const description =
       pageData.description || frontmatter.description || SITE_DESCRIPTION;
-    const image = absoluteImage(
-      socialSrc(loadImageManifest(), frontmatter.cover || "/brand/logo-light.png"),
-    );
+    const manifest = loadImageManifest();
+    const socialSource = frontmatter.cover || "/brand/logo-light.png";
+    const image = absoluteImage(socialSrc(manifest, socialSource));
+    const imageSize = socialSize(manifest.images?.[socialSource]);
+    const imageAlt = frontmatter.coverAlt || frontmatter.title || SITE_TITLE;
     const heads = [
       ["meta", { name: "robots", content: robotsFor(site, frontmatter) }],
       ["link", { rel: "canonical", href: canonical }],
@@ -184,6 +186,16 @@ export default defineConfig({
         },
       ],
       ["meta", { property: "og:image", content: image }],
+      ["meta", { property: "og:image:alt", content: imageAlt }],
+      ...(imageSize
+        ? [
+            ["meta", { property: "og:image:width", content: String(imageSize.width) }],
+            [
+              "meta",
+              { property: "og:image:height", content: String(imageSize.height) },
+            ],
+          ]
+        : []),
       [
         "meta",
         {
@@ -200,6 +212,7 @@ export default defineConfig({
       ],
       ["meta", { name: "twitter:description", content: description }],
       ["meta", { name: "twitter:image", content: image }],
+      ["meta", { name: "twitter:image:alt", content: imageAlt }],
     ];
     heads.push(...analyticsHead(frontmatter));
     if (pagePath === "/") {
