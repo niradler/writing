@@ -146,6 +146,7 @@ export default defineConfig({
       const name = seriesList.find((item) => item.slug === slug)?.name || slug;
       pageData.title = name;
       pageData.frontmatter.title = name;
+      pageData.description = `Articles in the ${name} series.`;
     }
     if (pageData.relativePath === "index.md") {
       pageData.title = SITE_TITLE;
@@ -183,7 +184,13 @@ export default defineConfig({
         },
       ],
       ["meta", { property: "og:image", content: image }],
-      ["meta", { name: "twitter:card", content: "summary_large_image" }],
+      [
+        "meta",
+        {
+          name: "twitter:card",
+          content: frontmatter.publishedAt ? "summary_large_image" : "summary",
+        },
+      ],
       [
         "meta",
         {
@@ -195,6 +202,31 @@ export default defineConfig({
       ["meta", { name: "twitter:image", content: image }],
     ];
     heads.push(...analyticsHead(frontmatter));
+    if (pagePath === "/") {
+      heads.push([
+        "script",
+        { type: "application/ld+json" },
+        JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Blog",
+          name: SITE_TITLE,
+          url: canonical,
+          description,
+          image,
+          author: {
+            "@type": "Person",
+            name: SITE_AUTHOR,
+            url: IDENTITY_LINKS.website,
+          },
+          publisher: {
+            "@type": "Organization",
+            name: SITE_TITLE,
+            url: canonical,
+            logo: { "@type": "ImageObject", url: image },
+          },
+        }),
+      ]);
+    }
     if (frontmatter.publishedAt) {
       heads.push([
         "meta",

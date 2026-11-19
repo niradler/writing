@@ -1,6 +1,7 @@
 ---
 title: Search
 description: Search articles on Piece by Piece.
+noindex: true
 ---
 
 <script setup>

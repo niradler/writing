@@ -35,7 +35,7 @@ Do not upload this directory, and do not point the deploy workflow at it, until 
 
 ## Cutover
 
-Do this only after a complete backup and an explicit decision to move `blog.niradler.com`. The Hashnode support export was still pending when this site was assembled. `migration/inventory.json` is marked unverified until that export is compared with `site/posts`.
+Do this only after a complete backup and an explicit decision to move `blog.niradler.com`. The backup is complete: Nir compared <https://github.com/niradler/hashnode> with `site/posts` on 19 November 2026, and `migration/inventory.json` is marked `verified` with that record.
 
 1. Compare the support export with the sitemap count, slugs, dates, tags, series, and `migration/media-sources.json`. Repair anything the public `.md` export missed. Do not overwrite a post silently.
 2. Build the preview and read it at <https://writing.niradler.com/>. Check articles, images, code blocks, the YouTube and Slides embeds, archive, tags, series, search, and the about page on a phone-width window and a desktop window.

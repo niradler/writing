@@ -1,6 +1,12 @@
 {
   "retrieved": "2026-11-08T12:02:48.773Z",
-  "completeness": "unverified",
+  "completeness": "verified",
+  "verification": {
+    "verifiedAt": "2026-11-19",
+    "verifiedBy": "Nir Adler",
+    "source": "https://github.com/niradler/hashnode",
+    "method": "Owner compared the backup with site/posts: all 54 published slugs present (one legacy duplicate file without frontmatter), 33 drafts kept in the backup only, assets mirrored under assets/."
+  },
   "liveSitemapPosts": 54,
   "considered": 54,
   "written": [
