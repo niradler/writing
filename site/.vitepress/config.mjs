@@ -230,6 +230,7 @@ export default defineConfig({
             "@type": "Person",
             name: SITE_AUTHOR,
             url: IDENTITY_LINKS.website,
+            sameAs: AUTHOR_SAME_AS,
           },
           publisher: {
             "@type": "Organization",
@@ -267,7 +268,12 @@ export default defineConfig({
           description,
           datePublished: frontmatter.publishedAt,
           dateModified: frontmatter.updatedAt || frontmatter.publishedAt,
-          author: { "@type": "Person", name: SITE_AUTHOR, url: IDENTITY_LINKS.website },
+          author: {
+            "@type": "Person",
+            name: SITE_AUTHOR,
+            url: IDENTITY_LINKS.website,
+            sameAs: AUTHOR_SAME_AS,
+          },
           publisher: {
             "@type": "Organization",
             name: SITE_TITLE,
@@ -292,6 +298,14 @@ export default defineConfig({
 });
 
 const PRODUCTION_HOME = "https://blog.niradler.com/";
+
+// Author identity links help search and answer engines attribute the articles.
+const AUTHOR_SAME_AS = [
+  IDENTITY_LINKS.website,
+  IDENTITY_LINKS.github,
+  IDENTITY_LINKS.hashnode,
+  IDENTITY_LINKS.linkedin,
+];
 
 function loadImageManifest() {
   try {

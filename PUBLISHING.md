@@ -13,6 +13,10 @@ Do not add a `CNAME` file. Pages deployed by a workflow ignores it, and the cust
 
 A push to `main` runs `.github/workflows/deploy.yml`: it builds the production target, runs `SITE_TARGET=production npm run check:built`, uploads `dist-production/`, and deploys with the GitHub Pages action. The build job has `contents: read`; only the deploy job has `pages: write` and `id-token: write`.
 
+## AI discoverability (GEO)
+
+The build also emits `llms.txt` (a curated map of the site for agents, llmstxt.org format) and `llms-full.txt` (every published article as one Markdown file, absolute media URLs, code fences verbatim). Production `robots.txt` explicitly welcomes AI answer-engine crawlers (OAI-SearchBot, ChatGPT-User, Claude-User, Claude-SearchBot, PerplexityBot, Perplexity-User, Google-Extended, Applebot-Extended, Amazonbot); bulk training crawlers stay under the generic allow. Article JSON-LD carries the author's `sameAs` identity links so engines can attribute the text. ChatGPT search answers draw on Bing's index, so the sitemap belongs in Bing Webmaster Tools too; Perplexity and Claude crawl directly.
+
 ## Cutover from Hashnode
 
 The backup is complete: Nir compared <https://github.com/niradler/hashnode> with `site/posts` on 19 November 2026, and `migration/inventory.json` is marked `verified` with that record.
@@ -24,7 +28,7 @@ Do the steps in order so `blog` never serves an indexable copy from two hosts at
 3. In **Settings → Pages**, set the custom domain to `blog.niradler.com` (replacing `writing.niradler.com`). Wait until the certificate is active, then **Enforce HTTPS**.
 4. Merge the single-domain PR. The deploy publishes the production build; confirm `https://blog.niradler.com/` serves `index, follow`, a self canonical, the sitemap at `/sitemap.xml`, and an article at its old slug with a 200.
 5. Remove the `writing` DNS record in Cloudflare and confirm `https://writing.niradler.com/` no longer resolves. If any links to `writing` exist worth preserving, add a Cloudflare 301 rule `writing.niradler.com/*` → `https://blog.niradler.com/$1` instead of deleting the record outright.
-6. Submit `https://blog.niradler.com/sitemap.xml` in Google Search Console.
+6. Submit `https://blog.niradler.com/sitemap.xml` in Google Search Console and Bing Webmaster Tools (Bing's index feeds ChatGPT search).
 7. The three old Hashnode paths in `lib/site.mjs` are HTML refresh pages because GitHub Pages cannot emit an HTTP 301 from this repo. If exact 301s matter for them, add three Cloudflare redirect rules for those paths.
 
 ## Rollback

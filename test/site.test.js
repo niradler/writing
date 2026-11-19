@@ -22,6 +22,8 @@ import {
 import { injectPostHeader, postHeaderHtml } from "../lib/header.mjs";
 import { parsePostHtml } from "../lib/hashnode.mjs";
 import {
+  renderLlmsFullTxt,
+  renderLlmsTxt,
   renderRedirect,
   renderRobots,
   renderRss,
@@ -263,10 +265,14 @@ describe("generated files", () => {
 
   it("blocks preview crawling and keeps production open", () => {
     assert.match(renderRobots(resolveSiteTarget("preview")), /Disallow: \//);
+    const productionRobots = renderRobots(resolveSiteTarget("production"));
     assert.match(
-      renderRobots(resolveSiteTarget("production")),
+      productionRobots,
       /Sitemap: https:\/\/blog\.niradler\.com\/sitemap\.xml/,
     );
+    assert.match(productionRobots, /User-agent: OAI-SearchBot/);
+    assert.match(productionRobots, /User-agent: PerplexityBot/);
+    assert.match(productionRobots, /User-agent: \*\nAllow: \//);
     const rss = renderRss(resolveSiteTarget("preview"), [
       {
         slug: "example",
@@ -294,5 +300,62 @@ describe("generated files", () => {
       redirect,
       /canonical" href="https:\/\/blog\.niradler\.com\/preparing-for-the-cka-exam-a-practical-guide"/,
     );
+  });
+
+  const geoPosts = [
+    {
+      slug: "published-example",
+      body: 'Intro text.\n\n![diagram](/media/published-example/diagram.png)\n\n[about](/page/about)\n\n<img src="/media/published-example/photo.jpg" alt="photo">\n\n```html\n<img src="/media/keep-verbatim.png">\n![fenced](/media/fenced.png)\n```\n',
+      data: {
+        title: "Published example",
+        description: "An example article.",
+        publishedAt: "2026-05-04T20:56:57.324Z",
+        updatedAt: "2026-05-05T20:56:57.324Z",
+        tags: ["ai"],
+        fixture: false,
+        draft: false,
+      },
+    },
+    {
+      slug: "hidden-draft",
+      body: "Draft body.",
+      data: {
+        title: "Hidden draft",
+        description: "Should not leak.",
+        publishedAt: "2026-06-04T20:56:57.324Z",
+        tags: [],
+        fixture: false,
+        draft: true,
+      },
+    },
+  ];
+
+  it("maps published posts for agents in llms.txt", () => {
+    const llms = renderLlmsTxt(resolveSiteTarget("production"), geoPosts);
+    assert.ok(llms.startsWith("# Piece by Piece"));
+    assert.match(
+      llms,
+      /- \[Published example\]\(https:\/\/blog\.niradler\.com\/published-example\): An example article\./,
+    );
+    assert.match(llms, /https:\/\/blog\.niradler\.com\/llms-full\.txt/);
+    assert.doesNotMatch(llms, /Hidden draft/);
+  });
+
+  it("exports full text with absolute media, leaving code fences verbatim", () => {
+    const full = renderLlmsFullTxt(resolveSiteTarget("production"), geoPosts);
+    assert.match(full, /# Published example/);
+    assert.match(full, /- URL: https:\/\/blog\.niradler\.com\/published-example/);
+    assert.match(
+      full,
+      /!\[diagram\]\(https:\/\/blog\.niradler\.com\/media\/published-example\/diagram\.png\)/,
+    );
+    assert.match(full, /\[about\]\(https:\/\/blog\.niradler\.com\/page\/about\)/);
+    assert.match(
+      full,
+      /src="https:\/\/blog\.niradler\.com\/media\/published-example\/photo\.jpg"/,
+    );
+    assert.match(full, /<img src="\/media\/keep-verbatim\.png">/);
+    assert.match(full, /!\[fenced\]\(\/media\/fenced\.png\)/);
+    assert.doesNotMatch(full, /Hidden draft/);
   });
 });

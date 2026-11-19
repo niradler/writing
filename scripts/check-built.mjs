@@ -6,6 +6,7 @@ import {
   REDIRECTS,
   GA_MEASUREMENT_ID,
   POSTHOG_API_KEY,
+  SITE_TITLE,
   resolveSiteTarget,
 } from "../lib/site.mjs";
 
@@ -116,6 +117,8 @@ else {
     errors.push("preview article is indexable");
   if (site.target === "production" && post.includes("noindex"))
     errors.push("production article is noindex");
+  if (!post.includes('"sameAs"'))
+    errors.push("article JSON-LD is missing author sameAs");
 }
 
 if (site.target === "production") {
@@ -190,6 +193,28 @@ if (
 if (sitemap.includes("fixtures/media")) errors.push("fixture leaked into the sitemap");
 if (site.target === "production" && !sitemap.includes("<lastmod>"))
   errors.push("production sitemap has no lastmod dates");
+
+const llms = await readFile(path.join(dist, "llms.txt"), "utf8");
+if (!llms.startsWith(`# ${SITE_TITLE}`))
+  errors.push("llms.txt is missing the site title");
+if (!llms.includes(`${site.origin}/postgres-already-is-your-backend`))
+  errors.push("llms.txt is missing the sample article");
+if (llms.includes("fixtures/media")) errors.push("fixture leaked into llms.txt");
+if (!llms.includes("/llms-full.txt"))
+  errors.push("llms.txt does not link the full text export");
+
+const llmsFull = await readFile(path.join(dist, "llms-full.txt"), "utf8");
+if (!llmsFull.includes("Postgres Already Is Your Backend"))
+  errors.push("llms-full.txt is missing the sample article");
+if (llmsFull.includes("fixtures/media"))
+  errors.push("fixture leaked into llms-full.txt");
+if (llmsFull.includes("](/media/"))
+  errors.push("llms-full.txt has root-relative media URLs");
+
+if (site.target === "production") {
+  if (!robots.includes("OAI-SearchBot") || !robots.includes("PerplexityBot"))
+    errors.push("robots.txt is missing the AI search crawler group");
+}
 
 for (const [from, to] of REDIRECTS) {
   const file = path.join(dist, `${from.slice(1)}.html`);
