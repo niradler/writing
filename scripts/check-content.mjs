@@ -66,8 +66,10 @@ for (const [, target] of REDIRECTS) {
 const inventory = JSON.parse(
   await readFile(path.join(root, "migration/inventory.json"), "utf8"),
 );
-if (inventory.completeness !== "unverified")
-  errors.push("inventory completeness was changed");
+if (inventory.completeness !== "verified")
+  errors.push("inventory completeness is not verified");
+if (!inventory.verification?.verifiedAt || !inventory.verification?.source)
+  errors.push("inventory is missing the verification record");
 if (inventory.failed?.length) errors.push("inventory contains failed imports");
 const inventorySlugs = new Set((inventory.written || []).map((item) => item.slug));
 const imported = posts.filter((post) => inventorySlugs.has(post.slug));

@@ -28,7 +28,7 @@ Do not add a `CNAME` file, change DNS, or point `blog.niradler.com` at this proj
 
 Use the author's published text. Do not invent a biography, an article, a date, a tag, or alt text. The about page is converted from <https://blog.niradler.com/page/about>. Posts come from each public `{slug}.md` export plus metadata on the HTML page.
 
-Keep the original slug, `publishedAt`, `updatedAt`, tags, series, and `originalUrl`. The Hashnode backup repository <https://github.com/niradler/hashnode> was not available. <https://github.com/niradler/hashnode-assets-backup> is the backup action, not an asset dump. The support export is still pending. `migration/inventory.json` stays `completeness: "unverified"` until that export is compared with this tree.
+Keep the original slug, `publishedAt`, `updatedAt`, tags, series, and `originalUrl`. The Hashnode backup repository <https://github.com/niradler/hashnode> holds the full backup (posts, drafts, assets); Nir compared it with this tree on 19 November 2026, and `migration/inventory.json` records that verification (`completeness: "verified"`). <https://github.com/niradler/hashnode-assets-backup> is the backup action, not an asset dump.
 
 `--update` is the only import mode that overwrites a post. A skipped existing file is intentional.
 

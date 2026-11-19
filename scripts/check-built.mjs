@@ -114,6 +114,18 @@ else {
     errors.push("production article is noindex");
 }
 
+if (site.target === "production") {
+  for (const page of ["search.html", "404.html"]) {
+    const file = path.join(dist, page);
+    if (!(await exists(file))) {
+      errors.push(`missing ${page}`);
+      continue;
+    }
+    const html = await readFile(file, "utf8");
+    if (!html.includes("noindex")) errors.push(`${page} should be noindex`);
+  }
+}
+
 const fixture = path.join(dist, "fixtures/media.html");
 if (!(await exists(fixture))) errors.push("missing media fixture");
 else {
@@ -172,6 +184,8 @@ if (
   errors.push("sitemap is missing the sample article");
 }
 if (sitemap.includes("fixtures/media")) errors.push("fixture leaked into the sitemap");
+if (site.target === "production" && !sitemap.includes("<lastmod>"))
+  errors.push("production sitemap has no lastmod dates");
 
 for (const [from, to] of REDIRECTS) {
   const file = path.join(dist, `${from.slice(1)}.html`);

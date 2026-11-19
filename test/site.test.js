@@ -20,7 +20,12 @@ import {
 } from "../lib/media.mjs";
 import { injectPostHeader, postHeaderHtml } from "../lib/header.mjs";
 import { parsePostHtml } from "../lib/hashnode.mjs";
-import { renderRedirect, renderRobots, renderRss } from "../lib/generate.mjs";
+import {
+  renderRedirect,
+  renderRobots,
+  renderRss,
+  renderSitemap,
+} from "../lib/generate.mjs";
 
 describe("site target", () => {
   it("serves the preview from its own domain and out of the index", () => {
@@ -69,8 +74,14 @@ describe("site target", () => {
         },
         site: production,
       }),
-      "https://niradler.com/getting-started-with-elk-stack/",
+      "https://blog.niradler.com/getting-started-with-elk-stack-by-building-uptime-monitor",
     );
+  });
+
+  it("keeps utility pages out of the index", () => {
+    const production = resolveSiteTarget("production");
+    assert.equal(robotsFor(production, {}), "index, follow");
+    assert.equal(robotsFor(production, { noindex: true }), "noindex, nofollow");
   });
 
   it("does not give a fixture the live blog canonical", () => {
@@ -231,6 +242,23 @@ describe("hashnode metadata", () => {
 });
 
 describe("generated files", () => {
+  it("stamps sitemap lastmod only where a date is known", () => {
+    const sitemap = renderSitemap(
+      resolveSiteTarget("production"),
+      ["/", "/example", "/tags"],
+      { "/": "2026-11-04", "/example": "2026-05-04" },
+    );
+    assert.match(
+      sitemap,
+      /<loc>https:\/\/blog\.niradler\.com\/example<\/loc><lastmod>2026-05-04<\/lastmod>/,
+    );
+    assert.match(
+      sitemap,
+      /<loc>https:\/\/blog\.niradler\.com\/<\/loc><lastmod>2026-11-04<\/lastmod>/,
+    );
+    assert.match(sitemap, /<loc>https:\/\/blog\.niradler\.com\/tags<\/loc><\/url>/);
+  });
+
   it("blocks preview crawling and keeps production open", () => {
     assert.match(renderRobots(resolveSiteTarget("preview")), /Disallow: \//);
     assert.match(
