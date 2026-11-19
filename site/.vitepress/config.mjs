@@ -5,7 +5,7 @@ import matter from "gray-matter";
 import { loadMarkdownDir } from "../../lib/content.mjs";
 import { generateBuildFiles } from "../../lib/generate.mjs";
 import { injectPostHeader, postHeaderHtml } from "../../lib/header.mjs";
-import { socialSrc, rewriteContentImages } from "../../lib/images.mjs";
+import { socialSize, socialSrc, rewriteContentImages } from "../../lib/images.mjs";
 import { prefixHtmlMedia } from "../../lib/media.mjs";
 import { readFileSync } from "node:fs";
 import {
@@ -13,6 +13,7 @@ import {
   SITE_AUTHOR,
   SITE_DESCRIPTION,
   SITE_TITLE,
+  analyticsHead,
   canonicalUrl,
   joinUrl,
   pagePathFromRelative,
@@ -145,6 +146,7 @@ export default defineConfig({
       const name = seriesList.find((item) => item.slug === slug)?.name || slug;
       pageData.title = name;
       pageData.frontmatter.title = name;
+      pageData.description = `Articles in the ${name} series.`;
     }
     if (pageData.relativePath === "index.md") {
       pageData.title = SITE_TITLE;
@@ -158,9 +160,11 @@ export default defineConfig({
     const canonical = canonicalUrl({ path: pagePath, frontmatter, site });
     const description =
       pageData.description || frontmatter.description || SITE_DESCRIPTION;
-    const image = absoluteImage(
-      socialSrc(loadImageManifest(), frontmatter.cover || "/brand/logo-light.png"),
-    );
+    const manifest = loadImageManifest();
+    const socialSource = frontmatter.cover || "/brand/logo-light.png";
+    const image = absoluteImage(socialSrc(manifest, socialSource));
+    const imageSize = socialSize(manifest.images?.[socialSource]);
+    const imageAlt = frontmatter.coverAlt || frontmatter.title || SITE_TITLE;
     const heads = [
       ["meta", { name: "robots", content: robotsFor(site, frontmatter) }],
       ["link", { rel: "canonical", href: canonical }],
@@ -182,7 +186,23 @@ export default defineConfig({
         },
       ],
       ["meta", { property: "og:image", content: image }],
-      ["meta", { name: "twitter:card", content: "summary_large_image" }],
+      ["meta", { property: "og:image:alt", content: imageAlt }],
+      ...(imageSize
+        ? [
+            ["meta", { property: "og:image:width", content: String(imageSize.width) }],
+            [
+              "meta",
+              { property: "og:image:height", content: String(imageSize.height) },
+            ],
+          ]
+        : []),
+      [
+        "meta",
+        {
+          name: "twitter:card",
+          content: frontmatter.publishedAt ? "summary_large_image" : "summary",
+        },
+      ],
       [
         "meta",
         {
@@ -192,7 +212,35 @@ export default defineConfig({
       ],
       ["meta", { name: "twitter:description", content: description }],
       ["meta", { name: "twitter:image", content: image }],
+      ["meta", { name: "twitter:image:alt", content: imageAlt }],
     ];
+    heads.push(...analyticsHead(frontmatter));
+    if (pagePath === "/") {
+      heads.push([
+        "script",
+        { type: "application/ld+json" },
+        JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Blog",
+          name: SITE_TITLE,
+          url: canonical,
+          description,
+          image,
+          author: {
+            "@type": "Person",
+            name: SITE_AUTHOR,
+            url: IDENTITY_LINKS.website,
+            sameAs: AUTHOR_SAME_AS,
+          },
+          publisher: {
+            "@type": "Organization",
+            name: SITE_TITLE,
+            url: canonical,
+            logo: { "@type": "ImageObject", url: image },
+          },
+        }),
+      ]);
+    }
     if (frontmatter.publishedAt) {
       heads.push([
         "meta",
@@ -220,7 +268,12 @@ export default defineConfig({
           description,
           datePublished: frontmatter.publishedAt,
           dateModified: frontmatter.updatedAt || frontmatter.publishedAt,
-          author: { "@type": "Person", name: SITE_AUTHOR, url: IDENTITY_LINKS.website },
+          author: {
+            "@type": "Person",
+            name: SITE_AUTHOR,
+            url: IDENTITY_LINKS.website,
+            sameAs: AUTHOR_SAME_AS,
+          },
           publisher: {
             "@type": "Organization",
             name: SITE_TITLE,
@@ -245,6 +298,14 @@ export default defineConfig({
 });
 
 const PRODUCTION_HOME = "https://blog.niradler.com/";
+
+// Author identity links help search and answer engines attribute the articles.
+const AUTHOR_SAME_AS = [
+  IDENTITY_LINKS.website,
+  IDENTITY_LINKS.github,
+  IDENTITY_LINKS.hashnode,
+  IDENTITY_LINKS.linkedin,
+];
 
 function loadImageManifest() {
   try {

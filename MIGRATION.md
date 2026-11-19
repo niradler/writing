@@ -1,8 +1,8 @@
 # Migration status
 
-Completeness is **unverified**.
+Completeness is **verified**.
 
-The public sitemap lists 54 posts. On 10 November 2026 its slugs matched `site/posts` exactly (54 of 54). Drafts and history are not in the public sitemap, so this is not a full backup until the support export is compared.
+The public sitemap lists 54 posts. On 10 November 2026 its slugs matched `site/posts` exactly (54 of 54). On 19 November 2026 Nir compared the Hashnode backup repository <https://github.com/niradler/hashnode> with this tree: all 54 published posts are present (one legacy duplicate file without frontmatter), and the backup's 33 drafts stay in the backup only. The comparison is recorded in `migration/inventory.json` under `verification`.
 
 ## What was available
 
@@ -14,10 +14,10 @@ The public sitemap lists 54 posts. On 10 November 2026 its slugs matched `site/p
 
 ## What was not available
 
-- <https://github.com/niradler/hashnode> was not found. The README in the first commit listed it as the content backup.
+- <https://github.com/niradler/hashnode> was missing when the site was assembled; it now holds the full backup (published posts, drafts, and assets) and was compared with this tree on 19 November 2026.
 - <https://github.com/niradler/hashnode-assets-backup> is a GitHub Action that rewrites Hashnode CDN links. The repository does not contain this blog's images.
 - Hashnode's GraphQL API now requires a paid publication plan. It was not called.
-- The full export requested from Hashnode support is still pending. Support was not contacted again.
+- The full export requested from Hashnode support never arrived; the backup repository above replaced it.
 
 ## What the importer does
 
@@ -27,10 +27,10 @@ Existing posts are left in place unless `--update` is passed. The script does no
 
 Descriptions that end in an ellipsis are Hashnode's truncated meta descriptions. They are stored as published, not rewritten.
 
-`migration/inventory.json` records the run and must keep `"completeness": "unverified"` until the support export is compared with this tree: post count, slugs, dates, edits, series, pages, and missing assets.
+`migration/inventory.json` records the run and the owner's verification of the backup against this tree: post count, slugs, dates, edits, series, pages, and missing assets. Keep `"completeness": "verified"` only while the `verification` record matches the tree; a new import run must re-verify.
 
 ## Not migrated
 
-Drafts, revision history, comments, reactions, the newsletter, view counts, and Hashnode analytics IDs are not copied. Analytics identifiers from the live page were intentionally left out.
+Drafts, revision history, comments, reactions, the newsletter, view counts, and Hashnode analytics IDs are not copied. The blog's own GA4 property (`G-BQ26N8LNFQ`) and PostHog project (US cloud, project 750300, public `phc_` key) are loaded on built pages through `transformHead`, so they run on the deployed site but not in local dev. Hashnode's platform trackers (its own GA ID and Plausible) and the interim Hotjar snippet were left out.
 
 A post whose image download fails keeps the remote URL and is listed in the inventory. Empty alt text is reported by `npm run audit:media` and is not replaced with generated text.

@@ -2,7 +2,11 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   articlePath,
+  analyticsHead,
   canonicalUrl,
+  GA_MEASUREMENT_ID,
+  POSTHOG_API_KEY,
+  POSTHOG_API_HOST,
   prefixRoot,
   resolveSiteTarget,
   robotsFor,
@@ -17,12 +21,19 @@ import {
 } from "../lib/media.mjs";
 import { injectPostHeader, postHeaderHtml } from "../lib/header.mjs";
 import { parsePostHtml } from "../lib/hashnode.mjs";
-import { renderRedirect, renderRobots, renderRss } from "../lib/generate.mjs";
+import {
+  renderLlmsFullTxt,
+  renderLlmsTxt,
+  renderRedirect,
+  renderRobots,
+  renderRss,
+  renderSitemap,
+} from "../lib/generate.mjs";
 
 describe("site target", () => {
-  it("serves the preview from its own domain and out of the index", () => {
+  it("keeps the staging build on the public origin and out of the index", () => {
     const site = resolveSiteTarget("preview");
-    assert.equal(site.origin, "https://writing.niradler.com");
+    assert.equal(site.origin, "https://blog.niradler.com");
     assert.equal(site.base, "/");
     assert.equal(site.robots, "noindex, nofollow");
     assert.equal(robotsFor(site, {}), "noindex, nofollow");
@@ -66,16 +77,45 @@ describe("site target", () => {
         },
         site: production,
       }),
-      "https://niradler.com/getting-started-with-elk-stack/",
+      "https://blog.niradler.com/getting-started-with-elk-stack-by-building-uptime-monitor",
     );
+  });
+
+  it("keeps utility pages out of the index", () => {
+    const production = resolveSiteTarget("production");
+    assert.equal(robotsFor(production, {}), "index, follow");
+    assert.equal(robotsFor(production, { noindex: true }), "noindex, nofollow");
   });
 
   it("does not give a fixture the live blog canonical", () => {
     const site = resolveSiteTarget("preview");
     assert.equal(
       canonicalUrl({ path: "/fixtures/media", frontmatter: { fixture: true }, site }),
-      "https://writing.niradler.com/fixtures/media",
+      "https://blog.niradler.com/fixtures/media",
     );
+  });
+});
+
+describe("analytics", () => {
+  it("loads the GA4 property on published pages", () => {
+    const heads = analyticsHead({});
+    assert.equal(heads.length, 3);
+    assert.equal(
+      heads[0][1].src,
+      `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`,
+    );
+    assert.ok(heads[1][2].includes(`gtag('config','${GA_MEASUREMENT_ID}')`));
+  });
+
+  it("loads the PostHog project on published pages", () => {
+    const heads = analyticsHead({});
+    assert.ok(heads[2][2].includes(`posthog.init('${POSTHOG_API_KEY}'`));
+    assert.ok(heads[2][2].includes(`api_host:'${POSTHOG_API_HOST}'`));
+    assert.ok(heads[2][2].includes("/static/array.js"));
+  });
+
+  it("keeps the rendering fixture out of analytics", () => {
+    assert.deepEqual(analyticsHead({ fixture: true }), []);
   });
 });
 
@@ -206,12 +246,33 @@ describe("hashnode metadata", () => {
 });
 
 describe("generated files", () => {
+  it("stamps sitemap lastmod only where a date is known", () => {
+    const sitemap = renderSitemap(
+      resolveSiteTarget("production"),
+      ["/", "/example", "/tags"],
+      { "/": "2026-11-04", "/example": "2026-05-04" },
+    );
+    assert.match(
+      sitemap,
+      /<loc>https:\/\/blog\.niradler\.com\/example<\/loc><lastmod>2026-05-04<\/lastmod>/,
+    );
+    assert.match(
+      sitemap,
+      /<loc>https:\/\/blog\.niradler\.com\/<\/loc><lastmod>2026-11-04<\/lastmod>/,
+    );
+    assert.match(sitemap, /<loc>https:\/\/blog\.niradler\.com\/tags<\/loc><\/url>/);
+  });
+
   it("blocks preview crawling and keeps production open", () => {
     assert.match(renderRobots(resolveSiteTarget("preview")), /Disallow: \//);
+    const productionRobots = renderRobots(resolveSiteTarget("production"));
     assert.match(
-      renderRobots(resolveSiteTarget("production")),
+      productionRobots,
       /Sitemap: https:\/\/blog\.niradler\.com\/sitemap\.xml/,
     );
+    assert.match(productionRobots, /User-agent: OAI-SearchBot/);
+    assert.match(productionRobots, /User-agent: PerplexityBot/);
+    assert.match(productionRobots, /User-agent: \*\nAllow: \//);
     const rss = renderRss(resolveSiteTarget("preview"), [
       {
         slug: "example",
@@ -226,7 +287,7 @@ describe("generated files", () => {
         },
       },
     ]);
-    assert.match(rss, /https:\/\/writing\.niradler\.com\/example/);
+    assert.match(rss, /https:\/\/blog\.niradler\.com\/example/);
     assert.match(rss, /Example &amp; title/);
     assert.doesNotMatch(rss, /<description>A <description>/);
     const redirect = renderRedirect(
@@ -239,5 +300,62 @@ describe("generated files", () => {
       redirect,
       /canonical" href="https:\/\/blog\.niradler\.com\/preparing-for-the-cka-exam-a-practical-guide"/,
     );
+  });
+
+  const geoPosts = [
+    {
+      slug: "published-example",
+      body: 'Intro text.\n\n![diagram](/media/published-example/diagram.png)\n\n[about](/page/about)\n\n<img src="/media/published-example/photo.jpg" alt="photo">\n\n```html\n<img src="/media/keep-verbatim.png">\n![fenced](/media/fenced.png)\n```\n',
+      data: {
+        title: "Published example",
+        description: "An example article.",
+        publishedAt: "2026-05-04T20:56:57.324Z",
+        updatedAt: "2026-05-05T20:56:57.324Z",
+        tags: ["ai"],
+        fixture: false,
+        draft: false,
+      },
+    },
+    {
+      slug: "hidden-draft",
+      body: "Draft body.",
+      data: {
+        title: "Hidden draft",
+        description: "Should not leak.",
+        publishedAt: "2026-06-04T20:56:57.324Z",
+        tags: [],
+        fixture: false,
+        draft: true,
+      },
+    },
+  ];
+
+  it("maps published posts for agents in llms.txt", () => {
+    const llms = renderLlmsTxt(resolveSiteTarget("production"), geoPosts);
+    assert.ok(llms.startsWith("# Piece by Piece"));
+    assert.match(
+      llms,
+      /- \[Published example\]\(https:\/\/blog\.niradler\.com\/published-example\): An example article\./,
+    );
+    assert.match(llms, /https:\/\/blog\.niradler\.com\/llms-full\.txt/);
+    assert.doesNotMatch(llms, /Hidden draft/);
+  });
+
+  it("exports full text with absolute media, leaving code fences verbatim", () => {
+    const full = renderLlmsFullTxt(resolveSiteTarget("production"), geoPosts);
+    assert.match(full, /# Published example/);
+    assert.match(full, /- URL: https:\/\/blog\.niradler\.com\/published-example/);
+    assert.match(
+      full,
+      /!\[diagram\]\(https:\/\/blog\.niradler\.com\/media\/published-example\/diagram\.png\)/,
+    );
+    assert.match(full, /\[about\]\(https:\/\/blog\.niradler\.com\/page\/about\)/);
+    assert.match(
+      full,
+      /src="https:\/\/blog\.niradler\.com\/media\/published-example\/photo\.jpg"/,
+    );
+    assert.match(full, /<img src="\/media\/keep-verbatim\.png">/);
+    assert.match(full, /!\[fenced\]\(\/media\/fenced\.png\)/);
+    assert.doesNotMatch(full, /Hidden draft/);
   });
 });

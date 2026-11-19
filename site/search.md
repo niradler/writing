@@ -1,6 +1,7 @@
 ---
 title: Search
 description: Search articles on Piece by Piece.
+noindex: true
 ---
 
 <script setup>
@@ -28,7 +29,7 @@ const results = computed(() => {
 
 <p>{{ results.length }} of {{ posts.length }} articles.</p>
 
-<ol class="post-list">
+<ol class="post-list plain">
   <li v-for="post in results" :key="post.url" class="entry">
     <div class="entry-main">
       <h2><a :href="post.url">{{ post.title }}</a></h2>

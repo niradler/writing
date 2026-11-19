@@ -20,7 +20,7 @@ npm run build
 npm run build:production
 ```
 
-`npm run build` writes the GitHub Pages site at <https://writing.niradler.com/>. `npm run build:production` writes the root-domain site for `blog.niradler.com`. CI checks both.
+`npm run build` writes the noindex staging build. `npm run build:production` writes the public site served at <https://blog.niradler.com/>. CI checks both; the deploy workflow publishes the production build.
 
 ## Publishing and migration
 

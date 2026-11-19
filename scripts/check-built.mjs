@@ -2,7 +2,13 @@ import { spawnSync } from "node:child_process";
 import { access, readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { REDIRECTS, resolveSiteTarget } from "../lib/site.mjs";
+import {
+  REDIRECTS,
+  GA_MEASUREMENT_ID,
+  POSTHOG_API_KEY,
+  SITE_TITLE,
+  resolveSiteTarget,
+} from "../lib/site.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const site = resolveSiteTarget(process.env.SITE_TARGET);
@@ -65,6 +71,10 @@ if (await exists(path.join(dist, "CNAME"))) errors.push("CNAME must not be publi
 const home = await readFile(path.join(dist, "index.html"), "utf8");
 if (!home.includes("Piece by Piece"))
   errors.push("home page is missing the site title");
+if (!home.includes(`gtag/js?id=${GA_MEASUREMENT_ID}`))
+  errors.push("home page is missing the analytics tag");
+if (!home.includes("posthog.init(") || !home.includes(POSTHOG_API_KEY))
+  errors.push("home page is missing the PostHog tag");
 if (!home.includes(site.robots)) errors.push(`home robots should be ${site.robots}`);
 const canonicalHome = home.match(/<link rel="canonical" href="([^"]+)"/)?.[1];
 if (site.target === "preview" && canonicalHome !== "https://blog.niradler.com/") {
@@ -92,6 +102,10 @@ else {
   const post = await readFile(postFile, "utf8");
   if (!post.includes("Postgres Already Is Your Backend"))
     errors.push("article title missing");
+  if (!post.includes('property="og:image:width"'))
+    errors.push("article is missing og:image dimensions");
+  if (!post.includes('name="twitter:image:alt"'))
+    errors.push("article is missing twitter:image:alt");
   if (
     !post.includes(
       'rel="canonical" href="https://blog.niradler.com/postgres-already-is-your-backend"',
@@ -103,6 +117,20 @@ else {
     errors.push("preview article is indexable");
   if (site.target === "production" && post.includes("noindex"))
     errors.push("production article is noindex");
+  if (!post.includes('"sameAs"'))
+    errors.push("article JSON-LD is missing author sameAs");
+}
+
+if (site.target === "production") {
+  for (const page of ["search.html", "404.html"]) {
+    const file = path.join(dist, page);
+    if (!(await exists(file))) {
+      errors.push(`missing ${page}`);
+      continue;
+    }
+    const html = await readFile(file, "utf8");
+    if (!html.includes("noindex")) errors.push(`${page} should be noindex`);
+  }
 }
 
 const fixture = path.join(dist, "fixtures/media.html");
@@ -163,6 +191,30 @@ if (
   errors.push("sitemap is missing the sample article");
 }
 if (sitemap.includes("fixtures/media")) errors.push("fixture leaked into the sitemap");
+if (site.target === "production" && !sitemap.includes("<lastmod>"))
+  errors.push("production sitemap has no lastmod dates");
+
+const llms = await readFile(path.join(dist, "llms.txt"), "utf8");
+if (!llms.startsWith(`# ${SITE_TITLE}`))
+  errors.push("llms.txt is missing the site title");
+if (!llms.includes(`${site.origin}/postgres-already-is-your-backend`))
+  errors.push("llms.txt is missing the sample article");
+if (llms.includes("fixtures/media")) errors.push("fixture leaked into llms.txt");
+if (!llms.includes("/llms-full.txt"))
+  errors.push("llms.txt does not link the full text export");
+
+const llmsFull = await readFile(path.join(dist, "llms-full.txt"), "utf8");
+if (!llmsFull.includes("Postgres Already Is Your Backend"))
+  errors.push("llms-full.txt is missing the sample article");
+if (llmsFull.includes("fixtures/media"))
+  errors.push("fixture leaked into llms-full.txt");
+if (llmsFull.includes("](/media/"))
+  errors.push("llms-full.txt has root-relative media URLs");
+
+if (site.target === "production") {
+  if (!robots.includes("OAI-SearchBot") || !robots.includes("PerplexityBot"))
+    errors.push("robots.txt is missing the AI search crawler group");
+}
 
 for (const [from, to] of REDIRECTS) {
   const file = path.join(dist, `${from.slice(1)}.html`);

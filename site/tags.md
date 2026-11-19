@@ -23,7 +23,6 @@ const tags = computed(() => {
 
 <ul class="tag-index">
   <li v-for="[tag, count] in tags" :key="tag">
-    <a :href="withBase(`/tag/${encodeURIComponent(tag)}`)">#{{ tag }}</a>
-    <span class="meta">{{ count }}</span>
+    <a :href="withBase(`/tag/${encodeURIComponent(tag)}`)">#{{ tag }} <span class="tag-count">{{ count }}</span></a>
   </li>
 </ul>
