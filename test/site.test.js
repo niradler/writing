@@ -5,7 +5,8 @@ import {
   analyticsHead,
   canonicalUrl,
   GA_MEASUREMENT_ID,
-  HOTJAR_SITE_ID,
+  POSTHOG_API_KEY,
+  POSTHOG_API_HOST,
   prefixRoot,
   resolveSiteTarget,
   robotsFor,
@@ -104,10 +105,11 @@ describe("analytics", () => {
     assert.ok(heads[1][2].includes(`gtag('config','${GA_MEASUREMENT_ID}')`));
   });
 
-  it("loads the Hotjar site on published pages", () => {
+  it("loads the PostHog project on published pages", () => {
     const heads = analyticsHead({});
-    assert.ok(heads[2][2].includes(`hjid:${HOTJAR_SITE_ID}`));
-    assert.ok(heads[2][2].includes("https://static.hotjar.com/c/hotjar-"));
+    assert.ok(heads[2][2].includes(`posthog.init('${POSTHOG_API_KEY}'`));
+    assert.ok(heads[2][2].includes(`api_host:'${POSTHOG_API_HOST}'`));
+    assert.ok(heads[2][2].includes("/static/array.js"));
   });
 
   it("keeps the rendering fixture out of analytics", () => {

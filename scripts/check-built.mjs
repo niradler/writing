@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import {
   REDIRECTS,
   GA_MEASUREMENT_ID,
-  HOTJAR_SITE_ID,
+  POSTHOG_API_KEY,
   resolveSiteTarget,
 } from "../lib/site.mjs";
 
@@ -72,8 +72,8 @@ if (!home.includes("Piece by Piece"))
   errors.push("home page is missing the site title");
 if (!home.includes(`gtag/js?id=${GA_MEASUREMENT_ID}`))
   errors.push("home page is missing the analytics tag");
-if (!home.includes(`hjid:${HOTJAR_SITE_ID}`))
-  errors.push("home page is missing the Hotjar tag");
+if (!home.includes("posthog.init(") || !home.includes(POSTHOG_API_KEY))
+  errors.push("home page is missing the PostHog tag");
 if (!home.includes(site.robots)) errors.push(`home robots should be ${site.robots}`);
 const canonicalHome = home.match(/<link rel="canonical" href="([^"]+)"/)?.[1];
 if (site.target === "preview" && canonicalHome !== "https://blog.niradler.com/") {
