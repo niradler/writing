@@ -165,6 +165,7 @@ function onKey(event) {
     closeMenu(true);
     return;
   }
+  if (event.key === "Escape") closeSeriesMenu();
   if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
     event.preventDefault();
     closeMenu(false);
@@ -183,6 +184,7 @@ onMounted(() => {
   media = window.matchMedia("(prefers-color-scheme: dark)");
   media.addEventListener?.("change", onMedia);
   window.addEventListener("keydown", onKey);
+  document.addEventListener("click", onDocumentClick);
   window.addEventListener("scroll", onOutlineScroll, { passive: true });
   window.addEventListener("hashchange", syncHash);
   window.addEventListener("popstate", syncHash);
@@ -195,6 +197,7 @@ onMounted(() => {
 onUnmounted(() => {
   media?.removeEventListener?.("change", onMedia);
   window.removeEventListener("keydown", onKey);
+  document.removeEventListener("click", onDocumentClick);
   window.removeEventListener("scroll", onOutlineScroll);
   window.removeEventListener("hashchange", syncHash);
   window.removeEventListener("popstate", syncHash);
@@ -205,6 +208,7 @@ watch(
   () => route.path,
   async () => {
     activeId.value = "";
+    closeSeriesMenu();
     await nextTick();
     collectOutline();
     syncHash();
@@ -213,6 +217,16 @@ watch(
 
 function onMedia() {
   if (mode.value === "system") applyTheme("system");
+}
+
+function closeSeriesMenu() {
+  const menu = document.querySelector(".series-menu");
+  if (menu?.open) menu.open = false;
+}
+
+function onDocumentClick(event) {
+  const menu = document.querySelector(".series-menu");
+  if (menu?.open && !menu.contains(event.target)) menu.open = false;
 }
 
 const year = new Date().getUTCFullYear();
