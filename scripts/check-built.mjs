@@ -3,6 +3,7 @@ import { access, readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  PRODUCTION_ORIGIN,
   REDIRECTS,
   GA_MEASUREMENT_ID,
   HOTJAR_SITE_ID,
@@ -76,11 +77,8 @@ if (!home.includes(`hjid:${HOTJAR_SITE_ID}`))
   errors.push("home page is missing the Hotjar tag");
 if (!home.includes(site.robots)) errors.push(`home robots should be ${site.robots}`);
 const canonicalHome = home.match(/<link rel="canonical" href="([^"]+)"/)?.[1];
-if (site.target === "preview" && canonicalHome !== "https://blog.niradler.com/") {
-  errors.push(`preview home canonical is ${canonicalHome}`);
-}
-if (site.target === "production" && canonicalHome !== "https://blog.niradler.com/") {
-  errors.push(`production home canonical is ${canonicalHome}`);
+if (canonicalHome !== `${PRODUCTION_ORIGIN}/`) {
+  errors.push(`home canonical is ${canonicalHome}`);
 }
 
 if (site.base !== "/") {
@@ -103,10 +101,10 @@ else {
     errors.push("article title missing");
   if (
     !post.includes(
-      'rel="canonical" href="https://blog.niradler.com/postgres-already-is-your-backend"',
+      `rel="canonical" href="${PRODUCTION_ORIGIN}/postgres-already-is-your-backend"`,
     )
   ) {
-    errors.push("article canonical is not the live slug");
+    errors.push("article canonical is not the production slug");
   }
   if (site.target === "preview" && !post.includes("noindex"))
     errors.push("preview article is indexable");

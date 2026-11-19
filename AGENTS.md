@@ -22,7 +22,7 @@ Node.js 24 and `npm ci`. Commit `package-lock.json` when dependencies change.
 - `npm run check:built` checks the site that `SITE_TARGET` selects. CI runs it for both builds.
 - `npm run import:hashnode` refreshes public articles. It skips files that already exist unless you pass `--update`.
 
-Do not add a `CNAME` file, change DNS, or point `blog.niradler.com` at this project. Preview pages are served at `writing.niradler.com` and send `noindex`.
+Do not add a `CNAME` file or attach `blog.niradler.com` to this project's Pages. After the cutover, `blog` 301-redirects to `writing.niradler.com` at Cloudflare. The preview build is a `noindex` staging build of the same origin and is not deployed; the deploy workflow publishes the production build.
 
 ## Content rules
 
@@ -46,12 +46,12 @@ Hashnode's `align="left"` suffix is rewritten out of the URL. Code fences are le
 
 `site/.vitepress/config.mjs` switches on `SITE_TARGET`:
 
-|                   | Preview                        | Production                  |
-| ----------------- | ------------------------------ | --------------------------- |
-| Origin            | `https://writing.niradler.com` | `https://blog.niradler.com` |
-| Base              | `/`                            | `/`                         |
-| Robots            | `noindex, nofollow`            | `index, follow`             |
-| Article canonical | the live `originalUrl`         | the same URL on this site   |
+|                   | Preview (staging, not deployed) | Production (deployed)          |
+| ----------------- | ------------------------------- | ------------------------------ |
+| Origin            | `https://writing.niradler.com`  | `https://writing.niradler.com` |
+| Base              | `/`                             | `/`                            |
+| Robots            | `noindex, nofollow`             | `index, follow`                |
+| Article canonical | the production URL on `writing` | the same URL on this site      |
 
 Root slugs are preserved with VitePress rewrites from `site/posts/*.md`. Series and tag URLs match the live site (`/series/<slug>`, `/tag/<slug>`). The about page stays at `/page/about`. Three old Hashnode paths redirect with HTML refresh pages because GitHub Pages cannot emit a custom HTTP 301 from this repo. See `REDIRECTS` in `lib/site.mjs`.
 

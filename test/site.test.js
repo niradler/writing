@@ -39,33 +39,28 @@ describe("site target", () => {
 
   it("uses the domain root in production and still hides fixtures", () => {
     const site = resolveSiteTarget("production");
+    assert.equal(site.origin, "https://writing.niradler.com");
     assert.equal(site.base, "/");
     assert.equal(site.robots, "index, follow");
     assert.equal(robotsFor(site, { fixture: true }), "noindex, nofollow");
   });
 
-  it("points preview article canonicals at the live slug", () => {
+  it("canonicals every page on the production origin for both targets", () => {
     const preview = resolveSiteTarget("preview");
     const production = resolveSiteTarget("production");
     const frontmatter = {
       originalUrl: "https://blog.niradler.com/postgres-already-is-your-backend",
     };
-    assert.equal(
-      canonicalUrl({
-        path: "/postgres-already-is-your-backend",
-        frontmatter,
-        site: preview,
-      }),
-      frontmatter.originalUrl,
-    );
-    assert.equal(
-      canonicalUrl({
-        path: "/postgres-already-is-your-backend",
-        frontmatter,
-        site: production,
-      }),
-      "https://blog.niradler.com/postgres-already-is-your-backend",
-    );
+    for (const site of [preview, production]) {
+      assert.equal(
+        canonicalUrl({
+          path: "/postgres-already-is-your-backend",
+          frontmatter,
+          site,
+        }),
+        "https://writing.niradler.com/postgres-already-is-your-backend",
+      );
+    }
     assert.equal(
       canonicalUrl({
         path: "/getting-started-with-elk-stack-by-building-uptime-monitor",
@@ -74,7 +69,7 @@ describe("site target", () => {
         },
         site: production,
       }),
-      "https://blog.niradler.com/getting-started-with-elk-stack-by-building-uptime-monitor",
+      "https://writing.niradler.com/getting-started-with-elk-stack-by-building-uptime-monitor",
     );
   });
 
@@ -250,20 +245,20 @@ describe("generated files", () => {
     );
     assert.match(
       sitemap,
-      /<loc>https:\/\/blog\.niradler\.com\/example<\/loc><lastmod>2026-05-04<\/lastmod>/,
+      /<loc>https:\/\/writing\.niradler\.com\/example<\/loc><lastmod>2026-05-04<\/lastmod>/,
     );
     assert.match(
       sitemap,
-      /<loc>https:\/\/blog\.niradler\.com\/<\/loc><lastmod>2026-11-04<\/lastmod>/,
+      /<loc>https:\/\/writing\.niradler\.com\/<\/loc><lastmod>2026-11-04<\/lastmod>/,
     );
-    assert.match(sitemap, /<loc>https:\/\/blog\.niradler\.com\/tags<\/loc><\/url>/);
+    assert.match(sitemap, /<loc>https:\/\/writing\.niradler\.com\/tags<\/loc><\/url>/);
   });
 
   it("blocks preview crawling and keeps production open", () => {
     assert.match(renderRobots(resolveSiteTarget("preview")), /Disallow: \//);
     assert.match(
       renderRobots(resolveSiteTarget("production")),
-      /Sitemap: https:\/\/blog\.niradler\.com\/sitemap\.xml/,
+      /Sitemap: https:\/\/writing\.niradler\.com\/sitemap\.xml/,
     );
     const rss = renderRss(resolveSiteTarget("preview"), [
       {
@@ -290,7 +285,7 @@ describe("generated files", () => {
     assert.match(redirect, /url=\/preparing-for-the-cka-exam-a-practical-guide/);
     assert.match(
       redirect,
-      /canonical" href="https:\/\/blog\.niradler\.com\/preparing-for-the-cka-exam-a-practical-guide"/,
+      /canonical" href="https:\/\/writing\.niradler\.com\/preparing-for-the-cka-exam-a-practical-guide"/,
     );
   });
 });

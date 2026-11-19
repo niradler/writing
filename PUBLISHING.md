@@ -1,58 +1,36 @@
 # Publishing
 
-The preview and the production site are two builds of the same sources. Only the preview is wired to GitHub Pages. The production build is there so canonical URLs, the root base, and indexing can be checked before anyone changes DNS.
+One public origin: `https://writing.niradler.com`, served by GitHub Pages (the custom domain is already set in **Settings → Pages**). Two builds of the same sources:
 
-## Preview
+- **Production** (`npm run build:production`, `dist-production/`): `index, follow`, self canonicals, sitemap and RSS on the public origin. This is what the deploy workflow publishes from `main`.
+- **Preview** (`npm run build`, `dist/`): `noindex, nofollow`, `robots.txt` disallows crawling, canonicals point at the production URLs. A staging build for local review and CI; it is not deployed.
 
-- Build command: `npm run build`
-- `SITE_TARGET` defaults to preview.
-- Origin: `https://writing.niradler.com`
-- Base: `/`
-- Every page, including articles, sends `noindex, nofollow`.
-- Article canonicals point at the current live URL on `https://blog.niradler.com/...` so a leaked preview does not become the canonical copy.
-- RSS and sitemap URLs use the preview host, because they describe the site that was just built. `robots.txt` disallows crawling.
-- The custom domain is set in **Settings → Pages**, not with a `CNAME` file. Pages deployed by a workflow ignore that file.
+`blog.niradler.com` is not attached to this project's Pages. After the cutover it permanently 301-redirects to `https://writing.niradler.com` at the Cloudflare layer, path-preserving. GitHub Pages supports one custom domain per site, so the redirect lives in Cloudflare, not here.
 
-GitHub Pages serves this project at <https://writing.niradler.com/>, and <https://niradler.github.io/writing/> redirects there. A push to `main` runs `.github/workflows/deploy.yml`. It uploads `dist/` and deploys with the GitHub Pages action. The build job has `contents: read`. Only the deploy job has `pages: write` and `id-token: write`.
+Do not add a `CNAME` file. Pages deployed by a workflow ignores it, and the custom domain is managed in Settings → Pages.
 
-### Custom domain
+## Deploy
 
-1. Cloudflare DNS for `niradler.com`: `CNAME` record, name `writing`, target `niradler.github.io`, proxy status **DNS only**.
-2. **Settings → Pages**: source **GitHub Actions**, custom domain `writing.niradler.com`, **Enforce HTTPS** once the certificate is issued.
-3. Open <https://writing.niradler.com/> and check the home page, one article, an image, and RSS at `/rss.xml`.
+A push to `main` runs `.github/workflows/deploy.yml`: it builds the production target, runs `SITE_TARGET=production npm run check:built`, uploads `dist-production/`, and deploys with the GitHub Pages action. The build job has `contents: read`; only the deploy job has `pages: write` and `id-token: write`.
 
-## Production build
+## Cutover from Hashnode
 
-`npm run build:production` writes `dist-production/` with:
+The backup is complete: Nir compared <https://github.com/niradler/hashnode> with `site/posts` on 19 November 2026, and `migration/inventory.json` is marked `verified` with that record.
 
-- Origin `https://blog.niradler.com`
-- Base `/`
-- `index, follow`, except the media fixture, which stays `noindex`
-- Self canonicals on `https://blog.niradler.com`
-- Sitemap at `https://blog.niradler.com/sitemap.xml`
+1. Merge the production-readiness PR, then the domain-flip PR (the flip switches the deploy workflow to the production build in the same change as the origin).
+2. Wait for the deploy, then confirm `https://writing.niradler.com/` serves `index, follow`, a self canonical, the sitemap at `/sitemap.xml`, and an article at its old slug with a 200.
+3. In Cloudflare DNS for `niradler.com`, point `blog` at a proxied record and add a redirect rule: `blog.niradler.com/*` → `https://writing.niradler.com/$1`, status **301**, preserve path and query. Lower the TTL ahead of the change if the record is DNS-only today.
+4. In Hashnode, remove the publication's custom-domain claim on `blog.niradler.com` so it cannot recapture the host. Keep the Hashnode publication and the backup repositories as archives.
+5. Confirm `https://blog.niradler.com/<slug>` returns a 301 to the same slug on `writing`, and that Google Search Console can fetch the production sitemap. Submit the sitemap there if the property is new.
+6. The three old Hashnode paths in `lib/site.mjs` are HTML refresh pages because GitHub Pages cannot emit an HTTP 301 from this repo. If exact 301s matter for them, add three more Cloudflare redirect rules for those paths.
 
-Do not upload this directory, and do not point the deploy workflow at it, until the gates below are finished.
-
-## Cutover
-
-Do this only after a complete backup and an explicit decision to move `blog.niradler.com`. The backup is complete: Nir compared <https://github.com/niradler/hashnode> with `site/posts` on 19 November 2026, and `migration/inventory.json` is marked `verified` with that record.
-
-1. Compare the support export with the sitemap count, slugs, dates, tags, series, and `migration/media-sources.json`. Repair anything the public `.md` export missed. Do not overwrite a post silently.
-2. Build the preview and read it at <https://writing.niradler.com/>. Check articles, images, code blocks, the YouTube and Slides embeds, archive, tags, series, search, and the about page on a phone-width window and a desktop window.
-3. Run `npm run build:production` and `SITE_TARGET=production npm run check:built`. Confirm there is still no `CNAME` in the preview deploy.
-4. Choose the hosting change. GitHub Pages can serve the custom domain, but adding the domain in **Settings → Pages**, or committing `CNAME` containing `blog.niradler.com`, attaches the domain. Do not do that until the checks above pass.
-5. Lower the DNS TTL for `blog.niradler.com` ahead of the change.
-6. When ready, set the Pages custom domain to `blog.niradler.com` and add the `CNAME` file in the published site only for that cutover. Create the DNS records GitHub shows for the domain. Wait until the Pages certificate is active.
-7. Switch the deploy workflow's build to `npm run build:production` and its artifact to `dist-production` in the same change as the domain, so the host that owns `blog.niradler.com` is serving root URLs and indexable pages.
-8. Request HTTPS and confirm `https://blog.niradler.com/<slug>` matches the old slug, returns 200, and uses a self canonical. Confirm `https://writing.niradler.com/` is either left as a noindex preview or retired on purpose. This repository does not redirect the preview to the live domain.
-9. Old Hashnode paths listed in `lib/site.mjs` are HTML refresh pages. GitHub Pages will not send an HTTP 301 for them. If a 301 is required, add it at the DNS or proxy layer.
-10. After traffic is stable, remove the Hashnode publication's claim on the domain so it does not recapture it. Keep the source backups.
+While Hashnode still answers on `blog` and the production build is live on `writing`, both hosts briefly serve indexable copies. That window closes when the redirect and the claim release land; keep it short.
 
 ## Rollback
 
-1. Point `blog.niradler.com` DNS back to Hashnode's records.
-2. Remove the custom domain from GitHub Pages and delete `CNAME` so Pages stops answering for that host.
-3. Put the deploy workflow back on `npm run build` and `dist/`, with preview `noindex`.
-4. Confirm <https://blog.niradler.com/> is the Hashnode site again and <https://writing.niradler.com/> still does not redirect.
+1. Revert the deploy workflow to `npm run build` and `dist/` (the noindex preview) and push, so `writing` stops serving indexable pages.
+2. Remove the Cloudflare redirect rule and point `blog` DNS back at Hashnode's records.
+3. Restore the Hashnode custom-domain claim if it was released.
+4. Confirm `https://blog.niradler.com/` is the Hashnode site again and `https://writing.niradler.com/` is the noindex staging build.
 
-No paid host, analytics property, or secret is required to build or preview the site.
+No paid host, analytics property, or secret is required to build or preview the site. GA4 and Hotjar load on built pages only (see `MIGRATION.md`).

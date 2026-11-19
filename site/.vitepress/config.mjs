@@ -278,7 +278,7 @@ export default defineConfig({
   },
 });
 
-const PRODUCTION_HOME = "https://blog.niradler.com/";
+const PRODUCTION_HOME = "https://writing.niradler.com/";
 
 function loadImageManifest() {
   try {
