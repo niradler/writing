@@ -1,3 +1,0 @@
-Fixed annotation transforms in [query.py](/private/tmp/agent-race2/runs/37330/codex-blind-1/repo/django/db/models/sql/query.py:2289). Selection now applies transforms to the annotation expression, so unbound output fields work and computed annotations produce the intended value.
-
-The `annotations` and `queries` suites passed: 607 tests, with 17 skipped and one expected failure. Direct regression checks also passed for wrapped fields, constant dates, grouping, chained selections, and invalid transforms.

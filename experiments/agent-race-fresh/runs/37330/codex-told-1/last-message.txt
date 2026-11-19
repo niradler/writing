@@ -1,3 +1,0 @@
-Fixed annotation transforms in [query.py](/private/tmp/agent-race2/runs/37330/codex-told-1/repo/django/db/models/sql/query.py:1942). They now wrap the annotation expression instead of treating its output field as a database column.
-
-Verified the reported `F()`, `ExpressionWrapper()`, and `Value()` cases, including grouped queries and invalid transforms. The annotations suite and 917 expression, ordering, query, and lookup tests passed.

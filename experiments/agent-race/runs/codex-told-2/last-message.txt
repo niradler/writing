@@ -1,3 +1,0 @@
-Sliced `Prefetch` querysets now limit related objects per parent for reverse foreign keys and many-to-many relations. The implementation uses window functions and raises `NotSupportedError` on backends that don’t support them. The behavior is documented in the queryset reference and Django 4.2 release notes.
-
-The `prefetch_related` test suite passed. Additional temporary checks passed for slice offsets, related-manager caching, `to_attr`, and unsupported backends.

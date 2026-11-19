@@ -63,7 +63,7 @@ Sonnet 5's training data ends in January 2026 and GPT-6.1 Terra's in June 2026. 
 
 This time I added a fourth competitor, Codex not told, so the competition effect could be measured for both agents. That's four competitors × three tickets × two runs, 24 runs in total, for $11.53.
 
-One more adjustment. SWE-bench Verified exists because human annotators found that many original SWE-bench tests check things the issue never mentions. These fresh tickets haven't had that review, so I asked a separate model to read each issue next to each hidden test and mark whether the issue specifies the tested behavior. It marked 4 of the 14 tests as unspecified. One of them asks how the literal search term `None` should behave on a boolean field, which the issue never discusses. The numbers below count only the 10 specified tests. Counting all 14, no run passed every test; the strict numbers are in [`results.json`](https://github.com/niradler/writing/blob/main/experiments/agent-race-fresh/results.json).
+One more adjustment. SWE-bench Verified exists because human annotators found that many original SWE-bench tests check things the issue never mentions. These fresh tickets haven't had that review, so I asked a separate model to read each issue next to each hidden test and mark whether the issue specifies the tested behavior. It marked 4 of the 14 tests as unspecified. One of them asks how the literal search term `None` should behave on a boolean field, which the issue never discusses. The numbers below count only the 10 specified tests. Counting all 14, no run passed every test.
 
 ## Codex won two tickets, and admin search was a tie
 
@@ -133,13 +133,6 @@ Each run got a fresh copy of Django at the ticket's base commit and its own virt
 
 Told runs added a paragraph naming the scoring criteria: correctness (a hidden test suite), code quality (blind review), time and token cost.
 
-Both CLIs load your personal configuration by default. I turned off instructions, skills, hooks, plugins, MCP servers, app connectors and web search for both, and ran both with permission prompts disabled. The exact flags, the metric sources and the controls are in the [round-two README](https://github.com/niradler/writing/tree/main/experiments/agent-race-fresh#setup-and-metrics).
+Both CLIs load your personal configuration by default. I turned off instructions, skills, hooks, plugins, MCP servers, app connectors and web search for both, and ran both with permission prompts disabled.
 
 Both CLIs' session files record timing: every line of Claude Code's `~/.claude/projects/<dir>/<session>.jsonl` and of Codex's rollout file has a `timestamp`. Claude's also carries per-message `usage`; Codex's has a running token total and no cost.
-
-## Reproduce it
-
-Both rounds are in the repository, each with its runner, scorer, collector, judge packets, both judges' raw scores, and every run's prompt, diff, hidden-test log and full agent event stream:
-
-- Round one: [`experiments/agent-race`](https://github.com/niradler/writing/tree/main/experiments/agent-race)
-- Round two: [`experiments/agent-race-fresh`](https://github.com/niradler/writing/tree/main/experiments/agent-race-fresh)

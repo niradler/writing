@@ -1,3 +1,0 @@
-Fixed admin changelist searches in [options.py](/private/tmp/agent-race2/runs/37263/codex-told-1/repo/django/contrib/admin/options.py). Non-text exact searches now validate choice values against the model field, and boolean searches reject arbitrary text instead of treating it as `True`.
-
-Both `admin_changelist` and `admin_views` test modules passed. Direct database checks also passed for the reported choice and boolean cases.

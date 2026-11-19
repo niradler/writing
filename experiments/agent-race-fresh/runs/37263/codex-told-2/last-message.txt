@@ -1,3 +1,0 @@
-Updated [admin search conversion](/private/tmp/agent-race2/runs/37263/codex-told-2/repo/django/contrib/admin/options.py:1360) so invalid terms are skipped for non-text fields with choices and arbitrary text no longer matches Boolean fields as `True`. Valid stored values remain searchable even if they are absent from the current choices.
-
-The `admin_changelist` suite passed: 100 tests, with 10 skipped. Direct checks of choice and Boolean searches also passed.

@@ -1,3 +1,0 @@
-Fixed chained permission renames in [auth management](/private/tmp/agent-race2/runs/37361/codex-blind-2/repo/django/contrib/auth/management/__init__.py). Rename steps now run in order within a transaction, and reverse migrations process operations in reverse order. A conflict rolls back the entire chain.
-
-The 77 existing auth management tests passed. A focused check also passed for forward and reverse chains and conflict rollback.

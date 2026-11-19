@@ -1,1 +1,0 @@
-["codex", "exec", "--skip-git-repo-check", "-m", "gpt-6.1-terra", "-c", "model_reasoning_effort=high", "-c", "web_search=\"disabled\"", "-c", "features.apps=false", "--dangerously-bypass-approvals-and-sandbox", "--json", "-o", "/tmp/agent-race2/runs/37330/codex-told-2/last-message.txt", "-"]

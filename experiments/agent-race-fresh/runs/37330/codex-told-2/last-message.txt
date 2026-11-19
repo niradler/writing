@@ -1,3 +1,0 @@
-Fixed transforms on annotation aliases in [query.py](/private/tmp/agent-race2/runs/37330/codex-told-2/repo/django/db/models/sql/query.py:2288). Selection now applies the transform to the annotation expression, so an output field does not need to be attached to a model.
-
-The `annotations`, `aggregation`, and `queries` test modules passed. I also checked the reported expression variants, grouped and chained `values()` queries, and invalid transforms.
