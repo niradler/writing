@@ -34,4 +34,4 @@ Do the steps in order so `blog` never serves an indexable copy from two hosts at
 3. Remove the Pages custom domain so Pages stops answering for `blog`.
 4. Confirm `https://blog.niradler.com/` is the Hashnode site again.
 
-No paid host, analytics property, or secret is required to build or preview the site. GA4 and Hotjar load on built pages only (see `MIGRATION.md`).
+No paid host, analytics property, or secret is required to build or preview the site. GA4 and PostHog load on built pages only (see `MIGRATION.md`).
