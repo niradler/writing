@@ -75,4 +75,31 @@ describe("home views", () => {
   it("keeps the tag count inside the tag pill", () => {
     assert.match(css, /\.tag-count\s*\{[^}]*color:\s*var\(--muted\)/s);
   });
+
+  it("rounds the toggle ends so the pressed background keeps the corner", () => {
+    assert.match(
+      css,
+      /\.view-toggle button:first-child\s*\{[^}]*border-radius:\s*7px 0 0 7px/s,
+    );
+    assert.match(
+      css,
+      /\.view-toggle button:last-child\s*\{[^}]*border-radius:\s*0 7px 7px 0/s,
+    );
+  });
+
+  it("hides the outline scrollbar but keeps the rail scrollable", () => {
+    assert.match(
+      css,
+      /\.outline-desktop\s*\{[^}]*overflow:\s*auto[^}]*scrollbar-width:\s*none/s,
+    );
+    assert.match(css, /\.outline-desktop::-webkit-scrollbar\s*\{[^}]*display:\s*none/s);
+  });
+
+  it("lays the post pager out side by side on wide screens", () => {
+    assert.match(
+      css,
+      /@media \(min-width:\s*720px\)\s*\{[\s\S]*\.pager\s*\{[^}]*flex-direction:\s*row/,
+    );
+    assert.match(css, /\.pager a \+ a\s*\{[^}]*margin-left:\s*auto/s);
+  });
 });

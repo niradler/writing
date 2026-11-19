@@ -124,7 +124,13 @@ try {
           const mobile = document.querySelector(".outline-mobile");
           const box = (element) => {
             const rect = element.getBoundingClientRect();
-            return { left: rect.left, right: rect.right, width: rect.width };
+            return {
+              left: rect.left,
+              right: rect.right,
+              width: rect.width,
+              top: rect.top,
+              bottom: rect.bottom,
+            };
           };
           const railShown = rail && getComputedStyle(rail).display !== "none";
           const style = frame ? getComputedStyle(frame) : null;
@@ -138,6 +144,7 @@ try {
             cover: cover ? box(cover) : null,
             paragraph: paragraph ? box(paragraph) : null,
             rail: railShown ? box(rail) : null,
+            pager: [...document.querySelectorAll(".pager a")].map(box),
             mobile: Boolean(mobile),
             mobileDisplay: mobile ? getComputedStyle(mobile).display : "absent",
             mobileOpen: Boolean(mobile?.open),
@@ -249,6 +256,14 @@ try {
             fail(`${label} list view did not replace the grid`);
           }
           await page.locator('.view-toggle button[aria-pressed="false"]').click();
+          if (width >= 960) {
+            await page.locator(".series-menu summary").click();
+            if (!(await page.locator(".series-menu").evaluate((el) => el.open)))
+              fail(`${label} series menu did not open`);
+            await page.locator(".home-count").click();
+            if (await page.locator(".series-menu").evaluate((el) => el.open))
+              fail(`${label} series menu stays open after an outside click`);
+          }
         } else {
           if (!measure.h1 || !measure.brand || !measure.frame) {
             fail(`${label} missing layout boxes`);
@@ -275,6 +290,16 @@ try {
           if (measure.h1.width > 820)
             fail(`${label} heading is ${measure.h1.width}px wide`);
           if (measure.outlineCount) fail(`${label} shows an article outline`);
+        }
+        if (name === "specialist" && measure.pager?.length === 2) {
+          const [newer, older] = measure.pager;
+          if (width >= 720) {
+            if (Math.abs(newer.top - older.top) > 2)
+              fail(`${label} pager is not side by side`);
+            if (older.left < newer.right) fail(`${label} pager links overlap`);
+          } else if (older.top < newer.bottom - 2) {
+            fail(`${label} pager is not stacked`);
+          }
         }
         if (name === "specialist" && measure.post) {
           samples.push({

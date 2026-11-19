@@ -28,9 +28,9 @@ import {
 } from "../lib/generate.mjs";
 
 describe("site target", () => {
-  it("serves the preview from its own domain and out of the index", () => {
+  it("keeps the staging build on the public origin and out of the index", () => {
     const site = resolveSiteTarget("preview");
-    assert.equal(site.origin, "https://writing.niradler.com");
+    assert.equal(site.origin, "https://blog.niradler.com");
     assert.equal(site.base, "/");
     assert.equal(site.robots, "noindex, nofollow");
     assert.equal(robotsFor(site, {}), "noindex, nofollow");
@@ -88,7 +88,7 @@ describe("site target", () => {
     const site = resolveSiteTarget("preview");
     assert.equal(
       canonicalUrl({ path: "/fixtures/media", frontmatter: { fixture: true }, site }),
-      "https://writing.niradler.com/fixtures/media",
+      "https://blog.niradler.com/fixtures/media",
     );
   });
 });
@@ -279,7 +279,7 @@ describe("generated files", () => {
         },
       },
     ]);
-    assert.match(rss, /https:\/\/writing\.niradler\.com\/example/);
+    assert.match(rss, /https:\/\/blog\.niradler\.com\/example/);
     assert.match(rss, /Example &amp; title/);
     assert.doesNotMatch(rss, /<description>A <description>/);
     const redirect = renderRedirect(

@@ -723,6 +723,14 @@ html.dark .shiki span {
   border-left: 1px solid var(--border);
 }
 
+.view-toggle button:first-child {
+  border-radius: 7px 0 0 7px;
+}
+
+.view-toggle button:last-child {
+  border-radius: 0 7px 7px 0;
+}
+
 .view-toggle button[aria-pressed="true"] {
   background: var(--selected);
   color: var(--text);
@@ -950,6 +958,7 @@ html.dark .shiki span {
 }
 
 .pager a {
+  min-width: 0;
   font-weight: 500;
 }
 
@@ -1021,6 +1030,22 @@ html.dark .shiki span {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 3rem 2.5rem;
   }
+
+  .pager {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 1.25rem;
+  }
+
+  .pager a {
+    flex: 0 1 auto;
+    max-width: 48%;
+  }
+
+  .pager a + a {
+    margin-left: auto;
+    text-align: right;
+  }
 }
 
 @media (max-width: 420px) {
@@ -1069,6 +1094,11 @@ html.dark .shiki span {
     top: var(--header-offset, 5.75rem);
     max-height: calc(100vh - var(--header-offset, 5.75rem) - 1.5rem);
     overflow: auto;
+    scrollbar-width: none;
+  }
+
+  .outline-desktop::-webkit-scrollbar {
+    display: none;
   }
 }
 
