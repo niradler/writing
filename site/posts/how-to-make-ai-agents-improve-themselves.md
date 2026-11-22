@@ -36,13 +36,11 @@ The idea is in the air. Software factories ([Dan Shapiro's five levels](https://
 
 The new production runs feed step 1, and the next round starts.
 
-## Two loops we ran
+## A loop we ran: making an RCA agent faster
 
-These are from our own agents, not a toy. In both, the student agent ran on a cheaper model, a coach agent on Opus proposed the changes, and a separate model applied them (once, by hand).
+This one is from our own agents, not a toy. The student ran on a cheaper model, a coach agent on Opus proposed the changes, and a separate model applied them.
 
-### Making an RCA agent faster on Cloud-OpsBench
-
-The agent investigates Kubernetes incidents. The objective was speed: mean seconds per investigation, with two limits written down before the first run - accuracy must not drop beyond its noise, cost must not rise beyond its noise. The student was Haiku 4.5. The cases were split into train, validation and a test tier nobody looked at until the end.
+The agent investigates Kubernetes incidents, and the benchmark was Cloud-OpsBench. The objective was speed: mean seconds per investigation, with two limits written down before the first run - accuracy must not drop beyond its noise, cost must not rise beyond its noise. The student was Haiku 4.5. The cases were split into train, validation and a test tier nobody looked at until the end.
 
 The coach read the baseline's transcripts and described the student like a coach describes an athlete: it runs in two speeds, and the slow runs are mostly the wrong ones; once it is lost it keeps investigating instead of stopping; it speculates past a cause it already found; it writes long shell loops that hit the two-minute tool timeout.
 
@@ -56,20 +54,6 @@ The first coach ran four rounds. One was kept (-39% time on train, -46% on valid
 | Correct runs | 7/10 | 7/10 |
 
 Same accuracy, a bit more than a third faster, a bit less than half the cost. Five test cases is small, and the speed is measured on recorded tool results, so it counts model turns and tool calls, not real cluster latency.
-
-### Catching an accuracy gain that wasn't real
-
-The second loop tried to make a bare Claude Code agent with a one-line prompt more accurate, on 31 incident cases captured from its own runs, each with an expected outcome.
-
-Before changing anything we ran the baseline twice. It scored 20/31 and 21/31, and 5 cases flipped between the runs. That put the smallest detectable gain at 14 points. Most teams skip this step and would have promoted anything above 1.
-
-- **Round 1: reverted.** The coach added an RCA procedure and an answer template. Accuracy moved 1.6 points, inside the band. Time dropped 23%, beyond its band, and the loop still reverted it: speed was not the objective.
-- **Round 2: kept, then caught.** A better coach proposed a decision record at the top of the answer. Accuracy jumped 19 points, beyond the band. On 16 fresh cases written by an agent that knew nothing about the coach, it was +16 points: same direction, but inside that smaller set's noise, a sign test at p ≈ 0.38. Reading the transcripts explained why. The grader's partial-credit reasons described the expected answer's shape, and the coach had learned the grader, not the job.
-- **Round 3: reverted.** We cut the coach off from the grader and gave it a critic that never sees the expected answer. Nothing leaked, accuracy stayed inside the band, and cost rose 37-55%. Reverted.
-
-![Animated bars: on the 31 cases the coach saw, +19 points beats a 14 point noise band; on 16 fresh cases, +16 points stays inside a 20 point band](/media/how-to-make-ai-agents-improve-themselves/seen-vs-fresh.svg)
-
-The real finding was not a better agent. The benchmark graded rules the agent's one-line prompt never told it, so the next step was to write the agent's job contract down and measure a new baseline. A loop that cannot get better is often telling you the test is wrong.
 
 If you want to watch the whole cycle on your laptop, the smallest version is public: [komodorio/hello-world-continual-learning](https://github.com/komodorio/hello-world-continual-learning), a teacher, a student, a grader and a coach on four support tickets.
 
@@ -94,24 +78,26 @@ A good loop also knows when it needs help, and asks for exactly that while every
 
 One flagged agent waits for an answer. The others keep improving. The human sets the objective, the limits and the budget once, reads the changelog, and answers the flags.
 
-## What makes it work
+## What works, and how to do it
 
-1. **Write the outcome first.** One sentence a domain expert would sign, turned into a checklist scored item by item. Averaging a correct decision with a friendly tone lets a wrong answer pass.
-2. **Take labels from work people already do.** Approvals and edits beat a labeling project nobody staffs.
-3. **Measure the noise before you improve anything.** Run the same agent twice on the same cases and look at the spread. Five of 31 cases flipping between two identical runs is normal. Without the band you promote luck.
-4. **Keep a hold-out you read once.** A coach can learn the grader instead of the job. Our 19-point gain shrank into the noise on fresh cases.
-5. **Score the agent, not a proxy.** We watched validation loss improve while the agent's score dropped below the base model.
-6. **Score like upstream does.** If a benchmark counts a timeout as a failure, so do you. Dropping timeouts as "infra" made our numbers look better than they were.
-7. **Change one thing, as a revision.** Every change is a new version you can diff, replay, shadow and roll back.
-8. **Make something try to disprove the result.** A blind judge, and a hold-out the coach never sees. Whatever proposes the change never grades it.
-9. **Shadow before live, with side effects off.** A shadow agent must not restart a pod or post to Slack twice.
-10. **Spend human time on the validation, then let go.**
+This is what we think makes an autonomous self-improvement factory work. Each point comes with how to do it, and with evidence from other teams building the same kind of factory, not only ours.
+
+1. **Grade the outcome, item by item.** Write the outcome in one sentence a domain expert would sign, turn it into a checklist, and score each item separately. Averaging a correct decision with a friendly tone lets a wrong answer pass. Anthropic's [guide to agent evals](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents) makes the same call: grade what the agent produced, not the path it took.
+2. **Start from real runs and real failures.** Record traces, and treat every approval, edit or rejection by a person as a label. Every failure becomes a permanent regression case. Anthropic suggests starting with 20-50 tasks taken from real failures. LangChain puts it as "in AI, the traces" [document the app](https://www.langchain.com/blog/traces-start-agent-improvement-loop). OpenAI's Performance Factory evaluates its agents with backtests against past incidents.
+3. **Measure the noise before you improve anything.** Run the baseline more than once on the same cases, and keep a change only if its gain clears that spread. Agents are less repeatable than they look: by Anthropic's arithmetic, an agent that succeeds 75% of the time on a task succeeds on all three of three tries only about 42% of the time. In our speed run, two rounds of seven cleared the band.
+4. **Hold out what the improver never sees.** Keep a test tier outside the loop and read it once, at the end. StrongDM keeps its scenarios [outside the codebase](https://factory.strongdm.ai/), like a hold-out set, so agents cannot pass by writing tests that [assert true](https://simonwillison.net/2026/Feb/7/software-factory/). Our speed result above is the test tier, read once.
+5. **The one who proposes never grades, and someone tries to disprove it.** Split the coach from the judge, and add an adversary. Google's [agent quality flywheel](https://developers.googleblog.com/driving-the-agent-quality-flywheel-from-your-coding-agent/) never lets the optimizer grade its own fix. OpenAI runs a separate Codex session whose job is to disprove each diagnosis.
+6. **Check the grader against people.** A model judge drifts, and its partial-credit reasons can leak the answer to whatever is learning from them. Compare it with human verdicts on a sample, and trust deltas more than absolute scores. When OpenAI hand-graded 100 of its agents' root causes, 70% were accurate.
+7. **Score the agent the way the world will.** If a benchmark counts a timeout as a failure, so do you. We dropped timeouts as "infra" once and our numbers looked better than they were. And score the agent, not a proxy: we watched validation loss improve while the agent got worse.
+8. **Change one thing, as a version in git.** The agent's prompt, skills, tools and model live in version control, and every change is a new revision you can diff, replay, shadow and roll back. Warp lists configuration kept outside git as a reason [self-improvement loops fail](https://www.warp.dev/articles/self-improvement-loop-software-factory): there is nothing to diff.
+9. **Shadow before live, with side effects off.** A shadow agent must not restart a pod or post to Slack twice. StrongDM goes further and tests against agent-built behavioral clones of Okta, Jira and Slack.
+10. **Write down where a human is needed, and automate the rest.** OpenAI's workflow configuration lists which steps need an engineer. A loop with scorers but no improver is, in Warp's words, a dashboard. Spend human time on the validation, then let go.
 
 ## The hard part
 
 ![Animated: seven coaching rounds drop onto a chart with a gray noise band measured before round 1; rounds 2 and 5 land above it and are kept, the other five land inside it and are reverted](/media/how-to-make-ai-agents-improve-themselves/noise-band.svg)
 
-Most of the loop produces nothing. Across the two coaches on Cloud-OpsBench, two rounds of seven were kept. The rest were correctly thrown away, and still paid for.
+Most of the loop produces nothing. In our speed run, two rounds of seven were kept. The rest were correctly thrown away, and still paid for. OpenAI found the same shape on its side: agents were better at finding root causes than at fixing them, and their fixes were sometimes more complicated than necessary.
 
 Replay needs recorded tool results, and an agent that does something new mid-investigation runs off the end of the recording. The grader is a model, so compare it with human verdicts before trusting its numbers. A blind judge hides the author; it does not make the judgment right.
 
