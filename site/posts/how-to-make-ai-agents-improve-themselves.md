@@ -57,9 +57,9 @@ The first coach ran four rounds. One was kept (-39% time on train, -46% on valid
 
 Same accuracy, a bit more than a third faster, a bit less than half the cost. Five test cases is small, and the speed is measured on recorded tool results, so it counts model turns and tool calls, not real cluster latency.
 
-### Making an agent more accurate on staging
+### Catching an accuracy gain that wasn't real
 
-The second loop ran on our staging environment against a bare Claude Code agent with a one-line prompt, on 31 incident cases captured from its own golden-scenario runs, each with an expected outcome.
+The second loop tried to make a bare Claude Code agent with a one-line prompt more accurate, on 31 incident cases captured from its own runs, each with an expected outcome.
 
 Before changing anything we ran the baseline twice. It scored 20/31 and 21/31, and 5 cases flipped between the runs. That put the smallest detectable gain at 14 points. Most teams skip this step and would have promoted anything above 1.
 
