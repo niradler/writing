@@ -16,7 +16,7 @@ coverAlt: 'A glowing teal loop track with measurement gates: most agent cores ar
 ---
 # How to Make AI Agents Improve Themselves: Build the Loop, Not the Changes
 
-I work on agents that investigate production incidents at [Komodor](https://komodor.com). Most of my time this year went into one question: how do you make an agent improve itself, without a person reading every run and rewriting the prompt?
+At [Komodor](https://komodor.com) we build agents that investigate production incidents. A lot of our work this year went into one question: how do you make an agent improve itself, without a person reading every run and rewriting the prompt?
 
 Writing a new version of an agent is cheap now. A prompt edit, a new skill, a cheaper model, a coding agent opening the PR. Knowing whether that version is better at the job is the expensive part. A self-improving agent is a loop that answers that question on its own, round after round, and keeps only the changes that prove themselves.
 
