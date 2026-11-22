@@ -11,8 +11,8 @@ tags:
   - komodor
 sourceUrl: 'https://blog.niradler.com/how-to-make-ai-agents-improve-themselves'
 originalUrl: 'https://blog.niradler.com/how-to-make-ai-agents-improve-themselves'
-cover: /media/how-to-make-ai-agents-improve-themselves/hero.png
-coverAlt: 'A small robot rides a circular conveyor through a workshop: a gauge measures it, an engineer adjusts one part with a wrench, and it leaves the loop with one improved part highlighted in coral'
+cover: /media/how-to-make-ai-agents-improve-themselves/cover.png
+coverAlt: 'A glowing teal loop track with measurement gates: most agent cores are rejected down chutes into a dim pit, and one core leaves the loop on an exit track glowing coral'
 ---
 # How to Make AI Agents Improve Themselves: Build the Loop, Not the Changes
 
@@ -24,7 +24,7 @@ The idea is in the air. Software factories ([Dan Shapiro's five levels](https://
 
 ## The loop
 
-![The self-improvement loop: production runs are graded, collected into datasets, a coach proposes one change, the candidate revision is replayed against the noise band, shadowed on live traffic and promoted. A software factory of issue, coding agent and pull request feeds candidates into the same loop.](/media/how-to-make-ai-agents-improve-themselves/self-improvement-loop.png)
+![Animated loop: production runs, grade, datasets, coach, candidate, replay, shadow, promote. Three candidates go around; two land inside the noise band at replay and drop into reverted, the third beats the noise and is promoted](/media/how-to-make-ai-agents-improve-themselves/loop.svg)
 
 1. **Run.** Record every run: the input, the tool calls, the answer, tokens and time.
 2. **Grade.** An evaluator scores every run against the outcome, with a written reason. People grade too, without extra work: when an engineer approves, edits or rejects the agent's conclusion, that is a label, and the edited answer is ground truth.
@@ -67,7 +67,7 @@ Before changing anything we ran the baseline twice. It scored 20/31 and 21/31, a
 - **Round 2: kept, then caught.** A better coach proposed a decision record at the top of the answer. Accuracy jumped 19 points, beyond the band. On 16 fresh cases written by an agent that knew nothing about the coach, it was +16 points: same direction, but inside that smaller set's noise, a sign test at p ≈ 0.38. Reading the transcripts explained why. The grader's partial-credit reasons described the expected answer's shape, and the coach had learned the grader, not the job.
 - **Round 3: reverted.** We cut the coach off from the grader and gave it a critic that never sees the expected answer. Nothing leaked, accuracy stayed inside the band, and cost rose 37-55%. Reverted.
 
-![A student robot at an exam desk glances at the examiner robot's answer key instead of its own problem sheet](/media/how-to-make-ai-agents-improve-themselves/learned-the-grader.png)
+![Animated bars: on the 31 cases the coach saw, +19 points beats a 14 point noise band; on 16 fresh cases, +16 points stays inside a 20 point band](/media/how-to-make-ai-agents-improve-themselves/seen-vs-fresh.svg)
 
 The real finding was not a better agent. The benchmark graded rules the agent's one-line prompt never told it, so the next step was to write the agent's job contract down and measure a new baseline. A loop that cannot get better is often telling you the test is wrong.
 
@@ -75,7 +75,7 @@ If you want to watch the whole cycle on your laptop, the smallest version is pub
 
 ## The human builds the loop, not the changes
 
-![An engineer calibrates gauges and a balance scale at a workbench while a loop of machines runs by itself; one machine on the loop raises a small coral flag](/media/how-to-make-ai-agents-improve-themselves/human-builds-loop.png)
+![Animated: four agents each circle their own improvement loop; cost-agent stops and raises a coral flag because two metrics trade, while rca-agent, triage-agent and review-agent keep running](/media/how-to-make-ai-agents-improve-themselves/one-loop-asks-for-help.svg)
 
 In a software factory the engineer stops writing code and starts writing specs. In a self-improving loop the engineer stops approving changes and starts building the validation: the answer keys, the noise band, the hold-out, the limits on cost and time. That is the real work.
 
@@ -109,7 +109,7 @@ One flagged agent waits for an answer. The others keep improving. The human sets
 
 ## The hard part
 
-![A band of gray noise across the middle: many prototype cards fall through it into a discard bin, and one coral card rises above it](/media/how-to-make-ai-agents-improve-themselves/noise-band.png)
+![Animated: seven coaching rounds drop onto a chart with a gray noise band measured before round 1; rounds 2 and 5 land above it and are kept, the other five land inside it and are reverted](/media/how-to-make-ai-agents-improve-themselves/noise-band.svg)
 
 Most of the loop produces nothing. Across the two coaches on Cloud-OpsBench, two rounds of seven were kept. The rest were correctly thrown away, and still paid for.
 
