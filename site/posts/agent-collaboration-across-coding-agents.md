@@ -126,12 +126,13 @@ Most setups combine two or three: call and return for reviews, hub sessions or f
 
 ## Summary
 
-One model working alone shares its own blind spots with every check it runs on itself. A multi-model, multi-agent flow breaks that:
+One agent working alone shares its own blind spots with every check it runs on itself. A flow across models and harnesses breaks that, because each brings different value:
 
 - **Different opinions.** A second model reads the plan or the diff with different training and different habits, and questions choices the first one took for granted.
+- **Different harnesses, different strengths.** Claude Code, Cursor and Codex each come with their own tools, context handling, review commands and permissions. The same model in another harness finds different things, so mixing harnesses adds value on top of mixing models.
 - **Issues caught earlier.** A reviewer that did not write the code finds the wrong assumption, the missed edge case or the number that does not add up before it ships or before money is spent.
 - **Each model on its best work.** Planning and judgement go to the strongest model; long, repetitive execution goes to a faster or cheaper one.
 - **More from every subscription.** Work spreads across the plans you already pay for, and one plan hitting its limit no longer stops the job.
 - **Clear accountability.** Roles, typed messages and one owner per piece of state leave a record of who decided what and why.
 
-The models are ready to work together. What makes it work is the plumbing between them: a channel that answers the five questions, state with one writer per piece, and operation rules that catch failures before they cost you.
+The models and harnesses are ready to work together. What makes it work is the plumbing between them: a channel that answers the five questions, state with one writer per piece, and operation rules that catch failures before they cost you.
