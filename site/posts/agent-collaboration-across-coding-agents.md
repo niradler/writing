@@ -29,7 +29,18 @@ Making them collaborate gets more out of every subscription and lets each model 
 | **Cheap supervision** | the supervisor reads only questions and alerts, not every report |
 | **A fresh context per step** | each executor run starts clean from the brief and the state, so it does not drift on a long context |
 
-The cost: the agents need a way to talk and a place to keep state. Inside one tool that comes built in. Across tools you build it, or you run a hub: a service that connects sessions from several tools.
+The cost: the agents need a way to talk and a place to keep state. Inside one tool that comes built in. Across tools you build it, or you run a hub: a service that connects sessions from several tools. It also costs tokens: Anthropic reports that its multi-agent research system uses about 15 times the tokens of a chat, and that multi-agent setups fit poorly when every agent needs the same context or the parts depend heavily on each other ([Anthropic](https://www.anthropic.com/engineering/multi-agent-research-system)). Split work only where the parts can run apart, and [start with the simplest setup that works](https://www.anthropic.com/engineering/building-effective-agents).
+
+## Models reason, harnesses act
+
+A coding agent is two things: a model that reasons, and a harness (Claude Code, Cursor, Codex, Gemini CLI) that owns the tools, the context, the state and the permissions. The pair is what you are really running. A [2026 preprint](https://arxiv.org/html/2608.26218v1) kept the model fixed and changed only the harness: complete solutions on a SWE-bench Verified subset rose from 43 to 72 of 169 tasks. So a mixed flow has two levers, not one.
+
+| Lever | How to use it |
+|---|---|
+| **Route models by role** | the strongest model plans and reviews; faster, cheaper models do routine edits and tool calls. In [Anthropic's research system](https://www.anthropic.com/engineering/multi-agent-research-system) an Opus lead with Sonnet subagents beat a single Opus agent by 90.2% on an internal eval |
+| **Match the harness to the work** | an open, sandboxed harness for exploring and debugging; a constrained one with tight permissions and approval gates for bounded changes ([Interloom](https://interloom.com/en/blog/harness-engineering-matching-agents-to-work/)) |
+| **Tune the harness to the model** | models expect different prompts, tools and context handling; per-model harness profiles fix stalled loops ([LangChain](https://www.langchain.com/blog/tuning-deep-agents-different-models)), and for a pairing you run often, a small adapter can be trained for that exact harness ([Hugging Face](https://huggingface.co/blog/harness-adapters-at-scale)) |
+| **Put controls in the harness, not the prompt** | budgets, approvals and audit trails belong in the layer that runs the agent. A meta-harness such as [Databricks Omnigent](https://www.databricks.com/blog/introducing-omnigent-meta-harness-combine-control-and-share-your-agents) sits above Claude Code and Codex and can pause a run after every $100 spent |
 
 ## Building the communication
 
@@ -80,6 +91,7 @@ With messages and state in place, the failures that remain are in the operation 
 | **Gates on a laptop** | a check that must stop the job lives in a loop on one machine; the machine sleeps or the loop dies | run must-not-miss gates with the work (auto-stop in the job itself) |
 | **Leftover processes** | a background script from an earlier session holds a resource the loop waits on | list every background process and its owner before the first run |
 | **Invisible spend** | the supervisor cannot see cost without reading every report | tokens and dollars in every report; a budget per run |
+| **Loops and context bloat** | an agent repeats a failing command or rereads files without editing, while old tool output fills the context | shorten old tool output as the window fills; detect repeated failures and stop early ([preprint](https://arxiv.org/html/2608.26218v1)) |
 
 ## Doing it with a hub
 
@@ -93,6 +105,8 @@ A hub turns most of the hand-built pieces into infrastructure. [ORC](https://git
 | pause file | human requests; flows wait for an answer |
 | liveness check | a dead worker is detected and [retried up to twice](https://github.com/niradler/orc/blob/eb22da7ad6028d6dd20524c471754233b31b2f2a/packages/core/src/config.ts#L331) |
 | loop guard (rarely built) | [3 hops and 20 messages per pair per hour](https://github.com/niradler/orc/blob/eb22da7ad6028d6dd20524c471754233b31b2f2a/packages/core/src/session-messages.ts#L4-L7) |
+
+Two other layers are growing next to hubs. Meta-harnesses such as [Omnigent](https://www.databricks.com/blog/introducing-omnigent-meta-harness-combine-control-and-share-your-agents) wrap Claude Code, Codex and custom agents behind one control layer, so switching harnesses is a configuration change. The [A2A protocol](https://a2a-protocol.org/latest/) (Linux Foundation, v1.0) standardizes messages between agents on different platforms: MCP connects an agent to tools, A2A connects agents to each other.
 
 ## Vendor bridges
 
@@ -129,7 +143,7 @@ Most setups combine two or three: call and return for reviews, hub sessions or f
 One agent working alone shares its own blind spots with every check it runs on itself. A flow across models and harnesses breaks that, because each brings different value:
 
 - **Different opinions.** A second model reads the plan or the diff with different training and different habits, and questions choices the first one took for granted.
-- **Different harnesses, different strengths.** Claude Code, Cursor and Codex each come with their own tools, context handling, review commands and permissions. The same model in another harness finds different things, so mixing harnesses adds value on top of mixing models.
+- **Different harnesses, different strengths.** Each harness brings its own tools, context handling and permissions, and the same model finds different things in another harness. Mixing harnesses adds value on top of mixing models.
 - **Issues caught earlier.** A reviewer that did not write the code finds the wrong assumption, the missed edge case or the number that does not add up before it ships or before money is spent.
 - **Each model on its best work.** Planning and judgement go to the strongest model; long, repetitive execution goes to a faster or cheaper one.
 - **More from every subscription.** Work spreads across the plans you already pay for, and one plan hitting its limit no longer stops the job.
