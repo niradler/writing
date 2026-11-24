@@ -22,7 +22,7 @@ This post is what that taught me: why multi-model, multi-session work improves t
 
 ## Why several agents beat one
 
-| Benefit | In our setup |
+| Benefit | Example |
 |---|---|
 | **The right model for each role** | Claude planned, reviewed and approved; Gemini did the grind: fetch logs, count, read transcripts, submit jobs |
 | **Every subscription pulls its weight** | the long, token-heavy work ran on the Cursor plan; Claude's plan went to supervision only |
@@ -37,7 +37,7 @@ The cost: the agents need a way to talk and a place to keep state. Inside one to
 
 Any channel between agents has to answer five questions.
 
-| Question | Same tool (Claude Code side sessions) | Different tools, by hand (our setup) | Different tools, through a hub ([ORC](https://github.com/niradler/orc)) |
+| Question | Same tool (Claude Code side sessions) | Different tools, by hand | Different tools, through a hub ([ORC](https://github.com/niradler/orc)) |
 |---|---|---|---|
 | **What is a message?** | a message to a session id | an entry appended to a markdown file | a row in a shared inbox |
 | **How is it delivered?** | injected into the session by the tool | read by the other agent on its next run | hook mid-turn, next turn, or resume |
@@ -47,7 +47,7 @@ Any channel between agents has to answer five questions.
 
 ![Left: Claude Code and the Cursor agent CLI talk only through files in the repo and a bash loop. Right: Claude Code, Gemini CLI, Codex and Cursor agent CLI all connect to an ORC hub; Cursor gets start and result only](/media/agent-collaboration-across-coding-agents/with-and-without-a-hub.svg)
 
-Our setup had no hub, so the channel was two files and a loop:
+Without a hub, the channel was two files and a loop:
 
 ![Animated: the driver starts the executor, the executor appends a REPORT, then a QUESTION lights the WAITING flag and the driver pauses until the supervisor answers and clears it](/media/agent-collaboration-across-coding-agents/protocol-loop.svg)
 
