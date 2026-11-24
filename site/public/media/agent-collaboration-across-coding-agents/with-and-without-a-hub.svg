@@ -1,49 +1,49 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 520" font-family="-apple-system,Segoe UI,Helvetica,Arial,sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 520" font-family="IBM Plex Sans, Inter, Helvetica, Arial, sans-serif" role="img">
 <defs>
-<marker id="a2e7d32" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2e7d32"/></marker>
-<marker id="ac62828" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#c62828"/></marker>
-<marker id="a1565c0" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1565c0"/></marker>
-<marker id="aef6c00" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#ef6c00"/></marker>
-<marker id="a6a1b9a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#6a1b9a"/></marker>
-<marker id="a222" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#222"/></marker>
-<marker id="a666" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#666"/></marker>
+<marker id="a2e7d32" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#14B88A"/></marker>
+<marker id="ac62828" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#FF6B6B"/></marker>
+<marker id="a1565c0" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5AA9E6"/></marker>
+<marker id="aef6c00" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#FF8A65"/></marker>
+<marker id="a6a1b9a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#B39DDB"/></marker>
+<marker id="a222" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#DCE7E2"/></marker>
+<marker id="a666" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8FA39B"/></marker>
 </defs>
-<rect width="1000" height="520" fill="#fff"/>
-<line x1="500" y1="50" x2="500" y2="500" stroke="#ddd"/>
-<text x="30" y="32" font-size="16" font-weight="600" fill="#222">Without a hub (by hand)</text>
-<text x="530" y="32" font-size="16" font-weight="600" fill="#222">With a hub (ORC)</text>
-<rect x="30" y="70" width="170" height="56" rx="9" fill="#fff" stroke="#6a1b9a" stroke-width="2"/><text x="115.0" y="95.0" text-anchor="middle" font-weight="600" font-size="13" fill="#222">Supervisor agent</text><text x="115.0" y="111.0" text-anchor="middle" font-size="10.5" fill="#666">tool A, model A</text>
-<rect x="290" y="70" width="180" height="56" rx="9" fill="#fff" stroke="#1565c0" stroke-width="2"/><text x="380.0" y="95.0" text-anchor="middle" font-weight="600" font-size="13" fill="#222">Executor agent</text><text x="380.0" y="111.0" text-anchor="middle" font-size="10.5" fill="#666">tool B, model B</text>
-<rect x="30" y="230" width="440" height="110" rx="9" fill="#fafafa" stroke="#999" stroke-width="2"/><text x="250.0" y="282.0" text-anchor="middle" font-weight="600" font-size="13" fill="#222"></text><text x="250.0" y="298.0" text-anchor="middle" font-size="10.5" fill="#666"></text>
-<text x="45" y="252" font-size="12" fill="#666">files in the repo (the only thing both can touch)</text>
-<text x="45" y="278" font-size="11.5" font-family="Menlo,monospace" fill="#222">to_supervisor.md  REPORT | QUESTION | BLOCKED | DONE</text>
-<text x="45" y="300" font-size="11.5" font-family="Menlo,monospace" fill="#222">to_executor.md  GUIDE | ANSWER, ack: time</text>
-<text x="45" y="322" font-size="11.5" font-family="Menlo,monospace" fill="#222">WAITING  pause flag      STATUS.md  stop word</text>
-<rect x="290" y="400" width="180" height="56" rx="9" fill="#fff" stroke="#555" stroke-width="2"/><text x="380.0" y="425.0" text-anchor="middle" font-weight="600" font-size="13" fill="#222">driver loop</text><text x="380.0" y="441.0" text-anchor="middle" font-size="10.5" fill="#666">one step per run</text>
-<line x1="115" y1="126" x2="115" y2="228" stroke="#6a1b9a" stroke-width="1.8" marker-end="url(#a6a1b9a)"/><text x="122" y="180" font-size="11" fill="#6a1b9a">watch / answer</text>
-<line x1="380" y1="126" x2="380" y2="228" stroke="#1565c0" stroke-width="1.8" marker-end="url(#a1565c0)"/><text x="388" y="180" font-size="11" fill="#1565c0">append, commit</text>
-<line x1="380" y1="398" x2="380" y2="128" stroke="#555" stroke-width="1.8" marker-end="url(#a555)" stroke-dasharray="4 3"/>
-<text x="282" y="372" text-anchor="end" font-size="11" fill="#555">starts one executor run per iteration</text>
-<text x="30" y="478" font-size="11.5" fill="#555">hand-built: loop, pause, acks, ids</text>
-<text x="30" y="494" font-size="11.5" fill="#c62828">no liveness: failed runs go unnoticed</text>
-<text x="30" y="510" font-size="11.5" fill="#c62828">single-instance CLIs: no lock</text>
-<ellipse cx="755" cy="275" rx="120" ry="78" fill="#f3e5f5" stroke="#6a1b9a" stroke-width="2"/>
-<text x="755" y="232" text-anchor="middle" font-size="14" font-weight="600" fill="#222">ORC hub</text>
-<text x="755" y="250" text-anchor="middle" font-size="11" font-weight="400" fill="#222">session registry</text>
-<text x="755" y="268" text-anchor="middle" font-size="11" font-weight="400" fill="#222">session_send inbox</text>
-<text x="755" y="286" text-anchor="middle" font-size="11" font-weight="400" fill="#222">session_start + notify</text>
-<text x="755" y="304" text-anchor="middle" font-size="11" font-weight="400" fill="#222">task board, human_request</text>
-<text x="755" y="322" text-anchor="middle" font-size="11" font-weight="400" fill="#222">memory / KB</text>
-<rect x="540" y="70" width="140" height="56" rx="9" fill="#fff" stroke="#2e7d32" stroke-width="2"/><text x="610.0" y="95.0" text-anchor="middle" font-weight="600" font-size="13" fill="#222">Claude Code</text><text x="610.0" y="111.0" text-anchor="middle" font-size="10.5" fill="#666">hook: mid-run messages</text>
-<rect x="830" y="70" width="140" height="56" rx="9" fill="#fff" stroke="#2e7d32" stroke-width="2"/><text x="900.0" y="95.0" text-anchor="middle" font-weight="600" font-size="13" fill="#222">Gemini CLI</text><text x="900.0" y="111.0" text-anchor="middle" font-size="10.5" fill="#666">hook + resume</text>
-<rect x="540" y="420" width="140" height="56" rx="9" fill="#fff" stroke="#2e7d32" stroke-width="2"/><text x="610.0" y="445.0" text-anchor="middle" font-weight="600" font-size="13" fill="#222">Codex</text><text x="610.0" y="461.0" text-anchor="middle" font-size="10.5" fill="#666">hook + resume</text>
-<rect x="830" y="420" width="140" height="56" rx="9" fill="#fff" stroke="#ef6c00" stroke-width="2"/><text x="900.0" y="445.0" text-anchor="middle" font-weight="600" font-size="13" fill="#222">Cursor agent CLI</text><text x="900.0" y="461.0" text-anchor="middle" font-size="10.5" fill="#666">start + result</text>
-<line x1="640" y1="126" x2="690" y2="205" stroke="#2e7d32" stroke-width="1.8" marker-end="url(#a2e7d32)"/>
-<line x1="700" y1="205" x2="650" y2="126" stroke="#2e7d32" stroke-width="1.8" marker-end="url(#a2e7d32)"/>
-<line x1="890" y1="126" x2="830" y2="207" stroke="#2e7d32" stroke-width="1.8" marker-end="url(#a2e7d32)"/>
-<line x1="820" y1="207" x2="880" y2="126" stroke="#2e7d32" stroke-width="1.8" marker-end="url(#a2e7d32)"/>
-<line x1="640" y1="418" x2="690" y2="345" stroke="#2e7d32" stroke-width="1.8" marker-end="url(#a2e7d32)"/>
-<line x1="700" y1="345" x2="650" y2="418" stroke="#2e7d32" stroke-width="1.8" marker-end="url(#a2e7d32)"/>
-<line x1="860" y1="418" x2="815" y2="349" stroke="#ef6c00" stroke-width="1.8" marker-end="url(#aef6c00)"/>
-<text x="530" y="497" font-size="10.5" fill="#666">sources (niradler/orc): core/src/session-messages.ts:161,</text><text x="530" y="511" font-size="10.5" fill="#666">core/src/chat.ts:8, mcp/src/tools.ts:355-370</text>
+<rect width="1000" height="520" rx="16" fill="#0E1412"/>
+<line x1="500" y1="50" x2="500" y2="500" stroke="#26332E"/>
+<text x="30" y="32" font-size="16" font-weight="600" fill="#DCE7E2">Without a hub (by hand)</text>
+<text x="530" y="32" font-size="16" font-weight="600" fill="#DCE7E2">With a hub (ORC)</text>
+<rect x="30" y="70" width="170" height="56" rx="9" fill="#16201C" stroke="#B39DDB" stroke-width="2"/><text x="115.0" y="95.0" text-anchor="middle" font-weight="600" font-size="13" fill="#DCE7E2">Supervisor agent</text><text x="115.0" y="111.0" text-anchor="middle" font-size="10.5" fill="#8FA39B">tool A, model A</text>
+<rect x="290" y="70" width="180" height="56" rx="9" fill="#16201C" stroke="#5AA9E6" stroke-width="2"/><text x="380.0" y="95.0" text-anchor="middle" font-weight="600" font-size="13" fill="#DCE7E2">Executor agent</text><text x="380.0" y="111.0" text-anchor="middle" font-size="10.5" fill="#8FA39B">tool B, model B</text>
+<rect x="30" y="230" width="440" height="110" rx="9" fill="#121A17" stroke="#3A4A44" stroke-width="2"/><text x="250.0" y="282.0" text-anchor="middle" font-weight="600" font-size="13" fill="#DCE7E2"></text><text x="250.0" y="298.0" text-anchor="middle" font-size="10.5" fill="#8FA39B"></text>
+<text x="45" y="252" font-size="12" fill="#8FA39B">files in the repo (the only thing both can touch)</text>
+<text x="45" y="278" font-size="11.5" font-family="Menlo,monospace" fill="#DCE7E2">to_supervisor.md  REPORT | QUESTION | BLOCKED | DONE</text>
+<text x="45" y="300" font-size="11.5" font-family="Menlo,monospace" fill="#DCE7E2">to_executor.md  GUIDE | ANSWER, ack: time</text>
+<text x="45" y="322" font-size="11.5" font-family="Menlo,monospace" fill="#DCE7E2">WAITING  pause flag      STATUS.md  stop word</text>
+<rect x="290" y="400" width="180" height="56" rx="9" fill="#16201C" stroke="#8FA39B" stroke-width="2"/><text x="380.0" y="425.0" text-anchor="middle" font-weight="600" font-size="13" fill="#DCE7E2">driver loop</text><text x="380.0" y="441.0" text-anchor="middle" font-size="10.5" fill="#8FA39B">one step per run</text>
+<line x1="115" y1="126" x2="115" y2="228" stroke="#B39DDB" stroke-width="1.8" marker-end="url(#a6a1b9a)"/><text x="122" y="180" font-size="11" fill="#B39DDB">watch / answer</text>
+<line x1="380" y1="126" x2="380" y2="228" stroke="#5AA9E6" stroke-width="1.8" marker-end="url(#a1565c0)"/><text x="388" y="180" font-size="11" fill="#5AA9E6">append, commit</text>
+<line x1="380" y1="398" x2="380" y2="128" stroke="#8FA39B" stroke-width="1.8" marker-end="url(#a555)" stroke-dasharray="4 3"/>
+<text x="282" y="372" text-anchor="end" font-size="11" fill="#8FA39B">starts one executor run per iteration</text>
+<text x="30" y="478" font-size="11.5" fill="#8FA39B">hand-built: loop, pause, acks, ids</text>
+<text x="30" y="494" font-size="11.5" fill="#FF6B6B">no liveness: failed runs go unnoticed</text>
+<text x="30" y="510" font-size="11.5" fill="#FF6B6B">single-instance CLIs: no lock</text>
+<ellipse cx="755" cy="275" rx="120" ry="78" fill="#0F3D31" stroke="#B39DDB" stroke-width="2"/>
+<text x="755" y="232" text-anchor="middle" font-size="14" font-weight="600" fill="#DCE7E2">ORC hub</text>
+<text x="755" y="250" text-anchor="middle" font-size="11" font-weight="400" fill="#DCE7E2">session registry</text>
+<text x="755" y="268" text-anchor="middle" font-size="11" font-weight="400" fill="#DCE7E2">session_send inbox</text>
+<text x="755" y="286" text-anchor="middle" font-size="11" font-weight="400" fill="#DCE7E2">session_start + notify</text>
+<text x="755" y="304" text-anchor="middle" font-size="11" font-weight="400" fill="#DCE7E2">task board, human_request</text>
+<text x="755" y="322" text-anchor="middle" font-size="11" font-weight="400" fill="#DCE7E2">memory / KB</text>
+<rect x="540" y="70" width="140" height="56" rx="9" fill="#16201C" stroke="#14B88A" stroke-width="2"/><text x="610.0" y="95.0" text-anchor="middle" font-weight="600" font-size="13" fill="#DCE7E2">Claude Code</text><text x="610.0" y="111.0" text-anchor="middle" font-size="10.5" fill="#8FA39B">hook: mid-run messages</text>
+<rect x="830" y="70" width="140" height="56" rx="9" fill="#16201C" stroke="#14B88A" stroke-width="2"/><text x="900.0" y="95.0" text-anchor="middle" font-weight="600" font-size="13" fill="#DCE7E2">Gemini CLI</text><text x="900.0" y="111.0" text-anchor="middle" font-size="10.5" fill="#8FA39B">hook + resume</text>
+<rect x="540" y="420" width="140" height="56" rx="9" fill="#16201C" stroke="#14B88A" stroke-width="2"/><text x="610.0" y="445.0" text-anchor="middle" font-weight="600" font-size="13" fill="#DCE7E2">Codex</text><text x="610.0" y="461.0" text-anchor="middle" font-size="10.5" fill="#8FA39B">hook + resume</text>
+<rect x="830" y="420" width="140" height="56" rx="9" fill="#16201C" stroke="#FF8A65" stroke-width="2"/><text x="900.0" y="445.0" text-anchor="middle" font-weight="600" font-size="13" fill="#DCE7E2">Cursor agent CLI</text><text x="900.0" y="461.0" text-anchor="middle" font-size="10.5" fill="#8FA39B">start + result</text>
+<line x1="640" y1="126" x2="690" y2="205" stroke="#14B88A" stroke-width="1.8" marker-end="url(#a2e7d32)"/>
+<line x1="700" y1="205" x2="650" y2="126" stroke="#14B88A" stroke-width="1.8" marker-end="url(#a2e7d32)"/>
+<line x1="890" y1="126" x2="830" y2="207" stroke="#14B88A" stroke-width="1.8" marker-end="url(#a2e7d32)"/>
+<line x1="820" y1="207" x2="880" y2="126" stroke="#14B88A" stroke-width="1.8" marker-end="url(#a2e7d32)"/>
+<line x1="640" y1="418" x2="690" y2="345" stroke="#14B88A" stroke-width="1.8" marker-end="url(#a2e7d32)"/>
+<line x1="700" y1="345" x2="650" y2="418" stroke="#14B88A" stroke-width="1.8" marker-end="url(#a2e7d32)"/>
+<line x1="860" y1="418" x2="815" y2="349" stroke="#FF8A65" stroke-width="1.8" marker-end="url(#aef6c00)"/>
+<text x="530" y="497" font-size="10.5" fill="#8FA39B">sources (niradler/orc): core/src/session-messages.ts:161,</text><text x="530" y="511" font-size="10.5" fill="#8FA39B">core/src/chat.ts:8, mcp/src/tools.ts:355-370</text>
 </svg>
