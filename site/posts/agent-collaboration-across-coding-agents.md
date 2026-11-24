@@ -132,7 +132,17 @@ Rerun today, I would start the executor as the Gemini CLI through ORC, so it can
 
 Most real setups combine two or three.
 
-Vendors have started shipping the call-and-return bridge themselves. OpenAI's [Codex plugin for Claude Code](https://community.openai.com/t/introducing-codex-plugin-for-claude-code/1378186) ([openai/codex-plugin-cc](https://github.com/openai/codex-plugin-cc)) lets Claude hand Codex a review, an adversarial review or a second pass, through the local Codex CLI and your ChatGPT subscription. That turns two subscriptions into one flow for short tasks. Long-running work still needs the state, the liveness and the gates above, either built by hand or from a hub.
+Vendors have started shipping these bridges themselves. OpenAI's [Codex plugin for Claude Code](https://github.com/openai/codex-plugin-cc) ([announcement](https://community.openai.com/t/introducing-codex-plugin-for-claude-code/1378186)) runs on your ChatGPT subscription and answers most of the five questions for one direction, Claude to Codex:
+
+| Question | Codex plugin |
+|---|---|
+| **Message** | `/codex:review`, `/codex:adversarial-review` with focus text, or `/codex:rescue` to hand Codex a task through a subagent |
+| **Reply** | `/codex:result`, with the Codex session id to reopen the run in Codex |
+| **Liveness** | `/codex:status` and `/codex:cancel` for background jobs |
+| **State** | `--resume` continues the latest Codex thread for the repo; `/codex:transfer` turns the whole Claude session into a Codex thread |
+| **Gate** | an optional review gate, set up with `/codex:setup` |
+
+It is one-way and call-and-return at heart: Claude asks, Codex answers, nothing flows back on its own. For short reviews and second passes across two subscriptions, that is enough. Long unattended work still needs the state, liveness and gates above, built by hand or from a hub.
 
 ## Check your own setup
 
