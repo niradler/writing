@@ -47,7 +47,7 @@ Any channel between agents has to answer five questions.
 
 ![Left: Claude Code and the Cursor agent CLI talk only through files in the repo and a bash loop. Right: Claude Code, Gemini CLI, Codex and Cursor agent CLI all connect to an ORC hub; Cursor gets start and result only](/media/agent-collaboration-across-coding-agents/with-and-without-a-hub.svg)
 
-Without a hub, the channel was two files and a loop:
+Without a hub, the simplest channel is two files and a loop:
 
 ![Animated: the driver starts the executor, the executor appends a REPORT, then a QUESTION lights the WAITING flag and the driver pauses until the supervisor answers and clears it](/media/agent-collaboration-across-coding-agents/protocol-loop.svg)
 
