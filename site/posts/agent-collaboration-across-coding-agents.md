@@ -1,6 +1,6 @@
 ---
 title: 'Agent Collaboration Across Coding Agents'
-description: 'How several coding agents, on different models and subscriptions, can work one task together: why it improves the process, how to build the communication and the shared state between them, and how to operate it, from a night Claude Code and the Cursor agent CLI ran a training job side by side.'
+description: 'How several coding agents, on different models and subscriptions, can work one task together: why it improves the process, how to build the communication and the shared state between them, and how to operate it, from a night Claude Code and the Cursor agent CLI ran a long job side by side.'
 publishedAt: '2026-11-24T12:00:00.000Z'
 updatedAt: '2026-11-24T12:00:00.000Z'
 tags:
@@ -14,9 +14,11 @@ originalUrl: 'https://blog.niradler.com/agent-collaboration-across-coding-agents
 ---
 # Agent Collaboration Across Coding Agents
 
-I pay for two coding-agent subscriptions, Claude Code and Cursor. Most days they sit side by side and never talk. For an overnight training run (60 RL steps, checks at fixed steps, a $2,000 budget) I wanted both on the same job, each on a different model: Claude as the supervisor that plans, reviews and approves spend, and the Cursor agent CLI running Gemini 4 Neon as the executor that does the hands-on work.
+Most of us now pay for more than one coding agent. I have Claude Code and Cursor. Most days they sit side by side and never talk, and each subscription only pays off when I happen to open that tool.
 
-At 23:40 UTC on 2026-11-23 Claude wrote a brief and handed execution to Cursor. For the next eight hours two agents, two models and two subscriptions ran one job. This post is what that taught me: why multi-model, multi-session work improves the process, and how to build and operate the communication and the state between the agents.
+I wanted them to collaborate: get more out of both subscriptions, and run a multi-model flow where each model does what it is best at. Claude plans, reviews and approves; the Cursor agent CLI running Gemini 4 Neon does the hands-on work. One evening Claude wrote a brief, handed execution to Cursor, and stayed on as supervisor for a long overnight job.
+
+This post is what that taught me: why multi-model, multi-session work improves the process, and how to build and operate the communication and the state between the agents.
 
 ## Why several agents beat one
 
@@ -51,7 +53,7 @@ That night had no hub, so the channel was two files and a loop:
 
 - **Typed messages.** The executor appends `REPORT`, `QUESTION`, `BLOCKED` or `DONE` to `to_claude.md`. The supervisor appends `GUIDE` or `ANSWER` to `to_cursor.md`. Typed headers let the supervisor watch only the three types that need it, so routine reports cost it nothing.
 - **Acks.** Each executor entry starts with `ack: <time>` of the last supervisor entry it read. You always know which instructions it acted on.
-- **A pause that stops spend.** A `QUESTION` creates a `WAITING` file; the loop starts nothing until the supervisor answers and deletes it. Before the 60-step run the executor asked at 03:31, Claude answered at 03:32, and the job was submitted at 03:46. Not before.
+- **A pause that stops spend.** A `QUESTION` creates a `WAITING` file; the loop starts nothing until the supervisor answers and deletes it. Before the expensive part of the job the executor asked, Claude answered within minutes, and only then did the executor launch it.
 - **One step per run.** A bash loop starts the executor once per iteration (1 h timeout, 10 minutes apart) and stops when the status file says `BLOCKED` or `DONE`.
 
 ## Building the state
@@ -66,7 +68,7 @@ Messages say what changed. State says where things are, so any agent, any new se
 | **Evidence** | the command and its real output for every number | executor | the supervisor can recount instead of trusting |
 | **Version control** | one commit per step, only the agent's own files | each agent, its own files | two agents in one folder never clobber each other |
 
-What good state bought: the executor's smoke-test report (176 successes, 107 failures, 2 confirmation misses, 0 duplicate writes) matched the raw log exactly when Claude recounted it. It also read 20 real transcripts at each of three checkpoints with 0 mismatches. It found a hook that silently discarded transcripts, proposed a three-line fix with an alternative, waited for approval, and kept every constraint attached to it.
+What good state bought: the executor's test-run report matched the raw log count for count when Claude recounted it. It also read 20 real transcripts at each of three checkpoints with 0 mismatches. It found a hook that silently discarded transcripts, proposed a three-line fix with an alternative, waited for approval, and kept every constraint attached to it.
 
 What bad state cost: two writers numbered decisions from the same sequence, and two different decisions ended up with the same number.
 
@@ -74,13 +76,13 @@ What bad state cost: two writers numbered decisions from the same sequence, and 
 
 Inside each step the executor was careful and correct. Everything that broke was in the operation around the steps.
 
-![Timeline: seven green executor runs, then thirteen red crosses from 05:13 to 07:13 UTC while RL steps 20 to 59 keep ticking; the step-30 check is marked never ran](/media/agent-collaboration-across-coding-agents/driver-timeline.svg)
+![Timeline: seven green executor runs, then thirteen red crosses while the job keeps running; a checkpoint review is marked never ran](/media/agent-collaboration-across-coding-agents/driver-timeline.svg)
 
-**Liveness.** The Cursor agent CLI runs one instance at a time; a second process kills the first. From 05:13 to 07:13 UTC thirteen runs in a row died at start-up with exit 137. The loop logged each exit code and slept. Training ran past the step-30 check that was supposed to stop it if things went wrong. Claude noticed at 07:25.
+**Liveness.** The Cursor agent CLI runs one instance at a time; a second process kills the first. Over two hours, thirteen runs in a row died at start-up with exit 137. The loop logged each exit code and slept. The job ran past a checkpoint review that was supposed to stop it if things went wrong. Claude noticed afterwards.
 
-![Chart: the trainer's response length jumps above the +25 % stop line within the first steps and stays there; the length the executor reported stays near 4,000](/media/agent-collaboration-across-coding-agents/response-length.svg)
+![Chart: the trainer's response length jumps above the +25 % stop line early and stays there; the length the executor reported stays flat](/media/agent-collaboration-across-coding-agents/response-length.svg)
 
-**Shared meaning.** The stop rule said "response length +25 %". At step 20 the executor reported +2.8 %; the trainer's own metric was +48 %. The two agents also disagreed on when KL divergence crossed its limit: step 41 versus step 50. Same words, different numbers.
+**Shared meaning.** The stop rule said "response length +25 %". At the same checkpoint the executor reported +2.8 %; the trainer's own metric was +48 %. The two agents also disagreed on when a second limit was crossed. Same words, different numbers.
 
 **Leftovers.** A batch script from an earlier session kept a builder running, and the loop waited on it: the first executor run started three and a half hours after the hand-off.
 
@@ -94,7 +96,7 @@ The rules that close these, whatever the channel:
 | **Lock single-instance tools.** A second caller waits instead of killing the first | the kills themselves |
 | **A metric contract in the brief.** Every stop rule names the exact log key, baseline and threshold | +2.8 % versus +48 % |
 | **One writer per piece of state.** Only the supervisor numbers decisions | duplicate decision numbers |
-| **Must-not-miss gates run with the work.** Auto-stop on the cluster, not from a laptop loop | the missed step-30 check |
+| **Must-not-miss gates run with the work.** Auto-stop on the cluster, not from a laptop loop | the missed checkpoint review |
 | **Hand off clean.** List every background process and its owner before the first run | three and a half lost hours |
 | **Budget per run.** Tokens and dollars in every report | spend visible without reading everything |
 
@@ -113,7 +115,7 @@ A hub turns most of the hand-built pieces into infrastructure. [ORC](https://git
 
 Not covered yet: mid-turn messages [reach only Claude, Codex and Gemini](https://github.com/niradler/orc/blob/eb22da7ad6028d6dd20524c471754233b31b2f2a/packages/core/src/session-messages.ts#L161), so a running Cursor session cannot be steered. A child's question [goes to a human, never to the parent agent](https://github.com/niradler/orc/blob/eb22da7ad6028d6dd20524c471754233b31b2f2a/packages/api/src/sessions/control.ts#L314-L317), so an agent cannot answer its executor overnight. And there are no cost budgets.
 
-Rerun today, I would start the executor as the Gemini CLI through ORC, so it can be messaged and resumed, put the job on the task board, and move the training stop rules into the job. The markdown channel would shrink to one thing: the supervisor's answers.
+Rerun today, I would start the executor as the Gemini CLI through ORC, so it can be messaged and resumed, put the job on the task board, and move the stop rules into the job itself. The markdown channel would shrink to one thing: the supervisor's answers.
 
 ## Which setup for which job
 
@@ -129,6 +131,8 @@ Rerun today, I would start the executor as the Gemini CLI through ORC, so it can
 | **Task board** | several agents and people on one goal | coarse; pair it with one of the above |
 
 Most real setups combine two or three.
+
+Vendors have started shipping the call-and-return bridge themselves. OpenAI's [Codex plugin for Claude Code](https://community.openai.com/t/introducing-codex-plugin-for-claude-code/1378186) ([openai/codex-plugin-cc](https://github.com/openai/codex-plugin-cc)) lets Claude hand Codex a review, an adversarial review or a second pass, through the local Codex CLI and your ChatGPT subscription. That turns two subscriptions into one flow for short tasks. Long-running work still needs the state, the liveness and the gates above, either built by hand or from a hub.
 
 ## Check your own setup
 

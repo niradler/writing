@@ -10,10 +10,10 @@
 </defs>
 <rect width="1000" height="520" fill="#fff"/>
 <line x1="500" y1="50" x2="500" y2="500" stroke="#ddd"/>
-<text x="30" y="32" font-size="16" font-weight="600" fill="#222">Without a hub (round 2)</text>
+<text x="30" y="32" font-size="16" font-weight="600" fill="#222">Without a hub (by hand)</text>
 <text x="530" y="32" font-size="16" font-weight="600" fill="#222">With a hub (ORC)</text>
-<rect x="30" y="70" width="170" height="56" rx="9" fill="#fff" stroke="#6a1b9a" stroke-width="2"/><text x="115.0" y="95.0" text-anchor="middle" font-weight="600" font-size="13" fill="#222">Claude Code</text><text x="115.0" y="111.0" text-anchor="middle" font-size="10.5" fill="#666">supervisor, Anthropic plan</text>
-<rect x="290" y="70" width="180" height="56" rx="9" fill="#fff" stroke="#1565c0" stroke-width="2"/><text x="380.0" y="95.0" text-anchor="middle" font-weight="600" font-size="13" fill="#222">Cursor agent CLI</text><text x="380.0" y="111.0" text-anchor="middle" font-size="10.5" fill="#666">executor, gemini-4-neon-high</text>
+<rect x="30" y="70" width="170" height="56" rx="9" fill="#fff" stroke="#6a1b9a" stroke-width="2"/><text x="115.0" y="95.0" text-anchor="middle" font-weight="600" font-size="13" fill="#222">Claude Code</text><text x="115.0" y="111.0" text-anchor="middle" font-size="10.5" fill="#666">supervisor, Claude plan</text>
+<rect x="290" y="70" width="180" height="56" rx="9" fill="#fff" stroke="#1565c0" stroke-width="2"/><text x="380.0" y="95.0" text-anchor="middle" font-weight="600" font-size="13" fill="#222">Cursor agent CLI</text><text x="380.0" y="111.0" text-anchor="middle" font-size="10.5" fill="#666">executor, Gemini 4 Neon</text>
 <rect x="30" y="230" width="440" height="110" rx="9" fill="#fafafa" stroke="#999" stroke-width="2"/><text x="250.0" y="282.0" text-anchor="middle" font-weight="600" font-size="13" fill="#222"></text><text x="250.0" y="298.0" text-anchor="middle" font-size="10.5" fill="#666"></text>
 <text x="45" y="252" font-size="12" fill="#666">files in the repo (the only thing both can touch)</text>
 <text x="45" y="278" font-size="11.5" font-family="Menlo,monospace" fill="#222">to_claude.md  REPORT | QUESTION | BLOCKED | DONE</text>
