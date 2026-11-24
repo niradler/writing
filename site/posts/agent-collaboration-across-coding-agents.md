@@ -43,7 +43,7 @@ Any channel between agents has to answer five questions. Claude Code sessions an
 | **How does a question pause work?** | built in | a pause file the loop respects | a human request; the flow waits |
 | **How do you know the other side is alive?** | built in | whatever you build | dead-process detection and retry |
 
-![Left: a supervisor agent and an executor agent from different tools talk only through files in the repo and a driver loop. Right: Claude Code, Gemini CLI, Codex and Cursor agent CLI all connect to an ORC hub; Cursor gets start and result only](/media/agent-collaboration-across-coding-agents/with-and-without-a-hub.svg)
+![Left: a supervisor agent and an executor agent from different tools talk only through files in the repo and a driver loop. Right: Claude Code, Gemini CLI, Codex and Cursor agent CLI all connect to an ORC hub](/media/agent-collaboration-across-coding-agents/with-and-without-a-hub.svg)
 
 Without a hub, the simplest channel is two files and a loop:
 
@@ -94,10 +94,6 @@ A hub turns most of the hand-built pieces into infrastructure. [ORC](https://git
 | liveness check | a dead worker is detected and [retried up to twice](https://github.com/niradler/orc/blob/eb22da7ad6028d6dd20524c471754233b31b2f2a/packages/core/src/config.ts#L331) |
 | loop guard (rarely built) | [3 hops and 20 messages per pair per hour](https://github.com/niradler/orc/blob/eb22da7ad6028d6dd20524c471754233b31b2f2a/packages/core/src/session-messages.ts#L4-L7) |
 
-What ORC does not cover yet: mid-turn messages [reach only Claude, Codex and Gemini](https://github.com/niradler/orc/blob/eb22da7ad6028d6dd20524c471754233b31b2f2a/packages/core/src/session-messages.ts#L161), so a running Cursor session cannot be steered. A child's question [goes to a human, never to the parent agent](https://github.com/niradler/orc/blob/eb22da7ad6028d6dd20524c471754233b31b2f2a/packages/api/src/sessions/control.ts#L314-L317), so a supervisor agent cannot answer its executor's question unattended. It has no cost budgets.
-
-Until those gaps close, a practical mix is hub sessions for starting agents, messages and liveness; a small file channel for supervisor answers; and stop rules inside the job.
-
 ## Vendor bridges
 
 Vendors have started shipping bridges themselves. OpenAI's [Codex plugin for Claude Code](https://github.com/openai/codex-plugin-cc) ([announcement](https://community.openai.com/t/introducing-codex-plugin-for-claude-code/1378186)) runs on a ChatGPT subscription and answers most of the five questions for one direction, Claude to Codex:
@@ -120,7 +116,7 @@ It is one-way and call-and-return at heart: Claude asks, Codex answers, nothing 
 |---|---|---|
 | **Call and return** (`codex exec`, `cursor-agent -p`, a subagent, the Codex plugin) | a bounded task under ten minutes: a review, a second opinion | the caller waits and pays for its context |
 | **Direct session messages** | two live agents of the same tool | same tool only |
-| **Hub sessions** | several tools, models or subscriptions on one goal | the hub must run; per-tool gaps |
+| **Hub sessions** | several tools, models or subscriptions on one goal | the hub must be running |
 | **Files and a loop** | hours unattended, spend gates, no hub | liveness is yours to build |
 | **Git as the channel** | code that must be reviewed and merged | slow round trips |
 | **Task board** | several agents and people on one goal | coarse; pair it with one of the above |
