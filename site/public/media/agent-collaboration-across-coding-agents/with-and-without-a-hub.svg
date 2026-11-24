@@ -12,21 +12,21 @@
 <line x1="500" y1="50" x2="500" y2="500" stroke="#ddd"/>
 <text x="30" y="32" font-size="16" font-weight="600" fill="#222">Without a hub (by hand)</text>
 <text x="530" y="32" font-size="16" font-weight="600" fill="#222">With a hub (ORC)</text>
-<rect x="30" y="70" width="170" height="56" rx="9" fill="#fff" stroke="#6a1b9a" stroke-width="2"/><text x="115.0" y="95.0" text-anchor="middle" font-weight="600" font-size="13" fill="#222">Claude Code</text><text x="115.0" y="111.0" text-anchor="middle" font-size="10.5" fill="#666">supervisor, Claude plan</text>
-<rect x="290" y="70" width="180" height="56" rx="9" fill="#fff" stroke="#1565c0" stroke-width="2"/><text x="380.0" y="95.0" text-anchor="middle" font-weight="600" font-size="13" fill="#222">Cursor agent CLI</text><text x="380.0" y="111.0" text-anchor="middle" font-size="10.5" fill="#666">executor, Gemini 4 Neon</text>
+<rect x="30" y="70" width="170" height="56" rx="9" fill="#fff" stroke="#6a1b9a" stroke-width="2"/><text x="115.0" y="95.0" text-anchor="middle" font-weight="600" font-size="13" fill="#222">Supervisor agent</text><text x="115.0" y="111.0" text-anchor="middle" font-size="10.5" fill="#666">tool A, model A</text>
+<rect x="290" y="70" width="180" height="56" rx="9" fill="#fff" stroke="#1565c0" stroke-width="2"/><text x="380.0" y="95.0" text-anchor="middle" font-weight="600" font-size="13" fill="#222">Executor agent</text><text x="380.0" y="111.0" text-anchor="middle" font-size="10.5" fill="#666">tool B, model B</text>
 <rect x="30" y="230" width="440" height="110" rx="9" fill="#fafafa" stroke="#999" stroke-width="2"/><text x="250.0" y="282.0" text-anchor="middle" font-weight="600" font-size="13" fill="#222"></text><text x="250.0" y="298.0" text-anchor="middle" font-size="10.5" fill="#666"></text>
 <text x="45" y="252" font-size="12" fill="#666">files in the repo (the only thing both can touch)</text>
-<text x="45" y="278" font-size="11.5" font-family="Menlo,monospace" fill="#222">to_claude.md  REPORT | QUESTION | BLOCKED | DONE</text>
-<text x="45" y="300" font-size="11.5" font-family="Menlo,monospace" fill="#222">to_cursor.md  GUIDE | ANSWER, ack: time</text>
+<text x="45" y="278" font-size="11.5" font-family="Menlo,monospace" fill="#222">to_supervisor.md  REPORT | QUESTION | BLOCKED | DONE</text>
+<text x="45" y="300" font-size="11.5" font-family="Menlo,monospace" fill="#222">to_executor.md  GUIDE | ANSWER, ack: time</text>
 <text x="45" y="322" font-size="11.5" font-family="Menlo,monospace" fill="#222">WAITING  pause flag      STATUS.md  stop word</text>
-<rect x="290" y="400" width="180" height="56" rx="9" fill="#fff" stroke="#555" stroke-width="2"/><text x="380.0" y="425.0" text-anchor="middle" font-weight="600" font-size="13" fill="#222">cursor_driver.sh</text><text x="380.0" y="441.0" text-anchor="middle" font-size="10.5" fill="#666">bash loop, 10 min sleep</text>
+<rect x="290" y="400" width="180" height="56" rx="9" fill="#fff" stroke="#555" stroke-width="2"/><text x="380.0" y="425.0" text-anchor="middle" font-weight="600" font-size="13" fill="#222">driver loop</text><text x="380.0" y="441.0" text-anchor="middle" font-size="10.5" fill="#666">one step per run</text>
 <line x1="115" y1="126" x2="115" y2="228" stroke="#6a1b9a" stroke-width="1.8" marker-end="url(#a6a1b9a)"/><text x="122" y="180" font-size="11" fill="#6a1b9a">watch / answer</text>
 <line x1="380" y1="126" x2="380" y2="228" stroke="#1565c0" stroke-width="1.8" marker-end="url(#a1565c0)"/><text x="388" y="180" font-size="11" fill="#1565c0">append, commit</text>
 <line x1="380" y1="398" x2="380" y2="128" stroke="#555" stroke-width="1.8" marker-end="url(#a555)" stroke-dasharray="4 3"/>
 <text x="282" y="372" text-anchor="end" font-size="11" fill="#555">starts one executor run per iteration</text>
 <text x="30" y="478" font-size="11.5" fill="#555">hand-built: loop, pause, acks, ids</text>
-<text x="30" y="494" font-size="11.5" fill="#c62828">no liveness: 13 kills unseen</text>
-<text x="30" y="510" font-size="11.5" fill="#c62828">single-instance CLI: no lock</text>
+<text x="30" y="494" font-size="11.5" fill="#c62828">no liveness: failed runs go unnoticed</text>
+<text x="30" y="510" font-size="11.5" fill="#c62828">single-instance CLIs: no lock</text>
 <ellipse cx="755" cy="275" rx="120" ry="78" fill="#f3e5f5" stroke="#6a1b9a" stroke-width="2"/>
 <text x="755" y="232" text-anchor="middle" font-size="14" font-weight="600" fill="#222">ORC hub</text>
 <text x="755" y="250" text-anchor="middle" font-size="11" font-weight="400" fill="#222">session registry</text>
