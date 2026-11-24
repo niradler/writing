@@ -1,6 +1,6 @@
 ---
 title: 'Agent Collaboration Across Coding Agents'
-description: 'How several coding agents, on different models and subscriptions, can work one task together: why it improves the process, how to build the communication and the shared state between them, and how to operate it, from a night Claude Code and the Cursor agent CLI ran a long job side by side.'
+description: 'How several coding agents, on different models and subscriptions, can work one task together: why it improves the process, how to build the communication and the shared state between them, and how to operate it, with Claude Code and the Cursor agent CLI as the example.'
 publishedAt: '2026-11-24T12:00:00.000Z'
 updatedAt: '2026-11-24T12:00:00.000Z'
 tags:
@@ -16,13 +16,13 @@ originalUrl: 'https://blog.niradler.com/agent-collaboration-across-coding-agents
 
 Most of us now pay for more than one coding agent. I have Claude Code and Cursor. Most days they sit side by side and never talk, and each subscription only pays off when I happen to open that tool.
 
-I wanted them to collaborate: get more out of both subscriptions, and run a multi-model flow where each model does what it is best at. Claude plans, reviews and approves; the Cursor agent CLI running Gemini 4 Neon does the hands-on work. One evening Claude wrote a brief, handed execution to Cursor, and stayed on as supervisor for a long overnight job.
+I wanted them to collaborate: get more out of both subscriptions, and run a multi-model flow where each model does what it is best at. Claude plans, reviews and approves; the Cursor agent CLI running Gemini 4 Neon does the hands-on work. For a long unattended job, Claude wrote a brief, handed execution to Cursor, and supervised.
 
 This post is what that taught me: why multi-model, multi-session work improves the process, and how to build and operate the communication and the state between the agents.
 
 ## Why several agents beat one
 
-| Benefit | What it looked like that night |
+| Benefit | In our setup |
 |---|---|
 | **The right model for each role** | Claude planned, reviewed and approved; Gemini did the grind: fetch logs, count, read transcripts, submit jobs |
 | **Every subscription pulls its weight** | the long, token-heavy work ran on the Cursor plan; Claude's plan went to supervision only |
@@ -31,13 +31,13 @@ This post is what that taught me: why multi-model, multi-session work improves t
 | **Cheap supervision** | the supervisor read only questions and alerts, not every report |
 | **A fresh head per step** | each executor run started clean from the brief and the state files, so it could not drift on a long context |
 
-The price: the agents now need a way to talk and a place to keep state. Inside one tool that comes built in. Across tools you build it.
+The cost: the agents need a way to talk and a place to keep state. Inside one tool that comes built in. Across tools you build it.
 
 ## Building the communication
 
 Any channel between agents has to answer five questions.
 
-| Question | Same tool (Claude Code side sessions) | Different tools, by hand (that night) | Different tools, through a hub ([ORC](https://github.com/niradler/orc)) |
+| Question | Same tool (Claude Code side sessions) | Different tools, by hand (our setup) | Different tools, through a hub ([ORC](https://github.com/niradler/orc)) |
 |---|---|---|---|
 | **What is a message?** | a message to a session id | an entry appended to a markdown file | a row in a shared inbox |
 | **How is it delivered?** | injected into the session by the tool | read by the other agent on its next run | hook mid-turn, next turn, or resume |
@@ -47,7 +47,7 @@ Any channel between agents has to answer five questions.
 
 ![Left: Claude Code and the Cursor agent CLI talk only through files in the repo and a bash loop. Right: Claude Code, Gemini CLI, Codex and Cursor agent CLI all connect to an ORC hub; Cursor gets start and result only](/media/agent-collaboration-across-coding-agents/with-and-without-a-hub.svg)
 
-That night had no hub, so the channel was two files and a loop:
+Our setup had no hub, so the channel was two files and a loop:
 
 ![Animated: the driver starts the executor, the executor appends a REPORT, then a QUESTION lights the WAITING flag and the driver pauses until the supervisor answers and clears it](/media/agent-collaboration-across-coding-agents/protocol-loop.svg)
 
@@ -68,9 +68,9 @@ Messages say what changed. State says where things are, so any agent, any new se
 | **Evidence** | the command and its real output for every number | executor | the supervisor can recount instead of trusting |
 | **Version control** | one commit per step, only the agent's own files | each agent, its own files | two agents in one folder never clobber each other |
 
-What good state bought: the executor's test-run report matched the raw log count for count when Claude recounted it. It also read 20 real transcripts at each of three checkpoints with 0 mismatches. It found a hook that silently discarded transcripts, proposed a three-line fix with an alternative, waited for approval, and kept every constraint attached to it.
+With this state in place, the executor's test-run report matched the raw log count for count when Claude recounted it. It also read 20 real transcripts at each of three checkpoints with 0 mismatches. It found a hook that silently discarded transcripts, proposed a three-line fix with an alternative, waited for approval, and kept every constraint attached to it.
 
-What bad state cost: two writers numbered decisions from the same sequence, and two different decisions ended up with the same number.
+Where it failed: two writers numbered decisions from the same sequence, and two different decisions ended up with the same number.
 
 ## Operating it
 
@@ -82,7 +82,7 @@ Inside each step the executor was careful and correct. Everything that broke was
 
 ![Chart: the trainer's response length jumps above the +25 % stop line early and stays there; the length the executor reported stays flat](/media/agent-collaboration-across-coding-agents/response-length.svg)
 
-**Shared meaning.** The stop rule said "response length +25 %". At the same checkpoint the executor reported +2.8 %; the trainer's own metric was +48 %. The two agents also disagreed on when a second limit was crossed. Same words, different numbers.
+**Shared meaning.** The stop rule said "response length +25 %". At the same checkpoint the executor reported +2.8 %; the trainer's own metric was +48 %. The two agents also disagreed on when a second limit was crossed.
 
 **Leftovers.** A batch script from an earlier session kept a builder running, and the loop waited on it: the first executor run started three and a half hours after the hand-off.
 
@@ -92,7 +92,7 @@ The rules that close these, whatever the channel:
 
 | Rule | Closes |
 |---|---|
-| **Liveness is machinery.** Alert after N failed runs in a row; write a heartbeat on every good one | thirteen silent kills |
+| **Liveness is machinery.** Alert after N failed runs in a row; write a heartbeat on every good one | thirteen failed runs with no alert |
 | **Lock single-instance tools.** A second caller waits instead of killing the first | the kills themselves |
 | **A metric contract in the brief.** Every stop rule names the exact log key, baseline and threshold | +2.8 % versus +48 % |
 | **One writer per piece of state.** Only the supervisor numbers decisions | duplicate decision numbers |
@@ -110,12 +110,12 @@ A hub turns most of the hand-built pieces into infrastructure. [ORC](https://git
 | two markdown files | [`session_send`](https://github.com/niradler/orc/blob/eb22da7ad6028d6dd20524c471754233b31b2f2a/packages/mcp/src/tools.ts#L355-L359), a durable inbox with [delivery states](https://github.com/niradler/orc/blob/eb22da7ad6028d6dd20524c471754233b31b2f2a/packages/core/src/session-messages.ts#L11-L20) and idempotent retries |
 | status file and decision log | a task board with states and comments; memories every agent loads |
 | `WAITING` file | human requests; flows wait for an answer |
-| nothing, 13 silent kills | a dead worker is detected and [retried up to twice](https://github.com/niradler/orc/blob/eb22da7ad6028d6dd20524c471754233b31b2f2a/packages/core/src/config.ts#L331) |
+| nothing; 13 failed runs went unnoticed | a dead worker is detected and [retried up to twice](https://github.com/niradler/orc/blob/eb22da7ad6028d6dd20524c471754233b31b2f2a/packages/core/src/config.ts#L331) |
 | no guard against agents ping-ponging | [3 hops and 20 messages per pair per hour](https://github.com/niradler/orc/blob/eb22da7ad6028d6dd20524c471754233b31b2f2a/packages/core/src/session-messages.ts#L4-L7) |
 
-Not covered yet: mid-turn messages [reach only Claude, Codex and Gemini](https://github.com/niradler/orc/blob/eb22da7ad6028d6dd20524c471754233b31b2f2a/packages/core/src/session-messages.ts#L161), so a running Cursor session cannot be steered. A child's question [goes to a human, never to the parent agent](https://github.com/niradler/orc/blob/eb22da7ad6028d6dd20524c471754233b31b2f2a/packages/api/src/sessions/control.ts#L314-L317), so an agent cannot answer its executor overnight. And there are no cost budgets.
+Not covered yet: mid-turn messages [reach only Claude, Codex and Gemini](https://github.com/niradler/orc/blob/eb22da7ad6028d6dd20524c471754233b31b2f2a/packages/core/src/session-messages.ts#L161), so a running Cursor session cannot be steered. A child's question [goes to a human, never to the parent agent](https://github.com/niradler/orc/blob/eb22da7ad6028d6dd20524c471754233b31b2f2a/packages/api/src/sessions/control.ts#L314-L317), so an agent cannot answer its executor's question unattended. And there are no cost budgets.
 
-Rerun today, I would start the executor as the Gemini CLI through ORC, so it can be messaged and resumed, put the job on the task board, and move the stop rules into the job itself. The markdown channel would shrink to one thing: the supervisor's answers.
+Next time I would start the executor as the Gemini CLI through ORC, so it can be messaged and resumed, put the job on the task board, and move the stop rules into the job itself. The markdown channel would shrink to one thing: the supervisor's answers.
 
 ## Which setup for which job
 
