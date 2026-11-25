@@ -13,6 +13,7 @@
     "preview": "vitepress preview site --host 127.0.0.1 --port 4173",
     "test": "node --test",
     "check": "npm run test && node scripts/check-content.mjs",
+    "check:slop": "node scripts/check-slop.mjs",
     "check:built": "node scripts/check-built.mjs",
     "check:layout": "node scripts/check-layout.mjs",
     "format": "prettier --write .",
