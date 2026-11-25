@@ -198,4 +198,43 @@ describe("slop cleaner", () => {
     assert.match(content, /Latency dropped, by half\. Memory stayed flat\./);
     assert.match(content, /\| A \| — \|/);
   });
+
+  it("preserves code-formatted links without placeholder leaks and resets sentence runs across headings", () => {
+    const s =
+      "This exact test sentence has sixteen plain words written to measure uniform rhythm well.";
+    const doc = [
+      "# Post",
+      "",
+      `${s} ${s} ${s} ${s}`,
+      "",
+      "## Next section",
+      "",
+      s,
+      "",
+      "| Col | Details |",
+      "| --- | --- |",
+      "| **Start** | [`session_start`](https://example.com/a) and [`session_send`](https://example.com/b); keeps links intact |",
+      "",
+      "- **Each model on its best work.** Planning stays separate.",
+      "- **One step per run.** Restarts cleanly.",
+    ].join("\n");
+
+    const analysis = analyzeMarkdown(doc);
+    assert.ok(!analysis.issues.some((i) => i.rule === "uniform-sentences"));
+    assert.ok(
+      analysis.issues.some((i) => i.rule === "table-semicolon" && i.severity === "P2"),
+    );
+    assert.equal(
+      analysis.issues.filter((i) => i.rule === "bold-list-period").length,
+      2,
+    );
+
+    const { content } = cleanMarkdown(doc, { fixPunctuation: true });
+    assert.ok(!content.includes("\u0000HOLD"));
+    assert.match(
+      content,
+      /\[`session_start`\]\(https:\/\/example\.com\/a\) and \[`session_send`\]\(https:\/\/example\.com\/b\); keeps links intact/,
+    );
+    assert.match(content, /- \*\*One step per run:\*\* Restarts cleanly\./);
+  });
 });

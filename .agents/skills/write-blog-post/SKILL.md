@@ -82,9 +82,10 @@ Notes:
 2. **Pick archetype and outline.** Confirm the thesis, section headings, planned diagrams/charts, and any `[confirm: ...]` gaps.
 3. **Draft body, then title and description.** Write the title and `description` last so they reflect the actual evidence.
 4. **Create visuals.** Build any SVGs (via `blog-diagrams`) or charts and save them under `site/public/media/<slug>/`.
-5. **Run automated slop check:**
+5. **Run automated checks:**
    ```bash
    npm run check:slop -- site/posts/<slug>.md
+   npm run check:svg -- site/public/media/<slug>/*.svg
    ```
    Fix every `P0` and `P1` issue, and review `P2` flags for rhythm and density.
 6. **Run a fresh-context review.** Use the `review-blog-post` skill in `detect` mode in a separate session or subagent so the reviewer evaluates evidence, contradictions, and voice without author bias.

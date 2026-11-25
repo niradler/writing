@@ -63,3 +63,6 @@ Best for: comparing 4-6 engineering patterns along two concrete axes (e.g., runt
 3. **Inline `<script>` tags**: browsers ignore JavaScript inside SVGs loaded via `<img>` tags. Use pure SVG/SMIL/CSS.
 4. **Transparent backgrounds**: transparent dark-text SVGs become unreadable in dark mode (`#000000`), and transparent light-text SVGs disappear in light mode (`#fafafa`). Always draw the `#0E1412` background card.
 5. **Unreadable mobile text**: cramming 15 boxes into `viewBox="0 0 1400 700"` makes `11px` labels microscopic on a `390px` phone screen. Split dense architectures into two focused diagrams instead.
+6. **`opacity` vs `fill-opacity` on stroked shapes**: setting `opacity="0.12"` on a `<circle>` or `<rect>` fades the border stroke along with the fill. Use `fill-opacity="0.12"` so the outline stays crisp.
+7. **Lines crossing unrelated boxes or text**: route return/feedback connectors around containers with a `<path>` instead of drawing a straight `<line>` straight through a box in the middle.
+8. **SMIL vs CSS reduced motion**: `@media (prefers-reduced-motion: reduce){*{animation:none!important}}` only halts CSS `@keyframes`, not SMIL `<animate>`/`<animateMotion>`. Wrap SMIL layers in `<g class="anim">` and swap to a `<g class="static-fallback">` under reduced motion.

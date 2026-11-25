@@ -17,12 +17,13 @@ Run reviews in a fresh context or a subagent that did not write the draft. Autho
 - **`edit`**: apply minimal, targeted in-place fixes to flagged spans, leaving strong human passages untouched. Never alter code blocks, direct quotes, or sourced numbers.
 - **`rewrite`**: advise a structural rewrite only when 3+ slop categories fire together AND the argument itself lacks a through-line.
 
-## Step 1: Run Deterministic Slop Detection
+## Step 1: Run Deterministic Checks
 
-Always start with the repo's script so mechanical tells are caught objectively:
+Always start with the repo's scripts so mechanical prose tells and SVG bugs are caught objectively:
 
 ```bash
 npm run check:slop -- site/posts/<slug>.md
+npm run check:svg -- site/public/media/<slug>/*.svg
 ```
 
 For machine-readable output:
@@ -38,7 +39,7 @@ npm run check:slop -- --fix --dry-run site/posts/<slug>.md
 npm run check:slop -- --fix site/posts/<slug>.md
 ```
 
-Use `--fix-punctuation` only if the author wants automatic em-dash and semicolon replacement, and review every touched sentence afterward so splits read naturally.
+Note that `--fix` converts short bold noun-label periods (`**Label.**`) to colons (`**Label:**`) but intentionally leaves bold-led bullet streaks for manual editing into prose or unbolded items. Use `--fix-punctuation` only if the author wants automatic em-dash and prose semicolon replacement, and review every touched sentence afterward.
 
 ## Step 2: Four-Lens Editorial Audit
 

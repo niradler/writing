@@ -50,13 +50,10 @@ All diagrams render inside the `42rem` (~672px) article column, wrapped with `1p
 
 Animate only when movement explains state over time (a loop cycle, a pause flag stopping spend, rounds dropping against a noise band).
 
-1. Always include reduced-motion support in `<style>`:
-   ```xml
-   @media (prefers-reduced-motion: reduce){*{animation:none!important}}
-   ```
+1. **Reduced motion**: CSS `@media (prefers-reduced-motion: reduce){*{animation:none!important}}` stops CSS `@keyframes` only; it does **not** stop SMIL `<animate>` or `<animateMotion>`. For SMIL-animated SVGs, wrap animated layers in `<g class="anim">` and provide a readable static `<g class="static-fallback">` toggled via `@media (prefers-reduced-motion: reduce){.anim{display:none}.static-fallback{display:inline}}` (with `.static-fallback{display:none}` by default), or use CSS animations instead of SMIL.
 2. Keep cycle durations calm and readable (`12s–18s` for multi-step stories, `5s–7s` for simple background loops).
 3. Ensure SMIL `keyTimes` values are strictly non-decreasing, start at `0`, and **never exceed `1`** (`0 <= t <= 1`).
-4. Ensure the first frame (`t = 0`) and reduced-motion static state still make sense visually.
+4. Ensure the first frame (`t = 0`) and reduced-motion static state still communicate the core flow visually (never hide all labels at `opacity="0"` without a static state).
 5. Do not use `<script>` inside SVGs; `<img src="/media/...">` sandboxes scripts and executes only declarative CSS/SMIL animations.
 
 ### Accessibility and File Placement
@@ -75,12 +72,17 @@ See [references/svg-patterns.md](references/svg-patterns.md) for reusable starte
 
 ## Verification Checklist
 
-Before committing any SVG or chart:
+Run the automated SVG checker first:
 
-- [ ] Every `url(#id)` marker or clipPath has a matching `<defs>` element with that exact `id`.
-- [ ] Every SMIL `keyTimes` list starts at `0`, ends at `<= 1`, is non-decreasing, and matches the length of `values` / `keyPoints`.
-- [ ] `<svg>` has `xmlns="http://www.w3.org/2000/svg"`, explicit `viewBox`, `role="img"`, and `<title>`.
-- [ ] Animated SVGs include `@media (prefers-reduced-motion: reduce)`.
-- [ ] No text clips past the card edge or overlaps boxes/lines.
+```bash
+npm run check:svg -- site/public/media/<slug>/*.svg
+```
+
+Then confirm manually before committing any SVG or chart:
+
+- [ ] `npm run check:svg` reports zero `P0` and `P1` issues (valid `url(#id)` refs, valid monotonic `keyTimes` in `[0, 1]`, `role="img"`, `<title>`, no `<script>`).
+- [ ] Animated SVGs have a readable static state for `prefers-reduced-motion: reduce`.
+- [ ] No connector line cuts through unrelated boxes or text, and no text clips past card edges or overlaps borders.
+- [ ] Stroked translucent shapes use `fill-opacity`, not whole-element `opacity`.
 - [ ] Rendered cleanly in `npm run dev` (or built preview) in both light and dark modes, at desktop (`1280px`) and mobile (`390px`).
 - [ ] `npm run check` passes (confirms local file exists and alt text is present).

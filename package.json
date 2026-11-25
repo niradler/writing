@@ -14,6 +14,7 @@
     "test": "node --test",
     "check": "npm run test && node scripts/check-content.mjs",
     "check:slop": "node scripts/check-slop.mjs",
+    "check:svg": "node scripts/check-svg.mjs",
     "check:built": "node scripts/check-built.mjs",
     "check:layout": "node scripts/check-layout.mjs",
     "format": "prettier --write .",
