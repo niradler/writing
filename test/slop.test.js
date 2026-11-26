@@ -43,8 +43,12 @@ describe("slop detector", () => {
     assert.ok(!rules.some((entry) => entry.endsWith("@L21")));
   });
 
-  it("flags P0 paste leaks, AI URL params, placeholders, and cutoff disclaimers", () => {
+  it("flags P0 paste leaks, AI URL params, placeholders, cutoff disclaimers, and missing cover", () => {
     const doc = [
+      "---",
+      'title: "Draft"',
+      'publishedAt: "2026-11-24T12:00:00.000Z"',
+      "---",
       "# Draft",
       "",
       "See [the report](https://example.com/post?utm_source=chatgpt.com&id=1) citeturn0search1.",
@@ -54,6 +58,7 @@ describe("slop detector", () => {
 
     const result = analyzeMarkdown(doc, { minSeverity: "P0" });
     const ruleSet = new Set(result.issues.map((item) => item.rule));
+    assert.ok(ruleSet.has("missing-cover"));
     assert.ok(ruleSet.has("ai-url-param"));
     assert.ok(ruleSet.has("chatbot-leak"));
     assert.ok(ruleSet.has("placeholder-leak"));

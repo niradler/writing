@@ -11,6 +11,8 @@ tags:
   - orc
 sourceUrl: 'https://blog.niradler.com/agent-collaboration-across-coding-agents'
 originalUrl: 'https://blog.niradler.com/agent-collaboration-across-coding-agents'
+cover: /media/agent-collaboration-across-coding-agents/cover.jpg
+coverAlt: 'Four glowing coding-agent workstations in teal, blue, violet, and coral connected by illuminated message tracks through a central emerald orchestration hub, with a coral checkpoint gate along the front track'
 ---
 # Agent Collaboration Across Coding Agents
 
