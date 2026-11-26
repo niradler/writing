@@ -9,12 +9,13 @@ Build visuals that carry real technical information and look native to Piece by 
 
 ## Choose the Right Visual
 
-| When the post explains...                                         | Use                                        | Example                                                                               |
-| ----------------------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------- |
-| A feedback loop, state machine, gating rule, or message protocol  | **Animated SVG** (SMIL / CSS)              | Candidate revisions entering a noise-band gate and dropping into reverted vs promoted |
-| Multi-component architecture, before/after comparison, or 2x2 map | **Static SVG**                             | Side-by-side "Without a hub" vs "With a hub" topology                                 |
-| Quantitative runs, latency/cost trade-offs, or distributions      | **Data chart** (PNG or SVG from real data) | Scatter of wall-clock time vs cost per run with labeled clusters                      |
-| Short linear command flow or small text hierarchy                 | **Code block or table**                    | Don't draw an SVG when a 6-line table is faster to scan                               |
+| When the post explains...                                         | Use                                        | Example                                                                                 |
+| ----------------------------------------------------------------- | ------------------------------------------ | --------------------------------------------------------------------------------------- |
+| Every published post's hero / social card (mandatory)             | **16:9 Raster Cover** (`cover.jpg`/`.png`) | Dark isometric editorial illustration (zero text, matching recent covers) or hero chart |
+| A feedback loop, state machine, gating rule, or message protocol  | **Animated SVG** (SMIL / CSS)              | Candidate revisions entering a noise-band gate and dropping into reverted vs promoted   |
+| Multi-component architecture, before/after comparison, or 2x2 map | **Static SVG**                             | Side-by-side "Without a hub" vs "With a hub" topology                                   |
+| Quantitative runs, latency/cost trade-offs, or distributions      | **Data chart** (PNG or SVG from real data) | Scatter of wall-clock time vs cost per run with labeled clusters                        |
+| Short linear command flow or small text hierarchy                 | **Code block or table**                    | Don't draw an SVG when a 6-line table is faster to scan                                 |
 
 ## Piece by Piece SVG Design System
 

@@ -48,6 +48,7 @@ for (const post of posts) {
       errors.push(`${slug}: missing media ${local}`);
     }
   }
+  if (!data.cover) errors.push(`${slug}: missing cover`);
   if (!data.coverAlt && data.cover) errors.push(`${slug}: cover has no alt text`);
   for (const src of refs.missingAlt) {
     if (src.startsWith("/media/") || /^https?:\/\//i.test(src)) {

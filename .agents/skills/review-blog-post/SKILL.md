@@ -72,15 +72,16 @@ Inspect the post across four lenses. Consult [references/slop-catalog.md](refere
 
 ### Lens 4: Visuals and Blog Compliance
 
+- **Cover image gate (P0 blocker)**: confirm frontmatter defines both `cover` (pointing to an existing local raster image under `site/public/media/<slug>/`, 16:9 PNG/JPG) and specific `coverAlt`. **Never approve or merge a post PR without a cover image.**
 - **Visual opportunities**: flag dense multi-step flows, architectures, or numeric comparisons that would be much clearer as an SVG diagram (see `blog-diagrams`) or data chart.
 - **SVG hygiene** (if SVGs exist): check `role="img"`, `<title>`, `prefers-reduced-motion: reduce`, valid `<defs>` marker references, monotonic SMIL `keyTimes` within `[0, 1]`, and legible contrast.
-- **Frontmatter & links**: verify `sourceUrl`/`originalUrl` match the slug, `description` is concrete, `cover` and all inline images live under `/media/<slug>/` with descriptive alt text, and `npm run check` passes.
+- **Frontmatter & links**: verify `sourceUrl`/`originalUrl` match the slug, `description` is concrete, all inline images live under `/media/<slug>/` with descriptive alt text, and `npm run check` passes.
 
 ## Step 3: Report Format
 
 Group findings by severity with exact line numbers, quoted text, error pattern name, and a concrete fix.
 
-- **P0 (Must fix before merge)**: factual errors, math mismatches, internal contradictions, unverified invented claims, unresolved `[confirm: ...]`, chat/URL leaks, broken media/checks.
+- **P0 (Must fix before merge)**: missing `cover` or `coverAlt`, factual errors, math mismatches, internal contradictions, unverified invented claims, unresolved `[confirm: ...]`, chat/URL leaks, broken media/SVGs/checks.
 - **P1 (Fix before publishing)**: em dashes, prose semicolons, AI vocabulary tells, negative parallelism, bold-led bullet walls, missing honest section, thin evidence or hidden variance, throat-clearing intro.
 - **P2 (Polish)**: uniform sentence/paragraph rhythm, wordy transitions, heading sentence case, tighter cuts, diagram suggestions.
 

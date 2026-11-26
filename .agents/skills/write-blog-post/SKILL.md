@@ -41,12 +41,14 @@ Choose the shape that fits the material before outlining. Load [references/post-
 - **How We Built X / Architecture**: concrete loop or system diagram, one real walkthrough end to end, human-in-the-loop boundaries, lessons with receipts, what is still hard.
 - **Build Log / Tool Walkthrough**: concrete problem, minimal working setup, runnable code/commands, tradeoffs, next concrete step.
 
-## Visuals and Diagrams
+## Visuals, Cover Image, and Diagrams
 
-If the post explains a feedback loop, multi-component architecture, protocol, or quantitative comparison, add a purpose-built diagram or data chart instead of describing topology in prose. Use the `blog-diagrams` skill for SVG design tokens, dark-card layout, accessibility, and motion rules.
+Every published post **must** have a local raster cover image (`cover` + `coverAlt` in frontmatter, stored at `site/public/media/<slug>/cover.jpg` or `cover.png`). Both `npm run check` and `npm run check:slop` treat a missing cover as a hard blocker; **never open or merge a post PR without a cover image**.
 
+- **Cover image**: use a 16:9 raster PNG/JPG (`1280x720` or wider) — either a dark isometric editorial illustration matching recent covers (such as `site/public/media/how-to-make-ai-agents-improve-themselves/cover.png`, zero text) or the post's hero data chart. Generate or render it explicitly and visually inspect it before committing.
+- **Inline diagrams**: if the post explains a feedback loop, multi-component architecture, protocol, or quantitative comparison, add a purpose-built diagram or data chart instead of describing topology in prose. Use the `blog-diagrams` skill for SVG design tokens, dark-card layout, accessibility, and motion rules.
 - Store all post media under `site/public/media/<slug>/`.
-- Reference media with root-relative paths (`/media/<slug>/file.svg` or `.png`).
+- Reference media with root-relative paths (`/media/<slug>/file.svg`, `.png`, or `.jpg`).
 - Never leave remote image URLs in Markdown.
 - Every image and `cover` must have specific, descriptive alt text (never empty, never a copy of the post title).
 
@@ -97,10 +99,12 @@ Notes:
    npm run format:check
    ```
 
-## Done When
+## Done When (Pre-Merge Gate)
 
+- **Cover image present and verified**: `cover` points to an existing local raster file under `site/public/media/<slug>/` with descriptive `coverAlt`. **Never merge a post PR without a cover image.**
 - Every number, quote, and technical detail traces to a verified source (zero `[confirm: ...]` markers left).
 - `npm run check:slop -- site/posts/<slug>.md` reports zero `P0` and `P1` issues.
+- `npm run check:svg -- site/public/media/<slug>/*.svg` reports zero `P0` and `P1` issues (if the post has SVGs).
 - Fresh-context `review-blog-post` pass has been addressed.
 - Every media asset is local under `site/public/media/<slug>/` with descriptive alt text.
 - `npm run check`, both builds + `check:built`, and `npm run format:check` pass.
